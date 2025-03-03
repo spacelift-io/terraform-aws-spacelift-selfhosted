@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint 👷
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+
+      - name: OpenTofu fmt
+        run: tofu fmt -recursive -diff -check
+
+      - name: OpenTofu Init
+        if: always()
+        id: init
+        run: tofu init
+
+      - name: OpenTofu Validate
+        if: always()
+        run: tofu validate
+
+      - name: Run tflint
+        uses: reviewdog/action-tflint@v1
+        with:
+          github_token: ${{ secrets.github_token }}
