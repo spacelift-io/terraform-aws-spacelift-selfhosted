@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "backend" {
-  name = "spacelift-backend-${var.seed}"
+  name = "spacelift-backend-${var.suffix}"
 
   encryption_configuration {
     encryption_type = "KMS"
@@ -32,7 +32,7 @@ resource "aws_ecr_lifecycle_policy" "backend" {
 }
 
 resource "aws_ecr_repository" "launcher" {
-  name = "spacelift-launcher-${var.seed}"
+  name = "spacelift-launcher-${var.suffix}"
 
   encryption_configuration {
     encryption_type = "KMS"

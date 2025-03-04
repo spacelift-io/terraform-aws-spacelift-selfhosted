@@ -10,7 +10,7 @@ resource "random_password" "db_pw" {
 }
 
 resource "aws_rds_global_cluster" "global_cluster" {
-  global_cluster_identifier = "spacelift-global-cluster-${var.seed}"
+  global_cluster_identifier = "spacelift-global-cluster-${var.suffix}"
   engine                    = "aurora-postgresql"
   engine_version            = var.postgres_engine_version
   deletion_protection       = var.db_delete_protection_enabled
@@ -18,7 +18,7 @@ resource "aws_rds_global_cluster" "global_cluster" {
 }
 
 resource "aws_rds_cluster" "db_cluster" {
-  cluster_identifier = "spacelift-${var.seed}"
+  cluster_identifier = "spacelift-${var.suffix}"
   database_name      = local.database_name
 
   engine      = aws_rds_global_cluster.global_cluster.engine
@@ -57,13 +57,13 @@ resource "aws_rds_cluster_instance" "db_instance" {
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
-  name        = "spacelift-${var.seed}"
+  name        = "spacelift-${var.suffix}"
   description = "Joins the Spacelift database to the private subnets"
   subnet_ids  = var.subnet_ids
 }
 
 resource "aws_rds_cluster_parameter_group" "spacelift" {
-  name        = "spacelift-${var.seed}"
+  name        = "spacelift-${var.suffix}"
   description = "Spacelift core product database parameter group."
   family      = join("", ["aurora-postgresql", substr(var.postgres_engine_version, 0, 2)])
 

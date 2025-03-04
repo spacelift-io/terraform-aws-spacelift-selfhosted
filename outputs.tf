@@ -1,3 +1,8 @@
+output "unique_suffix" {
+  value       = local.suffix
+  description = "Randomly generated suffix for AWS resource names, ensuring uniqueness."
+}
+
 output "kms_key_arn" {
   value       = length(module.kms) > 0 ? module.kms[0].key_arn : null
   description = "ARN of the KMS key used for encrypting AWS resources."

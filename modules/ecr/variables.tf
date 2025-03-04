@@ -1,4 +1,4 @@
-variable "seed" {
+variable "suffix" {
   type        = string
   description = "Unique postfix for resource names."
 }

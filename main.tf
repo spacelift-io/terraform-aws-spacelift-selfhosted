@@ -1,11 +1,11 @@
 data "aws_caller_identity" "current" {}
 
-resource "random_id" "seed" {
+resource "random_id" "suffix" {
   byte_length = 6
 }
 
 locals {
-  seed = lower(random_id.seed.id) # Certain resources (subnet group, rds) require all lowercase names
+  suffix = lower(random_id.suffix.id) # Certain resources (subnet group, rds) require all lowercase names
 }
 
 module "kms" {
@@ -20,7 +20,7 @@ module "ecr" {
   source = "./modules/ecr"
 
   kms_key_arn                = coalesce(var.kms_arn, module.kms[0].key_arn)
-  seed                       = local.seed
+  suffix                     = local.suffix
   number_of_images_to_retain = var.number_of_images_to_retain
 }
 
@@ -28,7 +28,7 @@ module "network" {
   source = "./modules/network"
   count  = var.create_vpc ? 1 : 0
 
-  seed            = local.seed
+  suffix          = local.suffix
   create_database = var.create_database
   vpc_cidr_block  = var.vpc_cidr_block
 }
@@ -37,7 +37,7 @@ module "rds" {
   source = "./modules/rds"
   count  = var.create_database ? 1 : 0
 
-  seed = local.seed
+  suffix = local.suffix
 
   postgres_engine_version = var.rds_engine_version
   engine_mode             = var.rds_engine_mode
@@ -59,7 +59,7 @@ module "rds" {
 module "s3" {
   source = "./modules/s3"
 
-  seed = local.seed
+  suffix = local.suffix
 
   encryption_key_arn = coalesce(var.kms_arn, module.kms[0].key_arn)
   cors_hostname      = var.website_domain

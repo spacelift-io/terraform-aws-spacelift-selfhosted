@@ -1,15 +1,15 @@
 locals {
   bucket_names = {
-    "deliveries" : "spacelift-deliveries-${var.seed}",
-    "large-queue" : "spacelift-large-queue-messages-${var.seed}",
-    "metadata" : "spacelift-metadata-${var.seed}",
-    "modules" : "spacelift-modules-${var.seed}",
-    "policy" : "spacelift-policy-inputs-${var.seed}",
-    "run-logs" : "spacelift-run-logs-${var.seed}",
-    "states" : "spacelift-states-${var.seed}",
-    "uploads" : "spacelift-uploads-${var.seed}",
-    "user-uploads" : "spacelift-user-uploaded-workspaces-${var.seed}",
-    "workspace" : "spacelift-workspace-${var.seed}",
+    "deliveries" : "spacelift-deliveries-${var.suffix}",
+    "large-queue" : "spacelift-large-queue-messages-${var.suffix}",
+    "metadata" : "spacelift-metadata-${var.suffix}",
+    "modules" : "spacelift-modules-${var.suffix}",
+    "policy" : "spacelift-policy-inputs-${var.suffix}",
+    "run-logs" : "spacelift-run-logs-${var.suffix}",
+    "states" : "spacelift-states-${var.suffix}",
+    "uploads" : "spacelift-uploads-${var.suffix}",
+    "user-uploads" : "spacelift-user-uploaded-workspaces-${var.suffix}",
+    "workspace" : "spacelift-workspace-${var.suffix}",
   }
 }
 
