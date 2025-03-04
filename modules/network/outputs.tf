@@ -12,8 +12,8 @@ output "private_subnet_ids" {
 }
 
 output "database_security_group_id" {
-  description = "The ID of the security group for the Spacelift database"
-  value       = aws_security_group.database_sg.id
+  description = "The ID of the security group for the Spacelift database. Will be null if create_database is false."
+  value       = var.create_database ? aws_security_group.database_sg[0].id : null
 }
 
 output "server_security_group_id" {

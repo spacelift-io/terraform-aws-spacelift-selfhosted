@@ -41,6 +41,16 @@ variable "db_delete_protection_enabled" {
   description = "Whether to enable deletion protection for the RDS instances."
 }
 
+variable "preferred_backup_window" {
+  type        = string
+  description = "Daily time range during which automated backups are created if automated backups are enabled using the backup_retention_period parameter."
+}
+
+variable "backup_retention_period" {
+  type        = number
+  description = "The number of days for which automated backups are retained. Default is 5."
+}
+
 variable "engine_mode" {
   type        = string
   description = "Engine mode for the RDS instances."

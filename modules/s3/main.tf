@@ -298,7 +298,7 @@ resource "aws_s3_bucket_versioning" "states" {
 }
 
 resource "aws_s3_bucket" "uploads" {
-  bucket        = var.bucket_names["uploads"]
+  bucket        = local.bucket_names["uploads"]
   force_destroy = !var.retain_on_destroy
 }
 
@@ -321,6 +321,7 @@ resource "aws_s3_bucket_versioning" "uploads" {
 }
 
 resource "aws_s3_bucket_cors_configuration" "uploads" {
+  count  = length(var.cors_hostname) > 0 ? 1 : 0
   bucket = aws_s3_bucket.uploads.id
 
   cors_rule {
@@ -337,17 +338,6 @@ resource "aws_s3_bucket_public_access_block" "uploads" {
   block_public_policy     = true
   ignore_public_acls      = true
   restrict_public_buckets = true
-}
-
-resource "aws_s3_bucket_server_side_encryption_configuration" "uploads" {
-  bucket = aws_s3_bucket.uploads.id
-
-  rule {
-    apply_server_side_encryption_by_default {
-      sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
-    }
-  }
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
