@@ -22,7 +22,8 @@ module "spacelift" {
 This module creates:
 
 - Encryption resources  
-  - a KMS key that is used to encrypt other resources (RDS, S3 buckets, ECR repositories)
+  - a KMS key that is used to encrypt other AWS resources (RDS, S3 buckets, ECR repositories)
+  - a KMS key that is used for in-app encryption (eg. encrypt entities in the database)
 - Network resources
   - A VPC, 3 subnets and 3 security groups
 - Container repositories (ECR)

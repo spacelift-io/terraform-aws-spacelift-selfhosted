@@ -1,6 +1,11 @@
 output "kms_key_arn" {
-  value       = coalesce(var.kms_arn, module.kms[0].key_arn)
-  description = "ARN of the KMS key used for encryption."
+  value       = length(module.kms) > 0 ? module.kms[0].key_arn : null
+  description = "ARN of the KMS key used for encrypting AWS resources."
+}
+
+output "encryption_key_arn" {
+  value       = length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
+  description = "ARN of the KMS key used for in-app encryption."
 }
 
 output "server_security_group_id" {

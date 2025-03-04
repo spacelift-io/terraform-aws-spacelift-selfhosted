@@ -24,7 +24,7 @@ variable "create_vpc" {
 variable "vpc_cidr_block" {
   type        = string
   description = "The CIDR block to use for the VPC created for Spacelift. The subnet mask must be between /16 and /24."
-  default     = "10.0.0.0/16"
+  default     = "10.0.0.0/24"
 }
 
 variable "rds_subnet_ids" {
