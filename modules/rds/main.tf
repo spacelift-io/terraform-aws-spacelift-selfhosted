@@ -32,9 +32,10 @@ resource "aws_rds_cluster" "db_cluster" {
   master_username   = var.db_username
   master_password   = random_password.db_pw.result
 
-  backup_retention_period = 5
-  preferred_backup_window = "07:00-09:00"
+  backup_retention_period = var.backup_retention_period
+  preferred_backup_window = var.preferred_backup_window
   copy_tags_to_snapshot   = true
+  skip_final_snapshot     = true
 
   deletion_protection             = var.db_delete_protection_enabled
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.spacelift.name
@@ -47,7 +48,8 @@ resource "aws_rds_cluster" "db_cluster" {
 resource "aws_rds_cluster_instance" "db_instance" {
   for_each = var.instance_configuration
 
-  cluster_identifier         = each.value["instance_identifier"]
+  cluster_identifier         = aws_rds_cluster.db_cluster.id
+  identifier                 = each.value["instance_identifier"]
   instance_class             = each.value["instance_class"]
   engine                     = aws_rds_global_cluster.global_cluster.engine
   auto_minor_version_upgrade = false

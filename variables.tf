@@ -17,37 +17,31 @@ variable "kms_arn" {
 
 variable "create_vpc" {
   type        = bool
-  description = "Whether to create a VPC for the Spacelift resources. Default is true."
+  description = "Whether to create a VPC for the Spacelift resources. Default is true. Note: if this is false, and create_database is true, you must provide rds_subnet_ids and rds_security_group_ids."
   default     = true
 }
 
 variable "vpc_cidr_block" {
   type        = string
-  description = "The CIDR block to use for the VPC created for Spacelift."
-  default     = "10.0.0.0/24"
-}
-
-variable "subnet_mask_size" {
-  type        = number
-  description = "The mask to use when generating CIDRs for each subnet."
-  default     = 5
+  description = "The CIDR block to use for the VPC created for Spacelift. The subnet mask must be between /16 and /24."
+  default     = "10.0.0.0/16"
 }
 
 variable "rds_subnet_ids" {
   type        = list(string)
-  description = "List of subnet IDs to use for the RDS instances."
+  description = "List of subnet IDs to use for the RDS instances. If create_vpc is false, this must be provided."
   default     = []
 }
 
 variable "rds_security_group_ids" {
   type        = list(string)
-  description = "List of security group IDs to use for the RDS instances."
+  description = "List of security group IDs to use for the RDS instances. If create_vpc is false, this must be provided."
   default     = []
 }
 
 variable "create_database" {
   type        = bool
-  description = "Whether to create the RDS database. Default is true."
+  description = "Whether to create the Aurora RDS database. Default is true."
   default     = true
 }
 
@@ -59,13 +53,13 @@ variable "rds_delete_protection_enabled" {
 
 variable "rds_engine_version" {
   type        = string
-  description = "Postgres engine version. Default is 14.13. If you change this, make sure to update postgres_family accordingly."
-  default     = "14.13"
+  description = "Postgres engine version."
+  default     = "16.6"
 }
 
 variable "rds_engine_mode" {
   type        = string
-  description = "Engine mode for the RDS instances. Default is 'provisioned'."
+  description = "Engine mode for the RDS instances. Default is 'provisioned'. Can be either 'serverless' or 'provisioned'."
   default     = "provisioned"
 
   validation {
@@ -76,7 +70,7 @@ variable "rds_engine_mode" {
 
 variable "rds_username" {
   type        = string
-  description = "Master username for the RDS instances."
+  description = "Master username for the RDS instances. Note: this won't be used by the application, but it's required by the RDS resource."
   default     = "spacelift"
 }
 
@@ -94,8 +88,32 @@ variable "rds_instance_configuration" {
   }
 }
 
+variable "rds_preferred_backup_window" {
+  type        = string
+  description = "Daily time range during which automated backups are created if automated backups are enabled using the rds_backup_retention_period parameter."
+  default     = "07:00-09:00"
+}
+
+variable "rds_backup_retention_period" {
+  type        = number
+  description = "The number of days for which automated backups are retained. Default is 3."
+  default     = 3
+}
+
+variable "website_domain" {
+  type        = string
+  description = "The hostname of the Spacelift website. Should include protocol (https://). This is being used for state uploads during Stack creations. Example: https://spacelift.mycorp.com. If this isn't known at the time of the deployment, it can be set later."
+  default     = ""
+}
+
+variable "s3_retain_on_destroy" {
+  type        = bool
+  description = "Whether to retain the S3 buckets' contents when destroyed. If true, and the S3 bucket isn't empty, the deletion will fail."
+  default     = true
+}
+
 variable "number_of_images_to_retain" {
   type        = number
-  description = "Number of images to retain in ECR repositories. Default is 5. If set to 0, no images will be deleted."
+  description = "Number of Docker images to retain in ECR repositories. Default is 5. If set to 0, no images will be cleaned up."
   default     = 5
 }

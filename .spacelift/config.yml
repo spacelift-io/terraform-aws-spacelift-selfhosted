@@ -1,0 +1,10 @@
+# version: 2
+# module_version: "0.0.1"
+
+# tests:
+#   - name: Test infrastructure creation
+#     environment:
+#       TF_VAR_region: eu-west-3
+#       TF_VAR_default_tags: '{"environment":"tf-module-testing", "repo": "terraform-aws-spacelift-selfhosted"}'
+#       TF_VAR_rds_delete_protection_enabled: false
+#       TF_VAR_s3_retain_on_destroy: false
