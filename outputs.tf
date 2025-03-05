@@ -23,6 +23,11 @@ output "drain_security_group_id" {
   description = "ID of the security group for the Spacelift async-processing service. It will be null if create_vpc is false."
 }
 
+output "scheduler_security_group_id" {
+  value       = var.create_vpc ? module.network[0].scheduler_security_group_id : null
+  description = "ID of the security group for the Spacelift scheduler service. It will be null if create_vpc is false."
+}
+
 output "database_security_group_id" {
   value       = var.create_vpc ? module.network[0].database_security_group_id : null
   description = "ID of the security group for the Spacelift database. It will be null if create_database is false."
@@ -82,4 +87,11 @@ output "ecr_backend_repository_url" {
 output "ecr_launcher_repository_url" {
   value       = module.ecr.ecr_launcher_repository_url
   description = "URL of the ECR repository for the launcher images."
+}
+
+data "aws_partition" "current" {}
+
+output "uploads_bucket_url" {
+  value       = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
+  description = "URL of the S3 bucket used for storing uploads."
 }

@@ -5,7 +5,7 @@ resource "random_id" "suffix" {
 }
 
 locals {
-  suffix = lower(random_id.suffix.id) # Certain resources (subnet group, rds) require all lowercase names
+  suffix = coalesce(lower(var.unique_suffix), lower(random_id.suffix.id)) # Certain resources (subnet group, rds) require all lowercase names
 }
 
 module "kms" {

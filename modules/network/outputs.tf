@@ -25,3 +25,8 @@ output "drain_security_group_id" {
   description = "The ID of the security group for the Spacelift async-processing service"
   value       = aws_security_group.drain_sg.id
 }
+
+output "scheduler_security_group_id" {
+  description = "The ID of the security group for the Spacelift cron scheduler service"
+  value       = aws_security_group.scheduler_sg.id
+}

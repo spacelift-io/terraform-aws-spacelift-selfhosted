@@ -9,6 +9,12 @@ variable "default_tags" {
   default     = {}
 }
 
+variable "unique_suffix" {
+  type        = string
+  description = "A unique suffix to append to resource names. Ideally passed from the terraform-aws-spacelift-selfhosted module's outputs."
+  default     = ""
+}
+
 variable "kms_arn" {
   type        = string
   description = "ARN of the KMS key to use for encryption: S3 buckets, RDS instances, and ECR repositories. If empty, a new KMS key will be created."
