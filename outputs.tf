@@ -139,6 +139,11 @@ output "run_logs_bucket_arn" {
   description = "ARN of the S3 bucket used for storing run logs."
 }
 
+output "run_logs_bucket_name" {
+  value       = module.s3.run_logs_bucket_name
+  description = "ID of the S3 bucket used for storing run logs."
+}
+
 output "states_bucket_arn" {
   value       = module.s3.states_bucket_arn
   description = "ARN of the S3 bucket used for storing states."

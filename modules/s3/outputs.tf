@@ -53,6 +53,11 @@ output "run_logs_bucket_arn" {
   description = "ARN of the S3 bucket used for storing run logs."
 }
 
+output "run_logs_bucket_name" {
+  value       = aws_s3_bucket.run_logs.id
+  description = "ID of the S3 bucket used for storing run logs."
+}
+
 output "states_bucket_arn" {
   value       = aws_s3_bucket.states.arn
   description = "ARN of the S3 bucket used for storing states."
@@ -64,7 +69,7 @@ output "states_bucket_name" {
 }
 
 output "uploads_bucket_arn" {
-  value       = aws_s3_bucket.uploads
+  value       = aws_s3_bucket.uploads.arn
   description = "ARN of the S3 bucket used for storing uploads."
 }
 

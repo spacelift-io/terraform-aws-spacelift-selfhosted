@@ -1,11 +1,10 @@
 data "aws_caller_identity" "current" {}
 
-resource "random_id" "suffix" {
-  byte_length = 6
+resource "random_uuid" "suffix" {
 }
 
 locals {
-  suffix = coalesce(lower(var.unique_suffix), lower(random_id.suffix.id)) # Certain resources (subnet group, rds) require all lowercase names
+  suffix = coalesce(lower(var.unique_suffix), lower(substr(random_uuid.suffix.id, 0, 5))) # Certain resources (subnet group, rds) require all lowercase names
 }
 
 module "kms" {
