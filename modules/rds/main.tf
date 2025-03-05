@@ -24,6 +24,15 @@ resource "aws_rds_cluster" "db_cluster" {
   engine      = aws_rds_global_cluster.global_cluster.engine
   engine_mode = var.engine_mode
 
+  dynamic "serverlessv2_scaling_configuration" {
+    for_each = var.serverlessv2_scaling_configuration != null ? [1] : []
+    content {
+      max_capacity             = var.serverlessv2_scaling_configuration.max_capacity
+      min_capacity             = var.serverlessv2_scaling_configuration.min_capacity
+      seconds_until_auto_pause = var.serverlessv2_scaling_configuration.seconds_until_auto_pause
+    }
+  }
+
   availability_zones   = slice(data.aws_availability_zones.available.names, 0, length(var.subnet_ids))
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
 
