@@ -85,77 +85,77 @@ output "ecr_launcher_repository_url" {
 }
 
 output "deliveries_bucket_arn" {
-  value       = aws_s3_bucket.deliveries.arn
+  value       = module.s3.deliveries_bucket_arn
   description = "ARN of the S3 bucket used for storing deliveries."
 }
 
 output "deliveries_bucket_name" {
-  value       = aws_s3_bucket.deliveries.id
+  value       = module.s3.deliveries_bucket_name
   description = "ID of the S3 bucket used for storing deliveries."
 }
 
 output "large_queue_messages_arn" {
-  value       = aws_s3_bucket.large_queue_messages.arn
+  value       = module.s3.large_queue_messages_arn
   description = "ARN of the S3 bucket used for storing large queue messages."
 }
 
 output "large_queue_messages_bucket_name" {
-  value       = aws_s3_bucket.large_queue_messages.id
+  value       = module.s3.large_queue_messages_bucket_name
   description = "ID of the S3 bucket used for storing large queue messages."
 }
 
 output "metadata_bucket_arn" {
-  value       = aws_s3_bucket.metadata.arn
+  value       = module.s3.metadata_bucket_arn
   description = "ARN of the S3 bucket used for storing metadata."
 }
 
 output "metadata_bucket_name" {
-  value       = aws_s3_bucket.metadata.id
+  value       = module.s3.metadata_bucket_name
   description = "ID of the S3 bucket used for storing metadata."
 }
 
 output "modules_bucket_arn" {
-  value       = aws_s3_bucket.modules.arn
+  value       = module.s3.modules_bucket_arn
   description = "ARN of the S3 bucket used for storing modules."
 }
 
 output "modules_bucket_name" {
-  value       = aws_s3_bucket.modules.id
+  value       = module.s3.modules_bucket_name
   description = "ID of the S3 bucket used for storing modules."
 }
 
 output "policy_inputs_bucket_arn" {
-  value       = aws_s3_bucket.policy_inputs.arn
+  value       = module.s3.policy_inputs_bucket_arn
   description = "ARN of the S3 bucket used for storing policy inputs."
 }
 
 output "policy_inputs_bucket_name" {
-  value       = aws_s3_bucket.policy_inputs.id
+  value       = module.s3.policy_inputs_bucket_name
   description = "ID of the S3 bucket used for storing policy inputs."
 }
 
 output "run_logs_bucket_arn" {
-  value       = aws_s3_bucket.run_logs.arn
+  value       = module.s3.run_logs_bucket_arn
   description = "ARN of the S3 bucket used for storing run logs."
 }
 
 output "states_bucket_arn" {
-  value       = aws_s3_bucket.states.arn
+  value       = module.s3.states_bucket_arn
   description = "ARN of the S3 bucket used for storing states."
 }
 
 output "states_bucket_name" {
-  value       = aws_s3_bucket.states.id
+  value       = module.s3.states_bucket_name
   description = "ID of the S3 bucket used for storing states."
 }
 
 output "uploads_bucket_arn" {
-  value       = aws_s3_bucket.uploads
+  value       = module.s3.uploads_bucket_arn
   description = "ARN of the S3 bucket used for storing uploads."
 }
 
 output "uploads_bucket_name" {
-  value       = aws_s3_bucket.uploads.id
+  value       = module.s3.uploads_bucket_name
   description = "ID of the S3 bucket used for storing uploads."
 }
 
@@ -167,21 +167,21 @@ output "uploads_bucket_url" {
 }
 
 output "user_uploaded_workspaces_arn" {
-  value       = aws_s3_bucket.user_uploads.arn
+  value       = module.s3.user_uploaded_workspaces_arn
   description = "ARN of the S3 bucket used for storing user uploaded workspaces."
 }
 
 output "user_uploaded_workspaces_bucket_name" {
-  value       = aws_s3_bucket.user_uploads.id
+  value       = module.s3.user_uploaded_workspaces_bucket_name
   description = "ID of the S3 bucket used for storing user uploaded workspaces."
 }
 
 output "workspace_bucket_arn" {
-  value       = aws_s3_bucket.workspaces.arn
+  value       = module.s3.workspace_bucket_arn
   description = "ARN of the S3 bucket used for storing workspaces."
 }
 
 output "workspace_bucket_name" {
-  value       = aws_s3_bucket.workspaces.id
+  value       = module.s3.workspace_bucket_name
   description = "ID of the S3 bucket used for storing workspaces."
 }
