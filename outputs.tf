@@ -38,6 +38,11 @@ output "private_subnet_ids" {
   description = "IDs of the private subnets. They will be null if create_vpc is false."
 }
 
+output "public_subnet_ids" {
+  value       = var.create_vpc ? values(module.network[0].public_subnet_ids) : null
+  description = "IDs of the public subnets. They will be null if create_vpc is false."
+}
+
 output "availability_zones" {
   value       = var.create_vpc ? keys(module.network[0].private_subnet_ids) : null
   description = "Availability zones of the private subnets. They will be null if create_vpc is false."

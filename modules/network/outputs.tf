@@ -3,6 +3,14 @@ output "vpc_id" {
   value       = aws_vpc.spacelift_vpc.id
 }
 
+output "public_subnet_ids" {
+  description = "A map of availability zones to public subnet IDs"
+  value = zipmap(
+    aws_subnet.public_subnets[*].availability_zone,
+    aws_subnet.public_subnets[*].id,
+  )
+}
+
 output "private_subnet_ids" {
   description = "A map of availability zones to private subnet IDs"
   value = zipmap(
