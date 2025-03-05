@@ -45,6 +45,16 @@ variable "rds_security_group_ids" {
   default     = []
 }
 
+variable "rds_serverlessv2_scaling_configuration" {
+  type = object({
+    max_capacity : number
+    min_capacity : number
+    seconds_until_auto_pause : optional(number)
+  })
+  description = "The serverlessv2_scaling_configuration block to use for the RDS cluster"
+  default     = null
+}
+
 variable "create_database" {
   type        = bool
   description = "Whether to create the Aurora RDS database. Default is true."

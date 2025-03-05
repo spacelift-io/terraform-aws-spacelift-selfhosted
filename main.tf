@@ -39,8 +39,9 @@ module "rds" {
 
   suffix = local.suffix
 
-  postgres_engine_version = var.rds_engine_version
-  engine_mode             = var.rds_engine_mode
+  postgres_engine_version            = var.rds_engine_version
+  engine_mode                        = var.rds_engine_mode
+  serverlessv2_scaling_configuration = var.rds_serverlessv2_scaling_configuration
 
   db_username = var.rds_username
 
