@@ -78,7 +78,7 @@ output "uploads_bucket_name" {
   description = "ID of the S3 bucket used for storing uploads."
 }
 
-output "user_uploaded_workspaces_arn" {
+output "user_uploaded_workspaces_bucket_arn" {
   value       = aws_s3_bucket.user_uploads.arn
   description = "ARN of the S3 bucket used for storing user uploaded workspaces."
 }

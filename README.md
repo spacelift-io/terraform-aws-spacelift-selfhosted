@@ -22,8 +22,9 @@ module "spacelift" {
 This module creates:
 
 - Encryption resources  
-  - a KMS key that is used to encrypt other AWS resources (RDS, S3 buckets, ECR repositories)
+  - a KMS key that is used to encrypt AWS resources (RDS, S3 buckets, ECR repositories)
   - a KMS key that is used for in-app encryption (eg. encrypt entities in the database)
+  - a KMS key that is used for signing and validating [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token)s
 - Network resources
   - A VPC, 3 subnets and 3 security groups
 - Container repositories (ECR)
@@ -32,7 +33,7 @@ This module creates:
 - Database resources
   - a [global Aurora cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html)
   - a regional Aurora cluster
-  - an RDS instance
+  - RDS instance(s) for the regional cluster
 - Storage resources
   - 10 S3 buckets
 

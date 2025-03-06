@@ -5,12 +5,17 @@ output "unique_suffix" {
 
 output "kms_key_arn" {
   value       = length(module.kms) > 0 ? module.kms[0].key_arn : null
-  description = "ARN of the KMS key used for encrypting AWS resources."
+  description = "ARN of the KMS key used for encrypting AWS resources. Null if create_kms is false."
 }
 
 output "encryption_key_arn" {
   value       = length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
-  description = "ARN of the KMS key used for in-app encryption."
+  description = "ARN of the KMS key used for in-app encryption. Null if create_kms is false."
+}
+
+output "jwt_signing_key_arn" {
+  value       = length(module.kms) > 0 ? module.kms[0].jwt_key_arn : null
+  description = "ARN of the KMS key used for signing and verifying JWTs. Null if create_kms is false."
 }
 
 output "server_security_group_id" {
@@ -176,8 +181,8 @@ output "uploads_bucket_url" {
   description = "URL of the S3 bucket used for storing uploads."
 }
 
-output "user_uploaded_workspaces_arn" {
-  value       = module.s3.user_uploaded_workspaces_arn
+output "user_uploaded_workspaces_bucket_arn" {
+  value       = module.s3.user_uploaded_workspaces_bucket_arn
   description = "ARN of the S3 bucket used for storing user uploaded workspaces."
 }
 
