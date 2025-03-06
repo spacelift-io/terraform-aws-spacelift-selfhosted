@@ -8,7 +8,7 @@ output "deliveries_bucket_name" {
   description = "ID of the S3 bucket used for storing deliveries."
 }
 
-output "large_queue_messages_arn" {
+output "large_queue_messages_bucket_arn" {
   value       = aws_s3_bucket.large_queue_messages.arn
   description = "ARN of the S3 bucket used for storing large queue messages."
 }

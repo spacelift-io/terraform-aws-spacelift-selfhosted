@@ -38,6 +38,11 @@ output "private_subnet_ids" {
   description = "IDs of the private subnets. They will be null if create_vpc is false."
 }
 
+output "public_subnet_ids" {
+  value       = var.create_vpc ? values(module.network[0].public_subnet_ids) : null
+  description = "IDs of the public subnets. They will be null if create_vpc is false."
+}
+
 output "availability_zones" {
   value       = var.create_vpc ? keys(module.network[0].private_subnet_ids) : null
   description = "Availability zones of the private subnets. They will be null if create_vpc is false."
@@ -94,8 +99,8 @@ output "deliveries_bucket_name" {
   description = "ID of the S3 bucket used for storing deliveries."
 }
 
-output "large_queue_messages_arn" {
-  value       = module.s3.large_queue_messages_arn
+output "large_queue_messages_bucket_arn" {
+  value       = module.s3.large_queue_messages_bucket_arn
   description = "ARN of the S3 bucket used for storing large queue messages."
 }
 

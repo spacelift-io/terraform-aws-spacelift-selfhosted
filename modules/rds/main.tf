@@ -4,9 +4,8 @@ locals {
 
 data "aws_availability_zones" "available" {}
 
-resource "random_password" "db_pw" {
-  length  = 16
-  special = true
+resource "random_id" "db_pw" {
+  byte_length = 24
 }
 
 resource "aws_rds_global_cluster" "global_cluster" {
@@ -39,7 +38,7 @@ resource "aws_rds_cluster" "db_cluster" {
   kms_key_id        = var.kms_key_arn
   storage_encrypted = true
   master_username   = var.db_username
-  master_password   = random_password.db_pw.result
+  master_password   = random_id.db_pw.b64_url
 
   backup_retention_period = var.backup_retention_period
   preferred_backup_window = var.preferred_backup_window

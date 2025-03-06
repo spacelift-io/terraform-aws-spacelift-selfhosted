@@ -11,6 +11,14 @@ output "private_subnet_ids" {
   )
 }
 
+output "public_subnet_ids" {
+  description = "A map of availability zones to public subnet IDs"
+  value = zipmap(
+    aws_subnet.public_subnets[*].availability_zone,
+    aws_subnet.public_subnets[*].id,
+  )
+}
+
 output "database_security_group_id" {
   description = "The ID of the security group for the Spacelift database. Will be null if create_database is false."
   value       = var.create_database ? aws_security_group.database_sg[0].id : null
