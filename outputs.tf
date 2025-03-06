@@ -89,9 +89,19 @@ output "ecr_backend_repository_url" {
   description = "URL of the ECR repository for the backend images."
 }
 
+output "ecr_backend_repository_arn" {
+  value       = module.ecr.ecr_backend_repository_arn
+  description = "ARN of the ECR repository for the backend images."
+}
+
 output "ecr_launcher_repository_url" {
   value       = module.ecr.ecr_launcher_repository_url
   description = "URL of the ECR repository for the launcher images."
+}
+
+output "ecr_launcher_repository_arn" {
+  value       = module.ecr.ecr_launcher_repository_arn
+  description = "ARN of the ECR repository for the launcher images."
 }
 
 output "deliveries_bucket_arn" {
