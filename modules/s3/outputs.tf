@@ -1,3 +1,13 @@
+output "binaries_bucket_arn" {
+  value       = aws_s3_bucket.binaries.arn
+  description = "ARN of the S3 bucket used for storing binaries."
+}
+
+output "binaries_bucket_name" {
+  value       = aws_s3_bucket.binaries.id
+  description = "ID of the S3 bucket used for storing binaries."
+}
+
 output "deliveries_bucket_arn" {
   value       = aws_s3_bucket.deliveries.arn
   description = "ARN of the S3 bucket used for storing deliveries."

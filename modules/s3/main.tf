@@ -1,5 +1,6 @@
 locals {
   bucket_names = {
+    "binaries" : "spacelift-binaries-${var.suffix}",
     "deliveries" : "spacelift-deliveries-${var.suffix}",
     "large-queue" : "spacelift-large-queue-messages-${var.suffix}",
     "metadata" : "spacelift-metadata-${var.suffix}",
@@ -11,6 +12,12 @@ locals {
     "user-uploads" : "spacelift-user-uploaded-workspaces-${var.suffix}",
     "workspace" : "spacelift-workspace-${var.suffix}",
   }
+}
+
+# Let's not enable server-side encryption for this bucket, it isn't necessary.
+resource "aws_s3_bucket" "binaries" {
+  bucket        = local.bucket_names["binaries"]
+  force_destroy = !var.retain_on_destroy
 }
 
 

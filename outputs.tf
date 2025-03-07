@@ -104,6 +104,16 @@ output "ecr_launcher_repository_arn" {
   description = "ARN of the ECR repository for the launcher images."
 }
 
+output "binaries_bucket_arn" {
+  value       = module.s3.binaries_bucket_arn
+  description = "ARN of the S3 bucket used for storing binaries."
+}
+
+output "binaries_bucket_name" {
+  value       = module.s3.binaries_bucket_name
+  description = "ID of the S3 bucket used for storing binaries."
+}
+
 output "deliveries_bucket_arn" {
   value       = module.s3.deliveries_bucket_arn
   description = "ARN of the S3 bucket used for storing deliveries."
