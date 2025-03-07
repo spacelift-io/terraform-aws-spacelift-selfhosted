@@ -28,12 +28,12 @@ This module creates:
 - Network resources
   - A VPC, 3 subnets and 3 security groups
 - Container repositories (ECR)
-  - a repository for the backend image (used by `server` and `drain`)
+  - a repository for the backend image (used by `server`, `drain` and `scheduler` services)
   - another repository for the launcher image
 - Database resources
   - a [global Aurora cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html)
   - a regional Aurora cluster
-  - RDS instance(s) for the regional cluster
+  - RDS instance(s) for the regional cluster (configurable)
 - Storage resources
   - 10 S3 buckets
 
@@ -43,7 +43,7 @@ It is highly configurable, so if you wish to use your own KMS key, VPC, RDS clus
 
 #### Default
 
-This deploys a KMS key, VPC (subnets, security groups), RDS cluster, ECR repositories and S3 buckets.
+This deploys the KMS keys, network stack (VPC, subnets, security groups), RDS cluster, ECR repositories and the S3 buckets.
 
 ```hcl
 module "spacelift" {
