@@ -1,5 +1,9 @@
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.spacelift_vpc.id
+
+  tags = {
+    Name = "Spacelift Internet Gateway (${var.suffix})"
+  }
 }
 
 resource "aws_route_table" "internet_gateway" {
@@ -8,6 +12,10 @@ resource "aws_route_table" "internet_gateway" {
   route {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.main.id
+  }
+
+  tags = {
+    Name = "Spacelift Internet Gateway Route Table (${var.suffix})"
   }
 }
 

@@ -1,5 +1,9 @@
 resource "aws_eip" "eips" {
   count = 3
+
+  tags = {
+    Name = "Spacelift Load Balancer IP (${var.suffix} - ${count.index})"
+  }
 }
 
 resource "aws_nat_gateway" "nat_gateways" {
@@ -7,6 +11,10 @@ resource "aws_nat_gateway" "nat_gateways" {
 
   allocation_id = element(aws_eip.eips.*.id, count.index)
   subnet_id     = element(aws_subnet.public_subnets.*.id, count.index)
+
+  tags = {
+    Name = "Spacelift NAT Gateway (${var.suffix} - ${count.index})"
+  }
 }
 
 resource "aws_route_table" "nat_gateway" {
@@ -19,6 +27,10 @@ resource "aws_route_table" "nat_gateway" {
   route {
     cidr_block     = "0.0.0.0/0"
     nat_gateway_id = element(aws_nat_gateway.nat_gateways.*.id, count.index)
+  }
+
+  tags = {
+    Name = "Spacelift NAT Gateway Route Table (${var.suffix} - ${count.index})"
   }
 }
 
