@@ -24,7 +24,7 @@ resource "aws_subnet" "private_subnets" {
   map_public_ip_on_launch = false
 
   tags = {
-    Name = "Spacelift Private Subnet ${var.suffix}-${count.index}"
+    Name = "Spacelift Private Subnet (${var.suffix} - ${count.index})"
   }
 }
 
