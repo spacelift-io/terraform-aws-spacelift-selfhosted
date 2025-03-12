@@ -20,6 +20,12 @@ resource "aws_s3_bucket" "binaries" {
   force_destroy = !var.retain_on_destroy
 }
 
+resource "aws_s3_bucket_versioning" "binaries" {
+  bucket = aws_s3_bucket.binaries.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
 
 resource "aws_s3_bucket" "deliveries" {
   bucket        = local.bucket_names["deliveries"]
