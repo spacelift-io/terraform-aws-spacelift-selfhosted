@@ -116,9 +116,9 @@ variable "rds_backup_retention_period" {
   default     = 3
 }
 
-variable "website_domain" {
+variable "website_endpoint" {
   type        = string
-  description = "The hostname of the Spacelift website. Should include protocol (https://). This is being used for state uploads during Stack creations. Example: https://spacelift.mycorp.com. If this isn't known at the time of the deployment, it can be set later."
+  description = "The endpoint of the Spacelift website. Should include protocol (https://). This is being used for state uploads during Stack creations. Example: https://spacelift.mycorp.com. If this isn't known at the time of the deployment, it can be set later."
   default     = ""
 }
 
