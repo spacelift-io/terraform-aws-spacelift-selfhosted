@@ -118,8 +118,7 @@ variable "rds_backup_retention_period" {
 
 variable "website_endpoint" {
   type        = string
-  description = "The endpoint of the Spacelift website. Should include protocol (https://). This is being used for state uploads during Stack creations. Example: https://spacelift.mycorp.com. If this isn't known at the time of the deployment, it can be set later."
-  default     = ""
+  description = "The endpoint of the Spacelift website. Should include protocol (https://). This is being used for state uploads during Stack creations. Example: https://spacelift.mycorp.com."
 }
 
 variable "s3_retain_on_destroy" {
