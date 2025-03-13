@@ -4,7 +4,8 @@ resource "random_uuid" "suffix" {
 }
 
 locals {
-  suffix = coalesce(lower(var.unique_suffix), lower(substr(random_uuid.suffix.id, 0, 5))) # Certain resources (subnet group, rds) require all lowercase names
+  suffix             = coalesce(lower(var.unique_suffix), lower(substr(random_uuid.suffix.id, 0, 5))) # Certain resources (subnet group, rds) require all lowercase names
+  uploads_bucket_url = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
 }
 
 module "kms" {
