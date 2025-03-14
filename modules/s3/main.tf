@@ -63,7 +63,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "deliveries" {
       days_after_initiation = 2
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 1
@@ -98,7 +100,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "large_queue_messages" {
       days_after_initiation = 2
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 2
@@ -142,7 +146,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "metadata" {
       days_after_initiation = 2
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 2
@@ -206,7 +212,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "policy_inputs" {
       days_after_initiation = 2
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 120
@@ -268,7 +276,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "run_logs" {
       days_after_initiation = 2
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 60
@@ -378,7 +388,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
       days_after_initiation = 2
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 1
@@ -420,7 +432,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "user_uploads" {
       days_after_initiation = 2
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 1
@@ -483,7 +497,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "workspaces" {
       noncurrent_days = 1
     }
 
-    filter {}
+    filter {
+      prefix = ""
+    }
 
     expiration {
       days = 90
