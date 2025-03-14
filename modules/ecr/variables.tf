@@ -12,3 +12,8 @@ variable "kms_key_arn" {
   type        = string
   description = "ARN of the KMS key to use for encrypting the ECR repository."
 }
+
+variable "ecr_force_delete" {
+  type        = bool
+  description = "Whether to force delete the ECRs, even if they contain images."
+}

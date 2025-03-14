@@ -1,5 +1,6 @@
 resource "aws_ecr_repository" "backend" {
-  name = "spacelift-backend-${var.suffix}"
+  name         = "spacelift-backend-${var.suffix}"
+  force_delete = var.ecr_force_delete
 
   encryption_configuration {
     encryption_type = "KMS"
@@ -32,7 +33,8 @@ resource "aws_ecr_lifecycle_policy" "backend" {
 }
 
 resource "aws_ecr_repository" "launcher" {
-  name = "spacelift-launcher-${var.suffix}"
+  name         = "spacelift-launcher-${var.suffix}"
+  force_delete = var.ecr_force_delete
 
   encryption_configuration {
     encryption_type = "KMS"

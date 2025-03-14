@@ -22,6 +22,7 @@ module "ecr" {
   kms_key_arn                = coalesce(var.kms_arn, module.kms[0].key_arn)
   suffix                     = local.suffix
   number_of_images_to_retain = var.number_of_images_to_retain
+  ecr_force_delete           = var.ecr_force_delete
 }
 
 module "network" {
