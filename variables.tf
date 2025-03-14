@@ -3,12 +3,6 @@ variable "region" {
   description = "AWS region to deploy resources."
 }
 
-variable "default_tags" {
-  type        = map(string)
-  description = "Default tags to apply to all resources."
-  default     = {}
-}
-
 variable "unique_suffix" {
   type        = string
   description = "A unique suffix to append to resource names. Ideally passed from the terraform-aws-spacelift-selfhosted module's outputs."

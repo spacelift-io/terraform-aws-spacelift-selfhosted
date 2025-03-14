@@ -15,7 +15,6 @@ module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.0.0"
 
   region       = "eu-west-1"
-  default_tags = {"app" = "spacelift-selfhosted"}
 }
 ```
 
@@ -50,7 +49,6 @@ module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.0.0"
 
   region       = "eu-west-1"
-  default_tags = {"app" = "spacelift-selfhosted", "env" = "dev"}
 }
 ```
 
@@ -61,7 +59,6 @@ module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.0.0"
 
   region       = "eu-west-1"
-  default_tags = {"app" = "spacelift-selfhosted", "env" = "dev"}
 
   create_vpc             = false
   rds_subnet_ids         = ["subnet-012345abc", "subnet-012345def", "subnet-012345ghi"]
@@ -78,7 +75,6 @@ module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.0.0"
 
   region       = "eu-west-1"
-  default_tags = {"app" = "spacelift-selfhosted", "env" = "dev"}
 
   rds_instance_configuration = {
     "primary-instance" = {
