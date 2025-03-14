@@ -56,11 +56,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "deliveries" {
   bucket = aws_s3_bucket.deliveries.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 1
@@ -88,11 +91,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "large_queue_messages" {
   bucket = aws_s3_bucket.large_queue_messages.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 2
@@ -129,11 +135,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "metadata" {
   bucket = aws_s3_bucket.metadata.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 2
@@ -191,11 +200,13 @@ resource "aws_s3_bucket_lifecycle_configuration" "policy_inputs" {
   bucket = aws_s3_bucket.policy_inputs.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 120
@@ -250,11 +261,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "run_logs" {
   bucket = aws_s3_bucket.run_logs.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 60
@@ -357,11 +371,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
   bucket = aws_s3_bucket.uploads.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 1
@@ -396,11 +413,14 @@ resource "aws_s3_bucket_lifecycle_configuration" "user_uploads" {
   bucket = aws_s3_bucket.user_uploads.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 1
@@ -453,14 +473,17 @@ resource "aws_s3_bucket_lifecycle_configuration" "workspaces" {
   bucket = aws_s3_bucket.workspaces.id
 
   rule {
-    id = "expire-after-x-days"
+    id     = "expire-after-x-days"
+    status = "Enabled"
+
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
     noncurrent_version_expiration {
       noncurrent_days = 1
     }
-    status = "Enabled"
+
+    filter {}
 
     expiration {
       days = 90
