@@ -197,7 +197,7 @@ output "uploads_bucket_name" {
 data "aws_partition" "current" {}
 
 output "uploads_bucket_url" {
-  value       = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
+  value       = local.uploads_bucket_url
   description = "URL of the S3 bucket used for storing uploads."
 }
 
@@ -219,4 +219,55 @@ output "workspace_bucket_arn" {
 output "workspace_bucket_name" {
   value       = module.s3.workspace_bucket_name
   description = "ID of the S3 bucket used for storing workspaces."
+}
+
+output "shell" {
+  value = templatefile("${path.module}/env.tftpl", {
+    env : {
+      AWS_REGION : var.region
+      AWS_ACCOUNT_ID : data.aws_caller_identity.current.account_id
+      BACKEND_IMAGE : module.ecr.ecr_backend_repository_url
+      LAUNCHER_IMAGE : module.ecr.ecr_launcher_repository_url
+      PRIVATE_ECR_LOGIN_URL : split("/", module.ecr.ecr_backend_repository_url)[0]
+      BINARIES_BUCKET_NAME : module.s3.binaries_bucket_name
+    },
+  })
+}
+
+output "tfvars" {
+  sensitive = true
+  value = templatefile("${path.module}/tfvars.tftpl", {
+    stringVars : {
+      aws_region : var.region
+      unique_suffix : local.suffix
+      vpc_id : var.create_vpc ? module.network[0].vpc_id : null
+      server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : null
+      drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : null
+      scheduler_security_group_id : var.create_vpc ? module.network[0].scheduler_security_group_id : null
+      backend_image : module.ecr.ecr_backend_repository_url
+      launcher_image : module.ecr.ecr_launcher_repository_url
+      database_url : var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].cluster_endpoint) : null
+      database_read_only_url : var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].reader_endpoint) : null
+      binaries_bucket_name : module.s3.binaries_bucket_name
+      deliveries_bucket_name : module.s3.deliveries_bucket_name
+      large_queue_messages_bucket_name : module.s3.large_queue_messages_bucket_name
+      metadata_bucket_name : module.s3.metadata_bucket_name
+      modules_bucket_name : module.s3.modules_bucket_name
+      policy_inputs_bucket_name : module.s3.policy_inputs_bucket_name
+      run_logs_bucket_name : module.s3.run_logs_bucket_name
+      states_bucket_name : module.s3.states_bucket_name
+      uploads_bucket_name : module.s3.uploads_bucket_name
+      uploads_bucket_url : local.uploads_bucket_url
+      user_uploaded_workspaces_bucket_name : module.s3.user_uploaded_workspaces_bucket_name
+      workspace_bucket_name : module.s3.workspace_bucket_name
+      encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
+      jwt_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : null
+      kms_key_arn : length(module.kms) > 0 ? module.kms[0].key_arn : null
+    },
+    jsonVars : {
+      public_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].public_subnet_ids)) : null
+      private_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].private_subnet_ids)) : null
+      availability_zones : var.create_vpc ? jsonencode(keys(module.network[0].private_subnet_ids)) : null
+    }
+  })
 }
