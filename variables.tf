@@ -126,3 +126,9 @@ variable "number_of_images_to_retain" {
   description = "Number of Docker images to retain in ECR repositories. Default is 5. If set to 0, no images will be cleaned up."
   default     = 5
 }
+
+variable "ecr_force_delete" {
+  type        = bool
+  description = "Whether to force delete the ECRs, even if they contain images."
+  default     = false
+}
