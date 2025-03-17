@@ -38,7 +38,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "deliveries" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -84,7 +84,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "large_queue_messa
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -130,7 +130,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "metadata" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -176,7 +176,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "modules" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -228,7 +228,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "policy_inputs" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -260,7 +260,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "run_logs" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -313,7 +313,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "states" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -345,7 +345,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "uploads" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -409,7 +409,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "user_uploads" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }
@@ -462,7 +462,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "workspaces" {
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
-      kms_master_key_id = var.encryption_key_arn
+      kms_master_key_id = var.kms_master_key_arn
     }
   }
 }

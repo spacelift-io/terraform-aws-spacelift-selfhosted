@@ -65,7 +65,7 @@ module "s3" {
 
   suffix = local.suffix
 
-  encryption_key_arn = coalesce(var.kms_arn, module.kms[0].key_arn)
+  kms_master_key_arn = coalesce(var.kms_arn, module.kms[0].key_arn)
   cors_hostname      = var.website_endpoint
   retain_on_destroy  = var.s3_retain_on_destroy
 }
