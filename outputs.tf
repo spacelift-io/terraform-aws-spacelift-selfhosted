@@ -84,6 +84,18 @@ output "rds_password" {
   sensitive   = true
 }
 
+output "database_url" {
+  description = "The URL to the write endpoint of the database. Can be used to pass to the DATABASE_URL environment variable for Spacelift. Only populated if create_database is true."
+  value       = local.database_url
+  sensitive   = true
+}
+
+output "database_read_only_url" {
+  description = "The URL to the read endpoint of the database. Can be used to pass to the DATABASE_URL environment variable for Spacelift. Only populated if create_database is true."
+  value       = local.database_read_only_url
+  sensitive   = true
+}
+
 output "ecr_backend_repository_url" {
   value       = module.ecr.ecr_backend_repository_url
   description = "URL of the ECR repository for the backend images."
@@ -246,8 +258,8 @@ output "tfvars" {
       scheduler_security_group_id : var.create_vpc ? module.network[0].scheduler_security_group_id : null
       backend_image : module.ecr.ecr_backend_repository_url
       launcher_image : module.ecr.ecr_launcher_repository_url
-      database_url : var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].cluster_endpoint) : null
-      database_read_only_url : var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].reader_endpoint) : null
+      database_url : local.database_url
+      database_read_only_url : local.database_read_only_url
       binaries_bucket_name : module.s3.binaries_bucket_name
       deliveries_bucket_name : module.s3.deliveries_bucket_name
       large_queue_messages_bucket_name : module.s3.large_queue_messages_bucket_name
