@@ -8,12 +8,12 @@ output "kms_key_arn" {
   description = "ARN of the KMS key used for encrypting AWS resources. Null if create_kms is false."
 }
 
-output "encryption_key_arn" {
+output "kms_encryption_key_arn" {
   value       = length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
   description = "ARN of the KMS key used for in-app encryption. Null if create_kms is false."
 }
 
-output "jwt_signing_key_arn" {
+output "kms_signing_key_arn" {
   value       = length(module.kms) > 0 ? module.kms[0].jwt_key_arn : null
   description = "ARN of the KMS key used for signing and verifying JWTs. Null if create_kms is false."
 }
@@ -272,8 +272,8 @@ output "tfvars" {
       uploads_bucket_url : local.uploads_bucket_url
       user_uploaded_workspaces_bucket_name : module.s3.user_uploaded_workspaces_bucket_name
       workspace_bucket_name : module.s3.workspace_bucket_name
-      encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
-      jwt_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : null
+      kms_encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
+      kms_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : null
       kms_key_arn : length(module.kms) > 0 ? module.kms[0].key_arn : null
     },
     jsonVars : {
