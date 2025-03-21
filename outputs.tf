@@ -252,10 +252,10 @@ output "tfvars" {
     stringVars : {
       aws_region : var.region
       unique_suffix : local.suffix
-      vpc_id : var.create_vpc ? module.network[0].vpc_id : null
-      server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : null
-      drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : null
-      scheduler_security_group_id : var.create_vpc ? module.network[0].scheduler_security_group_id : null
+      vpc_id : var.create_vpc ? module.network[0].vpc_id : ""
+      server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : ""
+      drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : ""
+      scheduler_security_group_id : var.create_vpc ? module.network[0].scheduler_security_group_id : ""
       backend_image : module.ecr.ecr_backend_repository_url
       launcher_image : module.ecr.ecr_launcher_repository_url
       database_url : local.database_url
@@ -272,14 +272,14 @@ output "tfvars" {
       uploads_bucket_url : local.uploads_bucket_url
       user_uploaded_workspaces_bucket_name : module.s3.user_uploaded_workspaces_bucket_name
       workspace_bucket_name : module.s3.workspace_bucket_name
-      kms_encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
-      kms_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : null
-      kms_key_arn : length(module.kms) > 0 ? module.kms[0].key_arn : null
+      kms_encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : ""
+      kms_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : ""
+      kms_key_arn : length(module.kms) > 0 ? module.kms[0].key_arn : ""
     },
     jsonVars : {
-      public_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].public_subnet_ids)) : null
-      private_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].private_subnet_ids)) : null
-      availability_zones : var.create_vpc ? jsonencode(keys(module.network[0].private_subnet_ids)) : null
+      public_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].public_subnet_ids)) : jsonencode([])
+      private_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].private_subnet_ids)) : jsonencode([])
+      availability_zones : var.create_vpc ? jsonencode(keys(module.network[0].private_subnet_ids)) : jsonencode([])
     }
   })
 }
