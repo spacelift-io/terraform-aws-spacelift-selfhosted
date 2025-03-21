@@ -8,6 +8,7 @@ locals {
   uploads_bucket_url     = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
   database_url           = var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].cluster_endpoint) : null
   database_read_only_url = var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].reader_endpoint) : null
+  kms_arn                = var.kms_arn != null && var.kms_arn != "" ? var.kms_arn : module.kms[0].key_arn
 }
 
 module "kms" {
@@ -21,7 +22,7 @@ module "kms" {
 module "ecr" {
   source = "./modules/ecr"
 
-  kms_key_arn                = coalesce(var.kms_arn, module.kms[0].key_arn)
+  kms_key_arn                = local.kms_arn
   suffix                     = local.suffix
   number_of_images_to_retain = var.number_of_images_to_retain
   ecr_force_delete           = var.ecr_force_delete
@@ -54,10 +55,10 @@ module "rds" {
   backup_retention_period      = var.rds_backup_retention_period
   preferred_backup_window      = var.rds_preferred_backup_window
 
-  subnet_ids         = coalescelist(var.rds_subnet_ids, values(module.network[0].private_subnet_ids))
-  security_group_ids = coalescelist(var.rds_security_group_ids, [module.network[0].database_security_group_id])
+  subnet_ids         = length(var.rds_subnet_ids) > 0 ? var.rds_subnet_ids : values(module.network[0].private_subnet_ids)
+  security_group_ids = length(var.rds_security_group_ids) > 0 ? var.rds_security_group_ids : [module.network[0].database_security_group_id]
 
-  kms_key_arn = coalesce(var.kms_arn, module.kms[0].key_arn)
+  kms_key_arn = local.kms_arn
 }
 
 module "s3" {
@@ -65,7 +66,7 @@ module "s3" {
 
   suffix = local.suffix
 
-  kms_master_key_arn = coalesce(var.kms_arn, module.kms[0].key_arn)
+  kms_master_key_arn = local.kms_arn
   cors_hostname      = var.website_endpoint
   retain_on_destroy  = var.s3_retain_on_destroy
 }
