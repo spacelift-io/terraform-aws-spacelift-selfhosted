@@ -4,9 +4,18 @@ resource "random_uuid" "suffix" {
 module "network" {
   source = "../../modules/network"
 
-  suffix          = lower(substr(random_uuid.suffix.id, 0, 5))
-  create_database = true
-  vpc_cidr_block  = "10.0.0.0/18"
+  suffix               = lower(substr(random_uuid.suffix.id, 0, 5))
+  create_database      = true
+  vpc_cidr_block       = "10.0.0.0/18"
+  enable_dns_hostnames = false
+
+  private_subnet_tags = {
+    "subnet-role" = "private"
+  }
+
+  public_subnet_tags = {
+    "subnet-role" = "public"
+  }
 }
 
 module "spacelift" {

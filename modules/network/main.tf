@@ -7,7 +7,7 @@ data "aws_availability_zones" "available" {}
 
 resource "aws_vpc" "spacelift_vpc" {
   cidr_block           = var.vpc_cidr_block
-  enable_dns_hostnames = false
+  enable_dns_hostnames = var.enable_dns_hostnames
   enable_dns_support   = true
 
   tags = {
@@ -23,9 +23,9 @@ resource "aws_subnet" "private_subnets" {
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
   map_public_ip_on_launch = false
 
-  tags = {
+  tags = merge(var.private_subnet_tags, {
     Name = "Spacelift Private Subnet (${var.suffix} - ${count.index})"
-  }
+  })
 }
 
 resource "aws_subnet" "public_subnets" {
@@ -36,7 +36,7 @@ resource "aws_subnet" "public_subnets" {
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
   map_public_ip_on_launch = false
 
-  tags = {
+  tags = merge(var.public_subnet_tags, {
     Name = "Spacelift Public Subnet (${var.suffix} - ${count.index})"
-  }
+  })
 }

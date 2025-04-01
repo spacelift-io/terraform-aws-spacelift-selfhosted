@@ -27,6 +27,24 @@ variable "vpc_cidr_block" {
   default     = "10.0.0.0/18"
 }
 
+variable "enable_dns_hostnames" {
+  type        = bool
+  description = "Whether DNS hostnames should be enabled on the VPC or not."
+  default     = false
+}
+
+variable "public_subnet_tags" {
+  type        = map(string)
+  description = "Custom tags to apply to the public subnets."
+  default     = {}
+}
+
+variable "private_subnet_tags" {
+  type        = map(string)
+  description = "Custom tags to apply to the private subnets."
+  default     = {}
+}
+
 variable "rds_subnet_ids" {
   type        = list(string)
   description = "List of subnet IDs to use for the RDS instances. If create_vpc is false, this must be provided."
