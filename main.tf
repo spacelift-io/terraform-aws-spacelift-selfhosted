@@ -58,8 +58,8 @@ module "rds" {
   backup_retention_period      = var.rds_backup_retention_period
   preferred_backup_window      = var.rds_preferred_backup_window
 
-  subnet_ids         = var.rds_subnet_ids != null && length(var.rds_subnet_ids) > 0 ? var.rds_subnet_ids : values(module.network[0].private_subnet_ids)
-  security_group_ids = var.rds_security_group_ids != null && length(var.rds_security_group_ids) > 0 ? var.rds_security_group_ids : [module.network[0].database_security_group_id]
+  subnet_ids         = length(coalesce(var.rds_subnet_ids, [])) > 0 ? var.rds_subnet_ids : values(module.network[0].private_subnet_ids)
+  security_group_ids = length(coalesce(var.rds_security_group_ids, [])) > 0 ? var.rds_security_group_ids : [module.network[0].database_security_group_id]
 
   kms_key_arn = local.kms_arn
 }
