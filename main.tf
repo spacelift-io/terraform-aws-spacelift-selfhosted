@@ -29,6 +29,8 @@ module "ecr" {
   suffix                     = local.suffix
   number_of_images_to_retain = var.number_of_images_to_retain
   ecr_force_delete           = var.ecr_force_delete
+  backend_repository_name    = var.backend_ecr_repository_name
+  launcher_repository_name   = var.launcher_ecr_repository_name
 }
 
 module "network" {

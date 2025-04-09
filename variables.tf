@@ -187,6 +187,18 @@ variable "s3_bucket_names" {
   default     = null
 }
 
+variable "backend_ecr_repository_name" {
+  type        = string
+  description = "Name of the backend ECR repository."
+  default     = null
+}
+
+variable "launcher_ecr_repository_name" {
+  type        = string
+  description = "Name of the launcher ECR repository."
+  default     = null
+}
+
 variable "number_of_images_to_retain" {
   type        = number
   description = "Number of Docker images to retain in ECR repositories. Default is 5. If set to 0, no images will be cleaned up."
