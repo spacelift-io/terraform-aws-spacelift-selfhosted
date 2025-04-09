@@ -139,6 +139,24 @@ variable "s3_retain_on_destroy" {
   default     = true
 }
 
+variable "s3_bucket_names" {
+  type = object({
+    binaries     = string
+    deliveries   = string
+    large_queue  = string
+    metadata     = string
+    modules      = string
+    policy       = string
+    run_logs     = string
+    states       = string
+    uploads      = string
+    user_uploads = string
+    workspace    = string
+  })
+  description = "S3 bucket names for Spacelift resources."
+  default     = null
+}
+
 variable "number_of_images_to_retain" {
   type        = number
   description = "Number of Docker images to retain in ECR repositories. Default is 5. If set to 0, no images will be cleaned up."
