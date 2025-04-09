@@ -15,6 +15,24 @@ variable "kms_arn" {
   default     = null
 }
 
+variable "kms_master_key_multi_regional" {
+  type        = bool
+  description = "Whether the KMS master key should be multi-regional."
+  default     = true
+}
+
+variable "kms_encryption_key_multi_regional" {
+  type        = bool
+  description = "Whether the encryption key used for in-app encryption should be multi-regional."
+  default     = true
+}
+
+variable "kms_jwt_key_multi_regional" {
+  type        = bool
+  description = "Whether the JWT key should be multi-regional."
+  default     = true
+}
+
 variable "create_vpc" {
   type        = bool
   description = "Whether to create a VPC for the Spacelift resources. Default is true. Note: if this is false, and create_database is true, you must provide rds_subnet_ids and rds_security_group_ids."

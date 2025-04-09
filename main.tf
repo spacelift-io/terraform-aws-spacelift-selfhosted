@@ -15,8 +15,11 @@ module "kms" {
   source = "./modules/kms"
   count  = var.kms_arn == null ? 1 : 0
 
-  region     = var.region
-  account_id = data.aws_caller_identity.current.account_id
+  region                        = var.region
+  account_id                    = data.aws_caller_identity.current.account_id
+  master_key_multi_regional     = var.kms_master_key_multi_regional
+  encryption_key_multi_regional = var.kms_encryption_key_multi_regional
+  jwt_key_multi_regional        = var.kms_jwt_key_multi_regional
 }
 
 module "ecr" {
