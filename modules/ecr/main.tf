@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "backend" {
-  name         = "spacelift-backend-${var.suffix}"
+  name         = coalesce(var.backend_repository_name, "spacelift-backend-${var.suffix}")
   force_delete = var.ecr_force_delete
 
   encryption_configuration {
@@ -33,7 +33,7 @@ resource "aws_ecr_lifecycle_policy" "backend" {
 }
 
 resource "aws_ecr_repository" "launcher" {
-  name         = "spacelift-launcher-${var.suffix}"
+  name         = coalesce(var.launcher_repository_name, "spacelift-launcher-${var.suffix}")
   force_delete = var.ecr_force_delete
 
   encryption_configuration {
