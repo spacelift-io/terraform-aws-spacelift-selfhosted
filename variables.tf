@@ -87,6 +87,24 @@ variable "rds_security_group_ids" {
   default     = []
 }
 
+variable "rds_regional_cluster_identifier" {
+  type        = string
+  description = "The identifier for the RDS cluster. If not provided, a name will be generated."
+  default     = null
+}
+
+variable "rds_subnet_group_name" {
+  type        = string
+  description = "Name of the RDS subnet group. If not provided, a name will be generated."
+  default     = null
+}
+
+variable "rds_parameter_group_name" {
+  type        = string
+  description = "Name of the RDS parameter group. If not provided, a name will be generated."
+  default     = null
+}
+
 variable "rds_serverlessv2_scaling_configuration" {
   type = object({
     max_capacity : number
