@@ -70,3 +70,18 @@ variable "serverlessv2_scaling_configuration" {
   description = "The serverlessv2_scaling_configuration block to use for the RDS cluster"
   default     = null
 }
+
+variable "regional_cluster_identifier" {
+  type        = string
+  description = "The identifier for the regional RDS cluster."
+}
+
+variable "subnet_group_name" {
+  type        = string
+  description = "Name of the DB subnet group."
+}
+
+variable "parameter_group_name" {
+  type        = string
+  description = "Name of the DB parameter group."
+}

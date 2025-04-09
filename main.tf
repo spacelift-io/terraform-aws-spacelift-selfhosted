@@ -58,6 +58,10 @@ module "rds" {
   engine_mode                        = var.rds_engine_mode
   serverlessv2_scaling_configuration = var.rds_serverlessv2_scaling_configuration
 
+  parameter_group_name        = var.rds_parameter_group_name
+  subnet_group_name           = var.rds_subnet_group_name
+  regional_cluster_identifier = var.rds_regional_cluster_identifier
+
   db_username = var.rds_username
 
   instance_configuration = var.rds_instance_configuration

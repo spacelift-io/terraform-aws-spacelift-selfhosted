@@ -16,6 +16,10 @@ module "network" {
   public_subnet_tags = {
     "subnet-role" = "public"
   }
+
+  private_subnet_cidr_blocks = []
+  public_subnet_cidr_blocks  = []
+  security_group_names       = null
 }
 
 module "spacelift" {

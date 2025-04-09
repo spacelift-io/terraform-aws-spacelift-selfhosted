@@ -17,7 +17,7 @@ resource "aws_rds_global_cluster" "global_cluster" {
 }
 
 resource "aws_rds_cluster" "db_cluster" {
-  cluster_identifier = "spacelift-${var.suffix}"
+  cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
   database_name      = local.database_name
 
   engine      = aws_rds_global_cluster.global_cluster.engine
@@ -65,13 +65,13 @@ resource "aws_rds_cluster_instance" "db_instance" {
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
-  name        = "spacelift-${var.suffix}"
+  name        = coalesce(var.subnet_group_name, "spacelift-${var.suffix}")
   description = "Joins the Spacelift database to the private subnets"
   subnet_ids  = var.subnet_ids
 }
 
 resource "aws_rds_cluster_parameter_group" "spacelift" {
-  name        = "spacelift-${var.suffix}"
+  name        = coalesce(var.parameter_group_name, "spacelift-${var.suffix}")
   description = "Spacelift core product database parameter group."
   family      = join("", ["aurora-postgresql", substr(var.postgres_engine_version, 0, 2)])
 

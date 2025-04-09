@@ -26,7 +26,7 @@ resource "aws_vpc_security_group_egress_rule" "server_sg_egress_rule" {
 
 resource "aws_security_group" "scheduler_sg" {
   name        = var.security_group_names != null ? var.security_group_names.scheduler : "scheduler_sg_${var.suffix}"
-  description = "The security group for the Spacelift cron scheduler service."
+  description = "The security group for the Spacelift scheduler service"
   vpc_id      = aws_vpc.spacelift_vpc.id
 }
 
