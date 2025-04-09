@@ -17,6 +17,16 @@ variable "enable_dns_hostnames" {
   description = "Whether DNS hostnames should be enabled on the VPC or not."
 }
 
+variable "public_subnet_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks for the public subnets."
+}
+
+variable "private_subnet_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks for the private subnets."
+}
+
 variable "public_subnet_tags" {
   type        = map(string)
   description = "Custom tags to apply to the public subnets."
