@@ -36,3 +36,13 @@ variable "private_subnet_tags" {
   type        = map(string)
   description = "Custom tags to apply to the private subnets."
 }
+
+variable "security_group_names" {
+  type = object({
+    database  = string
+    server    = string
+    drain     = string
+    scheduler = string
+  })
+  description = "The names of the security groups to create."
+}

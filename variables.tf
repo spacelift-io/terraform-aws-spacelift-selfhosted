@@ -169,6 +169,17 @@ variable "s3_retain_on_destroy" {
   default     = true
 }
 
+variable "security_group_names" {
+  type = object({
+    database  = string
+    server    = string
+    drain     = string
+    scheduler = string
+  })
+  description = "The names of the security groups to create."
+  default     = null
+}
+
 variable "s3_bucket_names" {
   type = object({
     binaries     = string

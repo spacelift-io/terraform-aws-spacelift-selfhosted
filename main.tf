@@ -45,6 +45,7 @@ module "network" {
   public_subnet_tags         = var.public_subnet_tags
   private_subnet_tags        = var.private_subnet_tags
   private_subnet_cidr_blocks = var.private_subnet_cidr_blocks
+  security_group_names       = var.security_group_names
 }
 
 module "rds" {
