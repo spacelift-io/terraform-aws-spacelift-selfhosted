@@ -35,12 +35,14 @@ module "network" {
   source = "./modules/network"
   count  = var.create_vpc ? 1 : 0
 
-  suffix               = local.suffix
-  create_database      = var.create_database
-  vpc_cidr_block       = var.vpc_cidr_block
-  enable_dns_hostnames = var.enable_dns_hostnames
-  public_subnet_tags   = var.public_subnet_tags
-  private_subnet_tags  = var.private_subnet_tags
+  suffix                     = local.suffix
+  create_database            = var.create_database
+  vpc_cidr_block             = var.vpc_cidr_block
+  enable_dns_hostnames       = var.enable_dns_hostnames
+  public_subnet_cidr_blocks  = var.public_subnet_cidr_blocks
+  public_subnet_tags         = var.public_subnet_tags
+  private_subnet_tags        = var.private_subnet_tags
+  private_subnet_cidr_blocks = var.private_subnet_cidr_blocks
 }
 
 module "rds" {
