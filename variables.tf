@@ -105,6 +105,18 @@ variable "rds_parameter_group_name" {
   default     = null
 }
 
+variable "rds_parameter_group_description" {
+  type        = string
+  description = "Description of the RDS parameter group."
+  default     = "Spacelift core product database parameter group."
+}
+
+variable "rds_password_sm_arn" {
+  type        = string
+  description = "ARN of the SSM parameter where the RDS password is stored already - this variable is only used for importing an existing database instance."
+  default     = null
+}
+
 variable "rds_serverlessv2_scaling_configuration" {
   type = object({
     max_capacity : number

@@ -1,11 +1,18 @@
 locals {
   database_name = "spacelift"
+  password      = var.password_sm_arn != null ? jsondecode(data.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"] : random_id.db_pw.b64_url
 }
 
 data "aws_availability_zones" "available" {}
 
 resource "random_id" "db_pw" {
   byte_length = 24
+}
+
+data "aws_secretsmanager_secret_version" "db_pw" {
+  count = var.password_sm_arn != null ? 1 : 0
+
+  secret_id = var.password_sm_arn
 }
 
 resource "aws_rds_global_cluster" "global_cluster" {
@@ -38,7 +45,7 @@ resource "aws_rds_cluster" "db_cluster" {
   kms_key_id        = var.kms_key_arn
   storage_encrypted = true
   master_username   = var.db_username
-  master_password   = random_id.db_pw.b64_url
+  master_password   = local.password
 
   backup_retention_period = var.backup_retention_period
   preferred_backup_window = var.preferred_backup_window
@@ -72,7 +79,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 
 resource "aws_rds_cluster_parameter_group" "spacelift" {
   name        = coalesce(var.parameter_group_name, "spacelift-${var.suffix}")
-  description = "Spacelift core product database parameter group."
+  description = coalesce(var.parameter_group_description, "Spacelift core product database parameter group.")
   family      = join("", ["aurora-postgresql", substr(var.postgres_engine_version, 0, 2)])
 
   parameter {
