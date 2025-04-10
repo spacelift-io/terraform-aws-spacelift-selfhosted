@@ -59,10 +59,12 @@ module "rds" {
   serverlessv2_scaling_configuration = var.rds_serverlessv2_scaling_configuration
 
   parameter_group_name        = var.rds_parameter_group_name
+  parameter_group_description = var.rds_parameter_group_description
   subnet_group_name           = var.rds_subnet_group_name
   regional_cluster_identifier = var.rds_regional_cluster_identifier
 
-  db_username = var.rds_username
+  db_username     = var.rds_username
+  password_sm_arn = var.rds_password_sm_arn
 
   instance_configuration = var.rds_instance_configuration
 

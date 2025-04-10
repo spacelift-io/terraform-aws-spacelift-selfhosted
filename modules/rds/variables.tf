@@ -13,6 +13,11 @@ variable "db_username" {
   description = "Master username for the RDS instances."
 }
 
+variable "password_sm_arn" {
+  type        = string
+  description = "Arn or the name of the SecretsManager secret that holds the database password."
+}
+
 variable "instance_configuration" {
   type = map(object({
     instance_identifier = string
@@ -84,4 +89,9 @@ variable "subnet_group_name" {
 variable "parameter_group_name" {
   type        = string
   description = "Name of the DB parameter group."
+}
+
+variable "parameter_group_description" {
+  type        = string
+  description = "Description of the DB parameter group."
 }
