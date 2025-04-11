@@ -1,6 +1,8 @@
 locals {
-  database_name = "spacelift"
-  password      = var.password_sm_arn != null ? jsondecode(data.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"] : random_id.db_pw.b64_url
+  database_name       = "spacelift"
+  db_url_from_sm      = var.password_sm_arn != null ? jsondecode(data.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"] : ""
+  db_password_from_sm = var.password_sm_arn != null ? regex("postgres://spacelift:([^@]+)@", local.db_url_from_sm)[0] : ""
+  password            = var.password_sm_arn != null ? local.db_password_from_sm : random_id.db_pw.b64_url
 }
 
 data "aws_availability_zones" "available" {}
@@ -90,14 +92,14 @@ resource "aws_rds_cluster_parameter_group" "spacelift" {
 }
 
 resource "aws_secretsmanager_secret" "conn_string" {
-  name        = "spacelift-db-${var.suffix}"
+  name        = "spacelift/db-conn-string-${var.suffix}"
   description = "Spacelift database connection string"
 }
 
 resource "aws_secretsmanager_secret_version" "conn_string" {
   secret_id = aws_secretsmanager_secret.conn_string.id
   secret_string = jsonencode({
-    DATABASE_URL           = "postgresql://${var.db_username}:${random_id.db_pw.b64_url}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
-    DATABASE_READ_ONLY_URL = "postgresql://${var.db_username}:${random_id.db_pw.b64_url}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+    DATABASE_URL           = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+    DATABASE_READ_ONLY_URL = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
   })
 }
