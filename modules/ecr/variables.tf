@@ -17,3 +17,13 @@ variable "ecr_force_delete" {
   type        = bool
   description = "Whether to force delete the ECRs, even if they contain images."
 }
+
+variable "backend_repository_name" {
+  type        = string
+  description = "Name of the backend ECR repository."
+}
+
+variable "launcher_repository_name" {
+  type        = string
+  description = "Name of the launcher ECR repository."
+}

@@ -15,6 +15,24 @@ variable "kms_arn" {
   default     = null
 }
 
+variable "kms_master_key_multi_regional" {
+  type        = bool
+  description = "Whether the KMS master key should be multi-regional."
+  default     = true
+}
+
+variable "kms_encryption_key_multi_regional" {
+  type        = bool
+  description = "Whether the encryption key used for in-app encryption should be multi-regional."
+  default     = true
+}
+
+variable "kms_jwt_key_multi_regional" {
+  type        = bool
+  description = "Whether the JWT key should be multi-regional."
+  default     = true
+}
+
 variable "create_vpc" {
   type        = bool
   description = "Whether to create a VPC for the Spacelift resources. Default is true. Note: if this is false, and create_database is true, you must provide rds_subnet_ids and rds_security_group_ids."
@@ -25,6 +43,18 @@ variable "vpc_cidr_block" {
   type        = string
   description = "The CIDR block to use for the VPC created for Spacelift. The subnet mask must be between /16 and /24."
   default     = "10.0.0.0/18"
+}
+
+variable "public_subnet_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks for the public subnets."
+  default     = []
+}
+
+variable "private_subnet_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks for the private subnets."
+  default     = []
 }
 
 variable "enable_dns_hostnames" {
@@ -55,6 +85,36 @@ variable "rds_security_group_ids" {
   type        = list(string)
   description = "List of security group IDs to use for the RDS instances. If create_vpc is false, this must be provided."
   default     = []
+}
+
+variable "rds_regional_cluster_identifier" {
+  type        = string
+  description = "The identifier for the RDS cluster. If not provided, a name will be generated."
+  default     = null
+}
+
+variable "rds_subnet_group_name" {
+  type        = string
+  description = "Name of the RDS subnet group. If not provided, a name will be generated."
+  default     = null
+}
+
+variable "rds_parameter_group_name" {
+  type        = string
+  description = "Name of the RDS parameter group. If not provided, a name will be generated."
+  default     = null
+}
+
+variable "rds_parameter_group_description" {
+  type        = string
+  description = "Description of the RDS parameter group."
+  default     = "Spacelift core product database parameter group."
+}
+
+variable "rds_password_sm_arn" {
+  type        = string
+  description = "ARN of the SSM parameter where the RDS password is stored already - this variable is only used for importing an existing database instance."
+  default     = null
 }
 
 variable "rds_serverlessv2_scaling_configuration" {
@@ -137,6 +197,47 @@ variable "s3_retain_on_destroy" {
   type        = bool
   description = "Whether to retain the S3 buckets' contents when destroyed. If true, and the S3 bucket isn't empty, the deletion will fail."
   default     = true
+}
+
+variable "security_group_names" {
+  type = object({
+    database  = string
+    server    = string
+    drain     = string
+    scheduler = string
+  })
+  description = "The names of the security groups to create."
+  default     = null
+}
+
+variable "s3_bucket_names" {
+  type = object({
+    binaries     = string
+    deliveries   = string
+    large_queue  = string
+    metadata     = string
+    modules      = string
+    policy       = string
+    run_logs     = string
+    states       = string
+    uploads      = string
+    user_uploads = string
+    workspace    = string
+  })
+  description = "S3 bucket names for Spacelift resources."
+  default     = null
+}
+
+variable "backend_ecr_repository_name" {
+  type        = string
+  description = "Name of the backend ECR repository."
+  default     = null
+}
+
+variable "launcher_ecr_repository_name" {
+  type        = string
+  description = "Name of the launcher ECR repository."
+  default     = null
 }
 
 variable "number_of_images_to_retain" {
