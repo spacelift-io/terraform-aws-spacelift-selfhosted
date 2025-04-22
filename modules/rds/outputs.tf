@@ -23,3 +23,19 @@ output "db_password" {
   value       = random_id.db_pw.b64_url
   sensitive   = true
 }
+
+output "secrets_manager_database_connection_string_name" {
+  description = "Name of the Secrets Manager secret for the database connection string."
+  value       = aws_secretsmanager_secret.conn_string.name
+
+}
+
+output "secrets_manager_database_connection_string_arn" {
+  description = "Connection string for the database stored in Secrets Manager."
+  value       = aws_secretsmanager_secret.conn_string.arn
+}
+
+output "secrets_manager_database_connection_string_version_id" {
+  description = "Version ID of the Secrets Manager secret for the database connection string."
+  value       = aws_secretsmanager_secret_version.conn_string.version_id
+}

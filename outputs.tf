@@ -96,6 +96,21 @@ output "database_read_only_url" {
   sensitive   = true
 }
 
+output "database_secret_name" {
+  description = "Name of the Secrets Manager secret for the database connection string. Will be null if create_database is false."
+  value       = var.create_database ? module.rds[0].secrets_manager_database_connection_string_name : null
+}
+
+output "database_secret_arn" {
+  description = "ARN of the Secrets Manager secret for the database connection string. Will be null if create_database is false."
+  value       = var.create_database ? module.rds[0].secrets_manager_database_connection_string_arn : null
+}
+
+output "database_secret_version_id" {
+  description = "Version ID of the Secrets Manager secret for the database connection string. Will be null if create_database is false."
+  value       = var.create_database ? module.rds[0].secrets_manager_database_connection_string_version_id : null
+}
+
 output "ecr_backend_repository_url" {
   value       = module.ecr.ecr_backend_repository_url
   description = "URL of the ECR repository for the backend images."

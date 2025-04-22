@@ -33,6 +33,7 @@ This module creates:
   - a [global Aurora cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html)
   - a regional Aurora cluster
   - RDS instance(s) for the regional cluster (configurable)
+  - a SecretsManager secret for the database credentials
 - Storage resources
   - 10 S3 buckets
 
@@ -46,7 +47,7 @@ This deploys the KMS keys, network stack (VPC, subnets, security groups), RDS cl
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.1.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.2.0"
 
   region       = "eu-west-1"
 }
@@ -56,7 +57,7 @@ module "spacelift" {
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.1.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.2.0"
 
   region       = "eu-west-1"
 
@@ -72,7 +73,7 @@ If `create_vpc` is `false`, you must provide `rds_subnet_ids` and `rds_security_
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.1.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.2.0"
 
   region       = "eu-west-1"
 
