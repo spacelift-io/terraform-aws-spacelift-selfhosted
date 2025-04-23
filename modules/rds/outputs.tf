@@ -20,7 +20,7 @@ output "reader_endpoint" {
 
 output "db_password" {
   description = "Password for the RDS database."
-  value       = random_id.db_pw.b64_url
+  value       = local.password
   sensitive   = true
 }
 

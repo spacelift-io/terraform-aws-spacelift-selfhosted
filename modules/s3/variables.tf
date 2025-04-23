@@ -17,3 +17,19 @@ variable "retain_on_destroy" {
   type        = bool
   description = "Whether to retain the bucket and its contents when destroyed. The objects can be recovered."
 }
+
+variable "bucket_names" {
+  type = object({
+    binaries     = string
+    deliveries   = string
+    large_queue  = string
+    metadata     = string
+    modules      = string
+    policy       = string
+    run_logs     = string
+    states       = string
+    uploads      = string
+    user_uploads = string
+    workspace    = string
+  })
+}

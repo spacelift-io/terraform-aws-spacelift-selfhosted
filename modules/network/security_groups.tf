@@ -1,5 +1,5 @@
 resource "aws_security_group" "drain_sg" {
-  name        = "drain_sg_${var.suffix}"
+  name        = var.security_group_names != null ? var.security_group_names.drain : "drain_sg_${var.suffix}"
   description = "The security group for the Spacelift async-processing service"
   vpc_id      = aws_vpc.spacelift_vpc.id
 }
@@ -12,7 +12,7 @@ resource "aws_vpc_security_group_egress_rule" "drain_sg_egress_rule" {
 }
 
 resource "aws_security_group" "server_sg" {
-  name        = "server_sg_${var.suffix}"
+  name        = var.security_group_names != null ? var.security_group_names.server : "server_sg_${var.suffix}"
   description = "The security group for the Spacelift HTTP server"
   vpc_id      = aws_vpc.spacelift_vpc.id
 }
@@ -25,8 +25,8 @@ resource "aws_vpc_security_group_egress_rule" "server_sg_egress_rule" {
 }
 
 resource "aws_security_group" "scheduler_sg" {
-  name        = "scheduler_sg_${var.suffix}"
-  description = "The security group for the Spacelift cron scheduler service."
+  name        = var.security_group_names != null ? var.security_group_names.scheduler : "scheduler_sg_${var.suffix}"
+  description = "The security group for the Spacelift scheduler service"
   vpc_id      = aws_vpc.spacelift_vpc.id
 }
 
@@ -40,7 +40,7 @@ resource "aws_vpc_security_group_egress_rule" "scheduler_sg_egress_rule" {
 resource "aws_security_group" "database_sg" {
   count = var.create_database ? 1 : 0
 
-  name        = "database_sg_${var.suffix}"
+  name        = var.security_group_names != null ? var.security_group_names.database : "database_sg_${var.suffix}"
   description = "The security group defining what services can access the Spacelift database"
   vpc_id      = aws_vpc.spacelift_vpc.id
 }

@@ -16,10 +16,10 @@ resource "aws_vpc" "spacelift_vpc" {
 }
 
 resource "aws_subnet" "private_subnets" {
-  count = 3
+  count = length(var.private_subnet_cidr_blocks) > 0 ? length(var.private_subnet_cidr_blocks) : 3
 
   vpc_id                  = aws_vpc.spacelift_vpc.id
-  cidr_block              = cidrsubnet(local.private_cidr_block, 2, count.index)
+  cidr_block              = length(var.private_subnet_cidr_blocks) > 0 ? var.private_subnet_cidr_blocks[count.index] : cidrsubnet(local.private_cidr_block, 2, count.index)
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
   map_public_ip_on_launch = false
 
@@ -29,10 +29,10 @@ resource "aws_subnet" "private_subnets" {
 }
 
 resource "aws_subnet" "public_subnets" {
-  count = 3
+  count = length(var.public_subnet_cidr_blocks) > 0 ? length(var.public_subnet_cidr_blocks) : 3
 
   vpc_id                  = aws_vpc.spacelift_vpc.id
-  cidr_block              = cidrsubnet(local.public_cidr_block, 2, count.index)
+  cidr_block              = length(var.public_subnet_cidr_blocks) > 0 ? var.public_subnet_cidr_blocks[count.index] : cidrsubnet(local.public_cidr_block, 2, count.index)
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
   map_public_ip_on_launch = false
 

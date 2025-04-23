@@ -1,16 +1,16 @@
 locals {
   bucket_names = {
-    "binaries" : "spacelift-binaries-${var.suffix}",
-    "deliveries" : "spacelift-deliveries-${var.suffix}",
-    "large-queue" : "spacelift-large-queue-messages-${var.suffix}",
-    "metadata" : "spacelift-metadata-${var.suffix}",
-    "modules" : "spacelift-modules-${var.suffix}",
-    "policy" : "spacelift-policy-inputs-${var.suffix}",
-    "run-logs" : "spacelift-run-logs-${var.suffix}",
-    "states" : "spacelift-states-${var.suffix}",
-    "uploads" : "spacelift-uploads-${var.suffix}",
-    "user-uploads" : "spacelift-user-uploaded-workspaces-${var.suffix}",
-    "workspace" : "spacelift-workspace-${var.suffix}",
+    "binaries" : var.bucket_names != null ? var.bucket_names.binaries : "spacelift-binaries-${var.suffix}",
+    "deliveries" : var.bucket_names != null ? var.bucket_names.deliveries : "spacelift-deliveries-${var.suffix}",
+    "large-queue" : var.bucket_names != null ? var.bucket_names.large_queue : "spacelift-large-queue-messages-${var.suffix}",
+    "metadata" : var.bucket_names != null ? var.bucket_names.metadata : "spacelift-metadata-${var.suffix}",
+    "modules" : var.bucket_names != null ? var.bucket_names.modules : "spacelift-modules-${var.suffix}",
+    "policy" : var.bucket_names != null ? var.bucket_names.policy : "spacelift-policy-inputs-${var.suffix}",
+    "run-logs" : var.bucket_names != null ? var.bucket_names.run_logs : "spacelift-run-logs-${var.suffix}",
+    "states" : var.bucket_names != null ? var.bucket_names.states : "spacelift-states-${var.suffix}",
+    "uploads" : var.bucket_names != null ? var.bucket_names.uploads : "spacelift-uploads-${var.suffix}",
+    "user-uploads" : var.bucket_names != null ? var.bucket_names.user_uploads : "spacelift-user-uploaded-workspaces-${var.suffix}",
+    "workspace" : var.bucket_names != null ? var.bucket_names.workspace : "spacelift-workspace-${var.suffix}",
   }
 }
 
