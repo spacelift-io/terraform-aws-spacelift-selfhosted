@@ -92,8 +92,9 @@ resource "aws_rds_cluster_parameter_group" "spacelift" {
 }
 
 resource "aws_secretsmanager_secret" "conn_string" {
-  name        = "spacelift/db-conn-string-${var.suffix}"
-  description = "Spacelift database connection string"
+  name                    = "spacelift/db-conn-string-${var.suffix}"
+  description             = "Spacelift database connection string"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "conn_string" {
