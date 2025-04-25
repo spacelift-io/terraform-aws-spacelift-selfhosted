@@ -17,19 +17,11 @@ data "aws_secretsmanager_secret_version" "db_pw" {
   secret_id = var.password_sm_arn
 }
 
-resource "aws_rds_global_cluster" "global_cluster" {
-  global_cluster_identifier = "spacelift-global-cluster-${var.suffix}"
-  engine                    = "aurora-postgresql"
-  engine_version            = var.postgres_engine_version
-  deletion_protection       = var.db_delete_protection_enabled
-  database_name             = local.database_name
-}
-
 resource "aws_rds_cluster" "db_cluster" {
   cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
   database_name      = local.database_name
 
-  engine      = aws_rds_global_cluster.global_cluster.engine
+  engine      = "aurora-postgresql"
   engine_mode = var.engine_mode
 
   dynamic "serverlessv2_scaling_configuration" {
@@ -68,7 +60,7 @@ resource "aws_rds_cluster_instance" "db_instance" {
   cluster_identifier         = aws_rds_cluster.db_cluster.id
   identifier                 = each.value["instance_identifier"]
   instance_class             = each.value["instance_class"]
-  engine                     = aws_rds_global_cluster.global_cluster.engine
+  engine                     = aws_rds_cluster.db_cluster.engine
   auto_minor_version_upgrade = false
   ca_cert_identifier         = "rds-ca-rsa2048-g1"
 }

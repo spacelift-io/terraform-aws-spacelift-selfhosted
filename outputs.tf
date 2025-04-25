@@ -58,9 +58,14 @@ output "vpc_id" {
   description = "ID of the VPC. It will be null if create_vpc is false."
 }
 
-output "rds_global_cluster_id" {
-  description = "ID of the global Aurora cluster. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].database_global_aurora_identifier : null
+output "rds_cluster_arn" {
+  description = "ARN of the RDS cluster. Will be null if create_database is false."
+  value       = var.create_database ? module.rds[0].cluster_arn : null
+}
+
+output "rds_cluster_resource_id" {
+  description = "Cluster resource ID of the RDS cluster. Will be null if create_database is false."
+  value       = var.create_database ? module.rds[0].cluster_resource_id : null
 }
 
 output "rds_cluster_endpoint" {
@@ -88,6 +93,11 @@ output "database_url" {
   description = "The URL to the write endpoint of the database. Can be used to pass to the DATABASE_URL environment variable for Spacelift. Only populated if create_database is true."
   value       = local.database_url
   sensitive   = true
+}
+
+output "database_name" {
+  description = "Name of the database. Will be null if create_database is false."
+  value       = var.create_database ? module.rds[0].database_name : null
 }
 
 output "database_read_only_url" {

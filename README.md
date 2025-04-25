@@ -30,8 +30,8 @@ This module creates:
   - a repository for the backend image (used by `server`, `drain` and `scheduler` services)
   - another repository for the launcher image
 - Database resources
-  - a [global Aurora cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html)
   - a regional Aurora cluster
+    - Note: feel free to promote it into a [global cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html) yourself. Check out the [New Global Cluster From Existing DB Cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_global_cluster#new-global-cluster-from-existing-db-cluster) section of the Terraform documentation.
   - RDS instance(s) for the regional cluster (configurable)
   - a SecretsManager secret for the database credentials
 - Storage resources
