@@ -1,11 +1,11 @@
-output "database_global_aurora_identifier" {
-  description = "ID of the global Aurora cluster."
-  value       = aws_rds_global_cluster.global_cluster.id
-}
-
 output "cluster_resource_id" {
   description = "Cluster resource ID of the RDS cluster."
   value       = aws_rds_cluster.db_cluster.cluster_resource_id
+}
+
+output "cluster_arn" {
+  description = "ARN of the RDS cluster."
+  value       = aws_rds_cluster.db_cluster.arn
 }
 
 output "cluster_endpoint" {
@@ -22,6 +22,11 @@ output "db_password" {
   description = "Password for the RDS database."
   value       = local.password
   sensitive   = true
+}
+
+output "database_name" {
+  description = "Name of the database."
+  value       = local.database_name
 }
 
 output "secrets_manager_database_connection_string_name" {
