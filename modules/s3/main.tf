@@ -1,16 +1,27 @@
 locals {
   bucket_names = {
-    "binaries" : var.bucket_names != null ? var.bucket_names.binaries : "spacelift-binaries-${var.suffix}",
-    "deliveries" : var.bucket_names != null ? var.bucket_names.deliveries : "spacelift-deliveries-${var.suffix}",
-    "large-queue" : var.bucket_names != null ? var.bucket_names.large_queue : "spacelift-large-queue-messages-${var.suffix}",
-    "metadata" : var.bucket_names != null ? var.bucket_names.metadata : "spacelift-metadata-${var.suffix}",
-    "modules" : var.bucket_names != null ? var.bucket_names.modules : "spacelift-modules-${var.suffix}",
-    "policy" : var.bucket_names != null ? var.bucket_names.policy : "spacelift-policy-inputs-${var.suffix}",
-    "run-logs" : var.bucket_names != null ? var.bucket_names.run_logs : "spacelift-run-logs-${var.suffix}",
-    "states" : var.bucket_names != null ? var.bucket_names.states : "spacelift-states-${var.suffix}",
-    "uploads" : var.bucket_names != null ? var.bucket_names.uploads : "spacelift-uploads-${var.suffix}",
-    "user-uploads" : var.bucket_names != null ? var.bucket_names.user_uploads : "spacelift-user-uploaded-workspaces-${var.suffix}",
-    "workspace" : var.bucket_names != null ? var.bucket_names.workspace : "spacelift-workspace-${var.suffix}",
+    "binaries" : var.bucket_configuration != null ? var.bucket_configuration.binaries.name : "spacelift-binaries-${var.suffix}",
+    "deliveries" : var.bucket_configuration != null ? var.bucket_configuration.deliveries.name : "spacelift-deliveries-${var.suffix}",
+    "large-queue" : var.bucket_configuration != null ? var.bucket_configuration.large_queue.name : "spacelift-large-queue-messages-${var.suffix}",
+    "metadata" : var.bucket_configuration != null ? var.bucket_configuration.metadata.name : "spacelift-metadata-${var.suffix}",
+    "modules" : var.bucket_configuration != null ? var.bucket_configuration.modules.name : "spacelift-modules-${var.suffix}",
+    "policy" : var.bucket_configuration != null ? var.bucket_configuration.policy.name : "spacelift-policy-inputs-${var.suffix}",
+    "run-logs" : var.bucket_configuration != null ? var.bucket_configuration.run_logs.name : "spacelift-run-logs-${var.suffix}",
+    "states" : var.bucket_configuration != null ? var.bucket_configuration.states.name : "spacelift-states-${var.suffix}",
+    "uploads" : var.bucket_configuration != null ? var.bucket_configuration.uploads.name : "spacelift-uploads-${var.suffix}",
+    "user-uploads" : var.bucket_configuration != null ? var.bucket_configuration.user_uploads.name : "spacelift-user-uploaded-workspaces-${var.suffix}",
+    "workspace" : var.bucket_configuration != null ? var.bucket_configuration.workspace.name : "spacelift-workspace-${var.suffix}",
+  }
+
+  bucket_expirations = {
+    "deliveries" : var.bucket_configuration != null ? var.bucket_configuration.deliveries.expiration_days : 1,
+    "large-queue" : var.bucket_configuration != null ? var.bucket_configuration.large_queue.expiration_days : 2,
+    "metadata" : var.bucket_configuration != null ? var.bucket_configuration.metadata.expiration_days : 2,
+    "policy" : var.bucket_configuration != null ? var.bucket_configuration.policy.expiration_days : 120,
+    "run-logs" : var.bucket_configuration != null ? var.bucket_configuration.run_logs.expiration_days : 60,
+    "uploads" : var.bucket_configuration != null ? var.bucket_configuration.uploads.expiration_days : 1,
+    "user-uploads" : var.bucket_configuration != null ? var.bucket_configuration.user_uploads.expiration_days : 1,
+    "workspace" : var.bucket_configuration != null ? var.bucket_configuration.workspace.expiration_days : 90,
   }
 }
 
@@ -68,7 +79,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "deliveries" {
     }
 
     expiration {
-      days = 1
+      days = local.bucket_expirations["deliveries"]
     }
   }
 }
@@ -105,7 +116,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "large_queue_messages" {
     }
 
     expiration {
-      days = 2
+      days = local.bucket_expirations["large-queue"]
     }
   }
 }
@@ -151,7 +162,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "metadata" {
     }
 
     expiration {
-      days = 2
+      days = local.bucket_expirations["metadata"]
     }
   }
 }
@@ -217,7 +228,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "policy_inputs" {
     }
 
     expiration {
-      days = 120
+      days = local.bucket_expirations["policy"]
     }
   }
 }
@@ -281,7 +292,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "run_logs" {
     }
 
     expiration {
-      days = 60
+      days = local.bucket_expirations["run-logs"]
     }
   }
 }
@@ -393,7 +404,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
     }
 
     expiration {
-      days = 1
+      days = local.bucket_expirations["uploads"]
     }
   }
 }
@@ -437,7 +448,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "user_uploads" {
     }
 
     expiration {
-      days = 1
+      days = local.bucket_expirations["user-uploads"]
     }
   }
 }
@@ -502,7 +513,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "workspaces" {
     }
 
     expiration {
-      days = 90
+      days = local.bucket_expirations["workspace"]
     }
   }
 }

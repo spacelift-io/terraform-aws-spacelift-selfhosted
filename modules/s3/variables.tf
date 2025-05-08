@@ -18,18 +18,18 @@ variable "retain_on_destroy" {
   description = "Whether to retain the bucket and its contents when destroyed. The objects can be recovered."
 }
 
-variable "bucket_names" {
+variable "bucket_configuration" {
   type = object({
-    binaries     = string
-    deliveries   = string
-    large_queue  = string
-    metadata     = string
-    modules      = string
-    policy       = string
-    run_logs     = string
-    states       = string
-    uploads      = string
-    user_uploads = string
-    workspace    = string
+    binaries     = object({ name = string, expiration_days = number })
+    deliveries   = object({ name = string, expiration_days = number })
+    large_queue  = object({ name = string, expiration_days = number })
+    metadata     = object({ name = string, expiration_days = number })
+    modules      = object({ name = string, expiration_days = number })
+    policy       = object({ name = string, expiration_days = number })
+    run_logs     = object({ name = string, expiration_days = number })
+    states       = object({ name = string, expiration_days = number })
+    uploads      = object({ name = string, expiration_days = number })
+    user_uploads = object({ name = string, expiration_days = number })
+    workspace    = object({ name = string, expiration_days = number })
   })
 }
