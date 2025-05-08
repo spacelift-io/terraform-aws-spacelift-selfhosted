@@ -2,7 +2,7 @@ resource "aws_eip" "eips" {
   count = 3
 
   tags = {
-    Name = "Spacelift Load Balancer IP (${var.suffix} - ${count.index})"
+    Name = "Spacelift NAT Gateway IP (${var.suffix} - ${count.index})"
   }
 }
 
