@@ -184,8 +184,8 @@ variable "rds_preferred_backup_window" {
 
 variable "rds_backup_retention_period" {
   type        = number
-  description = "The number of days for which automated backups are retained. Default is 3."
-  default     = 3
+  description = "The number of days for which automated backups are retained. Default is 5."
+  default     = 5
 }
 
 variable "website_endpoint" {
@@ -210,21 +210,21 @@ variable "security_group_names" {
   default     = null
 }
 
-variable "s3_bucket_names" {
+variable "s3_bucket_configuration" {
   type = object({
-    binaries     = string
-    deliveries   = string
-    large_queue  = string
-    metadata     = string
-    modules      = string
-    policy       = string
-    run_logs     = string
-    states       = string
-    uploads      = string
-    user_uploads = string
-    workspace    = string
+    binaries     = object({ name = string, expiration_days = number })
+    deliveries   = object({ name = string, expiration_days = number })
+    large_queue  = object({ name = string, expiration_days = number })
+    metadata     = object({ name = string, expiration_days = number })
+    modules      = object({ name = string, expiration_days = number })
+    policy       = object({ name = string, expiration_days = number })
+    run_logs     = object({ name = string, expiration_days = number })
+    states       = object({ name = string, expiration_days = number })
+    uploads      = object({ name = string, expiration_days = number })
+    user_uploads = object({ name = string, expiration_days = number })
+    workspace    = object({ name = string, expiration_days = number })
   })
-  description = "S3 bucket names for Spacelift resources."
+  description = "Custom configuration for S3 buckets."
   default     = null
 }
 
