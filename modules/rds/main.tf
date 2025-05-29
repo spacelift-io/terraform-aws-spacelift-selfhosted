@@ -33,7 +33,7 @@ resource "aws_rds_cluster" "db_cluster" {
     }
   }
 
-  availability_zones   = slice(data.aws_availability_zones.available.names, 0, length(var.subnet_ids))
+  availability_zones   = var.availability_zones != null ? var.availability_zones : slice(data.aws_availability_zones.available.names, 0, length(var.subnet_ids))
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
 
   kms_key_id        = var.kms_key_arn
