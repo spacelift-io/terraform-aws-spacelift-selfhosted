@@ -251,3 +251,9 @@ variable "ecr_force_delete" {
   description = "Whether to force delete the ECRs, even if they contain images."
   default     = false
 }
+
+variable "availability_zones" {
+  type        = list(string)
+  description = "overriding aws availability zones"
+  default     = null
+}
