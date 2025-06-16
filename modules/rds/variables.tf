@@ -95,3 +95,9 @@ variable "parameter_group_description" {
   type        = string
   description = "Description of the DB parameter group."
 }
+
+variable "availability_zones" {
+  type        = list(string)
+  description = "overriding aws availability zones"
+  default     = null
+}

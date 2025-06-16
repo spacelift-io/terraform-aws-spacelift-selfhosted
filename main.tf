@@ -68,6 +68,8 @@ module "rds" {
 
   instance_configuration = var.rds_instance_configuration
 
+  availability_zones = var.availability_zones
+
   db_delete_protection_enabled = var.rds_delete_protection_enabled
   backup_retention_period      = var.rds_backup_retention_period
   preferred_backup_window      = var.rds_preferred_backup_window
