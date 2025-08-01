@@ -33,6 +33,12 @@ variable "kms_jwt_key_multi_regional" {
   default     = true
 }
 
+variable "create_vcs_gateway" {
+  type        = bool
+  description = "Whether to create the infrastructure for the VCS gateway."
+  default     = false
+}
+
 variable "create_vpc" {
   type        = bool
   description = "Whether to create a VPC for the Spacelift resources. Default is true. Note: if this is false, and create_database is true, you must provide rds_subnet_ids and rds_security_group_ids."
@@ -201,10 +207,11 @@ variable "s3_retain_on_destroy" {
 
 variable "security_group_names" {
   type = object({
-    database  = string
-    server    = string
-    drain     = string
-    scheduler = string
+    database    = string
+    server      = string
+    drain       = string
+    scheduler   = string
+    vcs_gateway = string
   })
   description = "The names of the security groups to create."
   default     = null

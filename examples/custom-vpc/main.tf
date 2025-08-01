@@ -6,6 +6,7 @@ module "network" {
 
   suffix               = lower(substr(random_uuid.suffix.id, 0, 5))
   create_database      = true
+  create_vcs_gateway   = true
   vpc_cidr_block       = "10.0.0.0/18"
   enable_dns_hostnames = false
 

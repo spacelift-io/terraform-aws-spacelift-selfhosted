@@ -39,6 +39,7 @@ module "network" {
 
   suffix                     = local.suffix
   create_database            = var.create_database
+  create_vcs_gateway         = var.create_vcs_gateway
   vpc_cidr_block             = var.vpc_cidr_block
   enable_dns_hostnames       = var.enable_dns_hostnames
   public_subnet_cidr_blocks  = var.public_subnet_cidr_blocks

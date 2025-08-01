@@ -33,6 +33,11 @@ output "scheduler_security_group_id" {
   description = "ID of the security group for the Spacelift scheduler service. It will be null if create_vpc is false."
 }
 
+output "vcs_gateway_security_group_id" {
+  value       = var.create_vcs_gateway ? module.network[0].vcs_gateway_security_group_id : null
+  description = "ID of the security group for the Spacelift VCS gateway service. It will be null if create_vcs_gateway is false."
+}
+
 output "database_security_group_id" {
   value       = var.create_vpc ? module.network[0].database_security_group_id : null
   description = "ID of the security group for the Spacelift database. It will be null if create_database is false."

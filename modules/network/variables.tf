@@ -3,6 +3,11 @@ variable "suffix" {
   description = "Unique postfix for resource names."
 }
 
+variable "create_vcs_gateway" {
+  type        = bool
+  description = "Whether to create a VCS gateway security group."
+}
+
 variable "create_database" {
   type        = bool
   description = "Whether to create a database for Spacelift"
@@ -39,10 +44,11 @@ variable "private_subnet_tags" {
 
 variable "security_group_names" {
   type = object({
-    database  = string
-    server    = string
-    drain     = string
-    scheduler = string
+    database    = string
+    server      = string
+    drain       = string
+    scheduler   = string
+    vcs_gateway = string
   })
   description = "The names of the security groups to create."
 }
