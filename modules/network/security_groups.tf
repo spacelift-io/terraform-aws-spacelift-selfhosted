@@ -37,6 +37,23 @@ resource "aws_vpc_security_group_egress_rule" "scheduler_sg_egress_rule" {
   cidr_ipv4         = "0.0.0.0/0"
 }
 
+resource "aws_security_group" "vcs_gateway_sg" {
+  count = var.create_vcs_gateway ? 1 : 0
+
+  name        = var.security_group_names != null ? var.security_group_names.vcs_gateway : "vcs_gateway_sg_${var.suffix}"
+  description = "The security group for the Spacelift VCS gateway service"
+  vpc_id      = aws_vpc.spacelift_vpc.id
+}
+
+resource "aws_vpc_security_group_egress_rule" "vcs_gateway_sg_egress_rule" {
+  count = var.create_vcs_gateway ? 1 : 0
+
+  security_group_id = aws_security_group.vcs_gateway_sg[0].id
+  description       = "Unrestricted egress"
+  ip_protocol       = "-1"
+  cidr_ipv4         = "0.0.0.0/0"
+}
+
 resource "aws_security_group" "database_sg" {
   count = var.create_database ? 1 : 0
 
