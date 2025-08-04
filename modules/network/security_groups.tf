@@ -96,3 +96,15 @@ resource "aws_vpc_security_group_ingress_rule" "database_scheduler_ingress_rule"
   ip_protocol                  = "tcp"
   referenced_security_group_id = aws_security_group.scheduler_sg.id
 }
+
+resource "aws_vpc_security_group_ingress_rule" "database_vcs_gateway_ingress_rule" {
+  count = var.create_database && var.create_vcs_gateway ? 1 : 0
+
+  security_group_id = aws_security_group.database_sg[0].id
+
+  description                  = "Only accept TCP connections on appropriate port from the VCS gateway"
+  from_port                    = 5432
+  to_port                      = 5432
+  ip_protocol                  = "tcp"
+  referenced_security_group_id = aws_security_group.vcs_gateway_sg[0].id
+}
