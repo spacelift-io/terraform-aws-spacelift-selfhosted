@@ -63,6 +63,11 @@ output "vpc_id" {
   description = "ID of the VPC. It will be null if create_vpc is false."
 }
 
+output "rds_cluster_identifier" {
+  description = "Name of the RDS cluster."
+  value       =  var.create_database ? module.rds[0].cluster_identifier : null
+}
+
 output "rds_cluster_arn" {
   description = "ARN of the RDS cluster. Will be null if create_database is false."
   value       = var.create_database ? module.rds[0].cluster_arn : null
