@@ -65,7 +65,7 @@ output "vpc_id" {
 
 output "rds_cluster_identifier" {
   description = "Name of the RDS cluster."
-  value       =  var.create_database ? module.rds[0].cluster_identifier : null
+  value       = var.create_database ? module.rds[0].cluster_identifier : null
 }
 
 output "rds_cluster_arn" {
