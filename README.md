@@ -12,7 +12,7 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.4.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.6.0"
 
   region       = "eu-west-1"
 }
@@ -47,7 +47,7 @@ This deploys the KMS keys, network stack (VPC, subnets, security groups), RDS cl
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.4.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
 
   region       = "eu-west-1"
 }
@@ -57,7 +57,7 @@ module "spacelift" {
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.4.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
 
   region       = "eu-west-1"
 
@@ -73,7 +73,7 @@ If `create_vpc` is `false`, you must provide `rds_subnet_ids` and `rds_security_
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.4.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted
 
   region       = "eu-west-1"
 
