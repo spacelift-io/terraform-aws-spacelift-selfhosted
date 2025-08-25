@@ -1,3 +1,8 @@
+output "cluster_identifier" {
+  description = "Name of the RDS cluster."
+  value       = aws_rds_cluster.db_cluster.cluster_identifier
+}
+
 output "cluster_resource_id" {
   description = "Cluster resource ID of the RDS cluster."
   value       = aws_rds_cluster.db_cluster.cluster_resource_id
