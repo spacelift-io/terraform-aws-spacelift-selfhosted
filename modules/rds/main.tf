@@ -21,8 +21,9 @@ resource "aws_rds_cluster" "db_cluster" {
   cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
   database_name      = local.database_name
 
-  engine      = "aurora-postgresql"
-  engine_mode = var.engine_mode
+  engine         = "aurora-postgresql"
+  engine_mode    = var.engine_mode
+  engine_version = var.postgres_engine_version
 
   dynamic "serverlessv2_scaling_configuration" {
     for_each = var.serverlessv2_scaling_configuration != null ? [1] : []
