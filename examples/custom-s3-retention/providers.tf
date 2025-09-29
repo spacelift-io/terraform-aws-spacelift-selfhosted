@@ -13,7 +13,7 @@ provider "aws" {
   default_tags {
     tags = {
       "module"  = "terraform-aws-spacelift-selfhosted"
-      "example" = "custom-vpc"
+      "example" = "custom-s3-retention"
     }
   }
 }

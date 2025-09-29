@@ -9,3 +9,8 @@ tests:
     project_root: examples/custom-vpc
     environment:
       TF_VAR_aws_region: eu-north-1
+
+  - name: Custom S3 retention
+    project_root: examples/custom-s3-retention
+    environment:
+      TF_VAR_aws_region: eu-north-1
