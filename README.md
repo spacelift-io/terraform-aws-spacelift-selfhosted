@@ -90,6 +90,36 @@ module "spacelift" {
 }
 ```
 
+### Deploy with custom S3 bucket retention
+
+You can customize S3 bucket names and retention policies using the `s3_bucket_configuration` variable. This allows you to specify only the buckets you want to customize while others will use default settings:
+
+```hcl
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+
+  region = "eu-west-1"
+
+  s3_bucket_configuration = {
+    run_logs = {
+      name            = null  # Use default name
+      expiration_days = 360   # Keep run logs for 1 year instead of default 60 days
+    }
+    # All other buckets will use default settings
+    binaries     = null
+    deliveries   = null
+    large_queue  = null
+    metadata     = null
+    modules      = null
+    policy       = null
+    states       = null
+    uploads      = null
+    user_uploads = null
+    workspace    = null
+  }
+}
+```
+
 ## 🚀 Release
 
 We have a [GitHub workflow](./.github/workflows/release.yaml) to automatically create a tag and a release based on the version number in [`.spacelift/config.yml`](./.spacelift/config.yml) file.

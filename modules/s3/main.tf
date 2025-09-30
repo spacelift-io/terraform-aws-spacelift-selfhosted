@@ -1,27 +1,27 @@
 locals {
   bucket_names = {
-    "binaries" : var.bucket_configuration != null ? var.bucket_configuration.binaries.name : "spacelift-binaries-${var.suffix}",
-    "deliveries" : var.bucket_configuration != null ? var.bucket_configuration.deliveries.name : "spacelift-deliveries-${var.suffix}",
-    "large-queue" : var.bucket_configuration != null ? var.bucket_configuration.large_queue.name : "spacelift-large-queue-messages-${var.suffix}",
-    "metadata" : var.bucket_configuration != null ? var.bucket_configuration.metadata.name : "spacelift-metadata-${var.suffix}",
-    "modules" : var.bucket_configuration != null ? var.bucket_configuration.modules.name : "spacelift-modules-${var.suffix}",
-    "policy" : var.bucket_configuration != null ? var.bucket_configuration.policy.name : "spacelift-policy-inputs-${var.suffix}",
-    "run-logs" : var.bucket_configuration != null ? var.bucket_configuration.run_logs.name : "spacelift-run-logs-${var.suffix}",
-    "states" : var.bucket_configuration != null ? var.bucket_configuration.states.name : "spacelift-states-${var.suffix}",
-    "uploads" : var.bucket_configuration != null ? var.bucket_configuration.uploads.name : "spacelift-uploads-${var.suffix}",
-    "user-uploads" : var.bucket_configuration != null ? var.bucket_configuration.user_uploads.name : "spacelift-user-uploaded-workspaces-${var.suffix}",
-    "workspace" : var.bucket_configuration != null ? var.bucket_configuration.workspace.name : "spacelift-workspace-${var.suffix}",
+    binaries     = coalesce(try(var.bucket_configuration.binaries.name, null), "spacelift-binaries-${var.suffix}")
+    deliveries   = coalesce(try(var.bucket_configuration.deliveries.name, null), "spacelift-deliveries-${var.suffix}")
+    large-queue  = coalesce(try(var.bucket_configuration.large_queue.name, null), "spacelift-large-queue-messages-${var.suffix}")
+    metadata     = coalesce(try(var.bucket_configuration.metadata.name, null), "spacelift-metadata-${var.suffix}")
+    modules      = coalesce(try(var.bucket_configuration.modules.name, null), "spacelift-modules-${var.suffix}")
+    policy       = coalesce(try(var.bucket_configuration.policy.name, null), "spacelift-policy-inputs-${var.suffix}")
+    run-logs     = coalesce(try(var.bucket_configuration.run_logs.name, null), "spacelift-run-logs-${var.suffix}")
+    states       = coalesce(try(var.bucket_configuration.states.name, null), "spacelift-states-${var.suffix}")
+    uploads      = coalesce(try(var.bucket_configuration.uploads.name, null), "spacelift-uploads-${var.suffix}")
+    user-uploads = coalesce(try(var.bucket_configuration.user_uploads.name, null), "spacelift-user-uploaded-workspaces-${var.suffix}")
+    workspace    = coalesce(try(var.bucket_configuration.workspace.name, null), "spacelift-workspace-${var.suffix}")
   }
 
   bucket_expirations = {
-    "deliveries" : var.bucket_configuration != null ? var.bucket_configuration.deliveries.expiration_days : 1,
-    "large-queue" : var.bucket_configuration != null ? var.bucket_configuration.large_queue.expiration_days : 2,
-    "metadata" : var.bucket_configuration != null ? var.bucket_configuration.metadata.expiration_days : 2,
-    "policy" : var.bucket_configuration != null ? var.bucket_configuration.policy.expiration_days : 120,
-    "run-logs" : var.bucket_configuration != null ? var.bucket_configuration.run_logs.expiration_days : 60,
-    "uploads" : var.bucket_configuration != null ? var.bucket_configuration.uploads.expiration_days : 1,
-    "user-uploads" : var.bucket_configuration != null ? var.bucket_configuration.user_uploads.expiration_days : 1,
-    "workspace" : var.bucket_configuration != null ? var.bucket_configuration.workspace.expiration_days : 90,
+    deliveries   = coalesce(try(var.bucket_configuration.deliveries.expiration_days, null), 1)
+    large-queue  = coalesce(try(var.bucket_configuration.large_queue.expiration_days, null), 2)
+    metadata     = coalesce(try(var.bucket_configuration.metadata.expiration_days, null), 2)
+    policy       = coalesce(try(var.bucket_configuration.policy.expiration_days, null), 120)
+    run-logs     = coalesce(try(var.bucket_configuration.run_logs.expiration_days, null), 60)
+    uploads      = coalesce(try(var.bucket_configuration.uploads.expiration_days, null), 1)
+    user-uploads = coalesce(try(var.bucket_configuration.user_uploads.expiration_days, null), 1)
+    workspace    = coalesce(try(var.bucket_configuration.workspace.expiration_days, null), 90)
   }
 }
 
