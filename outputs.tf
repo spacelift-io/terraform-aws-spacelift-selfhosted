@@ -40,7 +40,12 @@ output "vcs_gateway_security_group_id" {
 
 output "database_security_group_id" {
   value       = var.create_vpc ? module.network[0].database_security_group_id : null
-  description = "ID of the security group for the Spacelift database. It will be null if create_database is false."
+  description = "**Deprecated in favor of database_security_group_ids**. ID of the security group for the Spacelift database. It will be null if create_database is false."
+}
+
+output "database_security_group_ids" {
+  value       = var.create_vpc ? [module.network[0].database_security_group_id] : var.rds_security_group_ids
+  description = "IDs of the security groups for the Spacelift database. It either returns the created security group ID if create_vpc is true, or the provided rds_security_group_ids if create_vpc is false."
 }
 
 output "private_subnet_ids" {
