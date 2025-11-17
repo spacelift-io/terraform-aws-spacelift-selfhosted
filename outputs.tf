@@ -273,6 +273,34 @@ output "workspace_bucket_name" {
   description = "ID of the S3 bucket used for storing workspaces."
 }
 
+output "sqs_queue_urls" {
+  description = "Map of all SQS queue URLs. Will be null if create_sqs is false."
+  value = var.create_sqs ? {
+    async_jobs      = module.sqs[0].async_jobs_queue_url
+    async_jobs_fifo = module.sqs[0].async_jobs_fifo_queue_url
+    events_inbox    = module.sqs[0].events_inbox_queue_url
+    cronjobs        = module.sqs[0].cronjobs_queue_url
+    deadletter      = module.sqs[0].deadletter_queue_url
+    deadletter_fifo = module.sqs[0].deadletter_fifo_queue_url
+    webhooks        = module.sqs[0].webhooks_queue_url
+    iot             = module.sqs[0].iot_queue_url
+  } : null
+}
+
+output "sqs_queue_arns" {
+  description = "Map of all SQS queue ARNs. Will be null if create_sqs is false."
+  value = var.create_sqs ? {
+    async_jobs      = module.sqs[0].async_jobs_queue_arn
+    async_jobs_fifo = module.sqs[0].async_jobs_fifo_queue_arn
+    events_inbox    = module.sqs[0].events_inbox_queue_arn
+    cronjobs        = module.sqs[0].cronjobs_queue_arn
+    deadletter      = module.sqs[0].deadletter_queue_arn
+    deadletter_fifo = module.sqs[0].deadletter_fifo_queue_arn
+    webhooks        = module.sqs[0].webhooks_queue_arn
+    iot             = module.sqs[0].iot_queue_arn
+  } : null
+}
+
 output "shell" {
   value = templatefile("${path.module}/env.tftpl", {
     env : {
