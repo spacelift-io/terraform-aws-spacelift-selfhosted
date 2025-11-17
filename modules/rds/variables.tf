@@ -101,3 +101,17 @@ variable "availability_zones" {
   description = "overriding aws availability zones"
   default     = null
 }
+
+variable "performance_insights" {
+  description = "Configuration block for RDS Performance Insights."
+  type = object({
+    enabled          = optional(bool)
+    kms_key_arn      = optional(string)
+    retention_period = optional(number)
+  })
+  default = {
+    enabled          = false
+    kms_key_arn      = null
+    retention_period = null
+  }
+}
