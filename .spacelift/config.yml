@@ -2,7 +2,7 @@ version: 2
 
 # Note: the module version here is just used to run tests via the Spacelift private module registry.
 # The value can be changed as needed and doesn't need to match the tagged module version.
-module_version: "0.0.4"
+module_version: "1.9.0"
 
 tests:
   - name: Custom VPC

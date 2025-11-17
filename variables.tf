@@ -249,6 +249,12 @@ variable "s3_bucket_configuration" {
   default     = null
 }
 
+variable "enable_public_access_block_on_s3" {
+  type        = bool
+  description = "Whether to enable the public access block on the bucket."
+  default     = true
+}
+
 variable "backend_ecr_repository_name" {
   type        = string
   description = "Name of the backend ECR repository."
