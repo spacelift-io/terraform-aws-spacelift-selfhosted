@@ -33,3 +33,8 @@ variable "bucket_configuration" {
     workspace    = object({ name = string, expiration_days = number })
   })
 }
+
+variable "enable_public_access_block_on_s3" {
+  type        = bool
+  description = "Whether to enable the public access block on the bucket."
+}

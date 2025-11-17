@@ -87,8 +87,9 @@ module "s3" {
 
   suffix = local.suffix
 
-  bucket_configuration = var.s3_bucket_configuration
-  kms_master_key_arn   = local.kms_arn
-  cors_hostname        = var.website_endpoint
-  retain_on_destroy    = var.s3_retain_on_destroy
+  bucket_configuration             = var.s3_bucket_configuration
+  enable_public_access_block_on_s3 = var.enable_public_access_block_on_s3
+  kms_master_key_arn               = local.kms_arn
+  cors_hostname                    = var.website_endpoint
+  retain_on_destroy                = var.s3_retain_on_destroy
 }

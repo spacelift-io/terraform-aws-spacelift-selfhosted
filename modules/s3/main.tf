@@ -55,6 +55,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "deliveries" {
 }
 
 resource "aws_s3_bucket_public_access_block" "deliveries" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.deliveries.id
 
   block_public_acls       = true
@@ -122,6 +123,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "large_queue_messages" {
 }
 
 resource "aws_s3_bucket_public_access_block" "large_queue_messages" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.large_queue_messages.id
 
   block_public_acls       = true
@@ -168,6 +170,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "metadata" {
 }
 
 resource "aws_s3_bucket_public_access_block" "metadata" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.metadata.id
 
   block_public_acls       = true
@@ -193,6 +196,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "modules" {
 }
 
 resource "aws_s3_bucket_public_access_block" "modules" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.modules.id
 
   block_public_acls       = true
@@ -245,6 +249,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "policy_inputs" {
 }
 
 resource "aws_s3_bucket_public_access_block" "policy_inputs" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.policy_inputs.id
 
   block_public_acls       = true
@@ -298,6 +303,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "run_logs" {
 }
 
 resource "aws_s3_bucket_public_access_block" "run_logs" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.run_logs.id
 
   block_public_acls       = true
@@ -330,6 +336,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "states" {
 }
 
 resource "aws_s3_bucket_public_access_block" "states" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.states.id
 
   block_public_acls       = true
@@ -380,6 +387,7 @@ resource "aws_s3_bucket_cors_configuration" "uploads" {
 }
 
 resource "aws_s3_bucket_public_access_block" "uploads" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.uploads.id
 
   block_public_acls       = true
@@ -454,6 +462,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "user_uploads" {
 }
 
 resource "aws_s3_bucket_public_access_block" "user_uploads" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.user_uploads.id
 
   block_public_acls       = true
@@ -486,6 +495,7 @@ resource "aws_s3_bucket_versioning" "workspaces" {
 }
 
 resource "aws_s3_bucket_public_access_block" "workspaces" {
+  count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.workspaces.id
 
   block_public_acls       = true
