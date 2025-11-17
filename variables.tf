@@ -194,6 +194,20 @@ variable "rds_backup_retention_period" {
   default     = 5
 }
 
+variable "rds_performance_insights" {
+  description = "Configuration block for RDS Performance Insights."
+  type = object({
+    enabled          = optional(bool)
+    kms_key_arn      = optional(string)
+    retention_period = optional(number)
+  })
+  default = {
+    enabled          = false
+    kms_key_arn      = null
+    retention_period = null
+  }
+}
+
 variable "website_endpoint" {
   type        = string
   description = "The endpoint of the Spacelift website. Should include protocol (https://). This is being used for state uploads during Stack creations. Example: https://spacelift.mycorp.com."

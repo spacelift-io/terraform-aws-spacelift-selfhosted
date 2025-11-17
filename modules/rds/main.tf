@@ -58,12 +58,15 @@ resource "aws_rds_cluster" "db_cluster" {
 resource "aws_rds_cluster_instance" "db_instance" {
   for_each = var.instance_configuration
 
-  cluster_identifier         = aws_rds_cluster.db_cluster.id
-  identifier                 = each.value["instance_identifier"]
-  instance_class             = each.value["instance_class"]
-  engine                     = aws_rds_cluster.db_cluster.engine
-  auto_minor_version_upgrade = false
-  ca_cert_identifier         = "rds-ca-rsa2048-g1"
+  cluster_identifier                    = aws_rds_cluster.db_cluster.id
+  identifier                            = each.value["instance_identifier"]
+  instance_class                        = each.value["instance_class"]
+  engine                                = aws_rds_cluster.db_cluster.engine
+  auto_minor_version_upgrade            = false
+  ca_cert_identifier                    = "rds-ca-rsa2048-g1"
+  performance_insights_enabled          = lookup(var.performance_insights, "enabled", false)
+  performance_insights_kms_key_id       = lookup(var.performance_insights, "kms_key_arn", null)
+  performance_insights_retention_period = lookup(var.performance_insights, "retention_period", null)
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
