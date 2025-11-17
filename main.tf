@@ -93,3 +93,10 @@ module "s3" {
   cors_hostname                    = var.website_endpoint
   retain_on_destroy                = var.s3_retain_on_destroy
 }
+
+module "sqs" {
+  source = "./modules/sqs"
+  count  = var.create_sqs ? 1 : 0
+
+  kms_master_key_arn = local.kms_arn
+}

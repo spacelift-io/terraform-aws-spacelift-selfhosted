@@ -1,3 +1,9 @@
+variable "create_sqs" {
+  type        = bool
+  description = "Whether to create the SQS queues for Spacelift."
+  default     = false
+}
+
 variable "region" {
   type        = string
   description = "AWS region to deploy resources."
