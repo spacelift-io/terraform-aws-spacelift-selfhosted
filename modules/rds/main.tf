@@ -80,6 +80,10 @@ resource "aws_rds_cluster_parameter_group" "spacelift" {
   description = coalesce(var.parameter_group_description, "Spacelift core product database parameter group.")
   family      = join("", ["aurora-postgresql", substr(var.postgres_engine_version, 0, 2)])
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   parameter {
     apply_method = "immediate"
     name         = "statement_timeout"
