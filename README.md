@@ -12,9 +12,10 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v1.6.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v2.0.0"
 
-  region       = "eu-west-1"
+  region             = "eu-west-1"
+  rds_engine_version = "17.7"
 }
 ```
 
@@ -49,7 +50,8 @@ This deploys the KMS keys, network stack (VPC, subnets, security groups), RDS cl
 module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
 
-  region       = "eu-west-1"
+  region             = "eu-west-1"
+  rds_engine_version = "17.7"
 }
 ```
 
@@ -64,6 +66,7 @@ module "spacelift" {
   create_vpc             = false
   rds_subnet_ids         = ["subnet-012345abc", "subnet-012345def", "subnet-012345ghi"]
   rds_security_group_ids = ["sg-012345abc"]
+  rds_engine_version     = "17.7"
 }
 ```
 
@@ -77,6 +80,7 @@ module "spacelift" {
 
   region       = "eu-west-1"
 
+  rds_engine_version         = "17.7"
   rds_instance_configuration = {
     "primary-instance" = {
       instance_identifier = "primary"
@@ -98,7 +102,8 @@ You can customize S3 bucket names and retention policies using the `s3_bucket_co
 module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
 
-  region = "eu-west-1"
+  region             = "eu-west-1"
+  rds_engine_version = "17.7"
 
   s3_bucket_configuration = {
     run_logs = {

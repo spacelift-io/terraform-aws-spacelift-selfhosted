@@ -154,7 +154,6 @@ variable "rds_delete_protection_enabled" {
 variable "rds_engine_version" {
   type        = string
   description = "Postgres engine version."
-  default     = "16.6"
 }
 
 variable "rds_engine_mode" {
