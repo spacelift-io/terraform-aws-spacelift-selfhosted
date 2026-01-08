@@ -3,9 +3,10 @@ module "spacelift" {
 
   region = var.aws_region
 
-  create_vpc       = false
-  create_database  = false
-  website_endpoint = "https://spacelift.example.com"
+  create_vpc         = false
+  create_database    = false
+  rds_engine_version = null
+  website_endpoint   = "https://spacelift.example.com"
 
   # Setting the run logs expiration to 360 days
   s3_bucket_configuration = {

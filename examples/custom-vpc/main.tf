@@ -1,6 +1,11 @@
 resource "random_uuid" "suffix" {
 }
 
+data "aws_rds_engine_version" "pgversion" {
+  engine = "aurora-postgresql"
+  latest = true
+}
+
 module "network" {
   source = "../../modules/network"
 
@@ -29,6 +34,7 @@ module "spacelift" {
   region = var.aws_region
 
   create_vpc             = false
+  rds_engine_version     = data.aws_rds_engine_version.pgversion.version_actual
   rds_subnet_ids         = values(module.network.private_subnet_ids)
   rds_security_group_ids = [module.network.database_security_group_id]
   website_endpoint       = "https://spacelift.example.com"
