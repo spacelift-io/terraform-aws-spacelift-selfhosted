@@ -78,7 +78,8 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 }
 
 resource "aws_rds_cluster_parameter_group" "spacelift" {
-  name_prefix = coalesce(var.parameter_group_name, "spacelift-${var.suffix}")
+  name        = var.parameter_group_name
+  name_prefix = var.parameter_group_name == null ? "spacelift-${var.suffix}" : null
   description = coalesce(var.parameter_group_description, "Spacelift core product database parameter group.")
   family      = join("", ["aurora-postgresql", substr(var.postgres_engine_version, 0, 2)])
 

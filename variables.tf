@@ -113,7 +113,7 @@ variable "rds_subnet_group_name" {
 
 variable "rds_parameter_group_name" {
   type        = string
-  description = "Name of the RDS parameter group. If not provided, a name will be generated."
+  description = "Name of the RDS parameter group. The use of this parameter is discouraged, as `name_prefix` is preferred due to the way RDS handles major version upgrades."
   default     = null
 }
 
