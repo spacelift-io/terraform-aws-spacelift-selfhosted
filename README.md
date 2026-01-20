@@ -40,6 +40,8 @@ This module creates:
 
 It is highly configurable, so if you wish to use your own KMS key, VPC, RDS cluster etc., you can do so by providing the necessary parameters.
 
+For guidance on upgrading your Aurora PostgreSQL database, see the [RDS Upgrade Guide](docs/rds-upgrade-guide.md).
+
 ### Examples
 
 #### Default

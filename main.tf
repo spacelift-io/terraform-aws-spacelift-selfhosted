@@ -75,6 +75,7 @@ module "rds" {
   db_delete_protection_enabled = var.rds_delete_protection_enabled
   backup_retention_period      = var.rds_backup_retention_period
   preferred_backup_window      = var.rds_preferred_backup_window
+  apply_immediately            = var.rds_apply_immediately
 
   subnet_ids         = length(coalesce(var.rds_subnet_ids, [])) > 0 ? var.rds_subnet_ids : values(module.network[0].private_subnet_ids)
   security_group_ids = length(coalesce(var.rds_security_group_ids, [])) > 0 ? var.rds_security_group_ids : [module.network[0].database_security_group_id]

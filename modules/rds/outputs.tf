@@ -49,3 +49,8 @@ output "secrets_manager_database_connection_string_version_id" {
   description = "Version ID of the Secrets Manager secret for the database connection string."
   value       = aws_secretsmanager_secret_version.conn_string.version_id
 }
+
+output "engine_version_actual" {
+  description = "Running engine version of the RDS cluster."
+  value       = aws_rds_cluster.db_cluster.engine_version_actual
+}
