@@ -21,9 +21,10 @@ resource "aws_rds_cluster" "db_cluster" {
   cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
   database_name      = local.database_name
 
-  engine         = "aurora-postgresql"
-  engine_mode    = var.engine_mode
-  engine_version = var.postgres_engine_version
+  engine                      = "aurora-postgresql"
+  engine_mode                 = var.engine_mode
+  engine_version              = var.postgres_engine_version
+  allow_major_version_upgrade = true
 
   dynamic "serverlessv2_scaling_configuration" {
     for_each = var.serverlessv2_scaling_configuration != null ? [1] : []
@@ -76,7 +77,7 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 }
 
 resource "aws_rds_cluster_parameter_group" "spacelift" {
-  name        = coalesce(var.parameter_group_name, "spacelift-${var.suffix}")
+  name_prefix = coalesce(var.parameter_group_name, "spacelift-${var.suffix}")
   description = coalesce(var.parameter_group_description, "Spacelift core product database parameter group.")
   family      = join("", ["aurora-postgresql", substr(var.postgres_engine_version, 0, 2)])
 
