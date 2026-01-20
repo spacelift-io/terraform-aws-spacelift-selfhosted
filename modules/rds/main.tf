@@ -25,6 +25,7 @@ resource "aws_rds_cluster" "db_cluster" {
   engine_mode                 = var.engine_mode
   engine_version              = var.postgres_engine_version
   allow_major_version_upgrade = true
+  apply_immediately           = var.apply_immediately
 
   dynamic "serverlessv2_scaling_configuration" {
     for_each = var.serverlessv2_scaling_configuration != null ? [1] : []
