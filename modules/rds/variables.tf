@@ -119,5 +119,4 @@ variable "performance_insights" {
 variable "apply_immediately" {
   type        = bool
   description = "Whether to apply cluster modifications immediately or during the next maintenance window."
-  default     = false
 }

@@ -216,7 +216,7 @@ variable "rds_performance_insights" {
 variable "rds_apply_immediately" {
   type        = bool
   description = "Whether to apply RDS cluster modifications immediately or during the next maintenance window. Recommended to set to true to avoid unexpected changes during maintenance windows."
-  default     = false
+  default     = true
 }
 
 variable "website_endpoint" {

@@ -93,6 +93,11 @@ output "rds_cluster_reader_endpoint" {
   value       = var.create_database ? module.rds[0].reader_endpoint : null
 }
 
+output "rds_engine_version_actual" {
+  description = "Running engine version of the RDS cluster. Will be null if create_database is false."
+  value       = var.create_database ? module.rds[0].engine_version_actual : null
+}
+
 output "rds_username" {
   description = "Username for the RDS database."
   value       = var.rds_username
