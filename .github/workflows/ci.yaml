@@ -9,7 +9,7 @@ jobs:
     name: Lint 👷
     steps:
       - name: Check out source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup OpenTofu
         uses: opentofu/setup-opentofu@v1
