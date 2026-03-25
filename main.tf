@@ -100,4 +100,6 @@ module "sqs" {
   count  = var.create_sqs ? 1 : 0
 
   kms_master_key_arn = local.kms_arn
+  mqtt_broker_type   = var.mqtt_broker_type
+  region             = var.region
 }
