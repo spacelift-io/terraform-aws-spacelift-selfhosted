@@ -1,9 +1,3 @@
-variable "create_sqs" {
-  type        = bool
-  description = "Whether to create the SQS queues for Spacelift."
-  default     = false
-}
-
 variable "region" {
   type        = string
   description = "AWS region to deploy resources."
@@ -13,6 +7,23 @@ variable "unique_suffix" {
   type        = string
   description = "A unique suffix to append to resource names. Ideally passed from the terraform-aws-spacelift-selfhosted module's outputs."
   default     = ""
+}
+
+variable "create_sqs" {
+  type        = bool
+  description = "Whether to create the SQS queues for Spacelift."
+  default     = false
+}
+
+variable "mqtt_broker_type" {
+  type        = string
+  description = "The type of MQTT broker to use. Can be 'builtin' for the embedded MQTT server, or 'iotcore' for AWS IoT Core."
+  default     = ""
+
+  validation {
+    condition     = contains(["", "builtin", "iotcore"], var.mqtt_broker_type)
+    error_message = "mqtt_broker_type must be either 'builtin' or 'iotcore'."
+  }
 }
 
 variable "kms_arn" {
