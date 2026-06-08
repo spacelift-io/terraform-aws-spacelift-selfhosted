@@ -12,10 +12,10 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v2.0.0"
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v2.3.0"
 
   region             = "eu-west-1"
-  rds_engine_version = "17.7"
+  rds_engine_version = "18.3"
 }
 ```
 
@@ -53,7 +53,7 @@ module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
 
   region             = "eu-west-1"
-  rds_engine_version = "17.7"
+  rds_engine_version = "18.3"
 }
 ```
 
@@ -68,7 +68,7 @@ module "spacelift" {
   create_vpc             = false
   rds_subnet_ids         = ["subnet-012345abc", "subnet-012345def", "subnet-012345ghi"]
   rds_security_group_ids = ["sg-012345abc"]
-  rds_engine_version     = "17.7"
+  rds_engine_version     = "18.3"
 }
 ```
 
@@ -82,7 +82,7 @@ module "spacelift" {
 
   region       = "eu-west-1"
 
-  rds_engine_version         = "17.7"
+  rds_engine_version         = "18.3"
   rds_instance_configuration = {
     "primary-instance" = {
       instance_identifier = "primary"
@@ -105,7 +105,7 @@ module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
 
   region             = "eu-west-1"
-  rds_engine_version = "17.7"
+  rds_engine_version = "18.3"
 
   s3_bucket_configuration = {
     run_logs = {
@@ -126,6 +126,24 @@ module "spacelift" {
   }
 }
 ```
+
+### Enable the RDS Data API
+
+Set `rds_enable_http_endpoint` to `true` to turn on the [Data API](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html) for the cluster. This unlocks the query editor in the RDS console, so you can run SQL against the database straight from the browser. No bastion host, VPN, or local client needed, which is handy for quick inspections and debugging.
+
+```hcl
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+
+  region             = "eu-west-1"
+  rds_engine_version = "18.3"
+
+  rds_enable_http_endpoint = true
+}
+```
+
+> [!NOTE]
+> The Data API is only available for Aurora Serverless v2 and provisioned clusters in [supported regions](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html#data-api.regions).
 
 ## 🚀 Release
 

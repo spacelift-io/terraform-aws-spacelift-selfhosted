@@ -230,6 +230,12 @@ variable "rds_apply_immediately" {
   default     = true
 }
 
+variable "rds_enable_http_endpoint" {
+  type        = bool
+  description = "Whether to enable the Data API (HTTP endpoint) for the RDS cluster. This also unlocks the query editor in the RDS console, letting you run SQL against the database without a bastion or local client. Only available for Aurora Serverless v2 and provisioned clusters in supported regions, see https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html#data-api.regions for the list."
+  default     = null
+}
+
 variable "website_endpoint" {
   type        = string
   description = "The endpoint of the Spacelift website. Should include protocol (https://). This is being used for state uploads during Stack creations. Example: https://spacelift.mycorp.com."

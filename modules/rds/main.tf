@@ -55,6 +55,7 @@ resource "aws_rds_cluster" "db_cluster" {
   port                                = 5432
   vpc_security_group_ids              = var.security_group_ids
   iam_database_authentication_enabled = true
+  enable_http_endpoint                = var.enable_http_endpoint
 }
 
 resource "aws_rds_cluster_instance" "db_instance" {
