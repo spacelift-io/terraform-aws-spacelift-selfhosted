@@ -252,7 +252,6 @@ variable "security_group_names" {
     database    = string
     server      = string
     drain       = string
-    scheduler   = string
     vcs_gateway = string
   })
   description = "The names of the security groups to create."

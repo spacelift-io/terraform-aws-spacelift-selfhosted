@@ -28,11 +28,6 @@ output "drain_security_group_id" {
   description = "ID of the security group for the Spacelift async-processing service. It will be null if create_vpc is false."
 }
 
-output "scheduler_security_group_id" {
-  value       = var.create_vpc ? module.network[0].scheduler_security_group_id : null
-  description = "ID of the security group for the Spacelift scheduler service. It will be null if create_vpc is false."
-}
-
 output "vcs_gateway_security_group_id" {
   value       = var.create_vcs_gateway ? module.network[0].vcs_gateway_security_group_id : null
   description = "ID of the security group for the Spacelift VCS gateway service. It will be null if create_vcs_gateway is false."
@@ -328,7 +323,6 @@ output "tfvars" {
       vpc_id : var.create_vpc ? module.network[0].vpc_id : ""
       server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : ""
       drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : ""
-      scheduler_security_group_id : var.create_vpc ? module.network[0].scheduler_security_group_id : ""
       backend_image : module.ecr.ecr_backend_repository_url
       launcher_image : module.ecr.ecr_launcher_repository_url
       database_url : local.database_url

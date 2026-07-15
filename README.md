@@ -2,6 +2,13 @@
 
 This module creates a base infrastructure for a self-hosted Spacelift instance on AWS.
 
+> [!IMPORTANT]
+> **Breaking change in v3.0.0 - scheduler security group removed:** the standalone
+> scheduler service is gone (the cron scheduler runs inside the drain, always from
+> Self-Hosted v6.4.0), so the module no longer creates the scheduler security
+> group. Removed output: `scheduler_security_group_id`; the `security_group_names`
+> object no longer accepts a `scheduler` key.
+
 ## State storage
 
 Check out the [Terraform](https://developer.hashicorp.com/terraform/language/backend) or the [OpenTofu](https://opentofu.org/docs/language/settings/backends/configuration/) backend documentation for more information on how to configure the state storage.
@@ -28,7 +35,7 @@ This module creates:
 - Network resources
   - A VPC, 3 subnets and 3 security groups
 - Container repositories (ECR)
-  - a repository for the backend image (used by `server`, `drain` and `scheduler` services)
+  - a repository for the backend image (used by the `server` and `drain` services)
   - another repository for the launcher image
 - Database resources
   - a regional Aurora cluster
