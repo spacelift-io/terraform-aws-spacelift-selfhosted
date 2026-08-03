@@ -6,8 +6,7 @@ This module creates a base infrastructure for a self-hosted Spacelift instance o
 > **Breaking change in v3.0.0 - scheduler security group removed:** the standalone
 > scheduler service is gone (the cron scheduler runs inside the drain, always from
 > Self-Hosted v6.4.0), so the module no longer creates the scheduler security
-> group. Removed output: `scheduler_security_group_id`; the `security_group_names`
-> object no longer accepts a `scheduler` key.
+> group.
 
 ## State storage
 
