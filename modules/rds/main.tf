@@ -21,6 +21,11 @@ resource "aws_rds_cluster" "db_cluster" {
   cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
   database_name      = local.database_name
 
+  # When restoring from a snapshot, the master username comes from the snapshot
+  # and must match var.db_username, otherwise the generated connection strings
+  # won't work. The master password is reset to the generated one after restore.
+  snapshot_identifier = var.snapshot_identifier
+
   engine                      = "aurora-postgresql"
   engine_mode                 = var.engine_mode
   engine_version              = var.postgres_engine_version

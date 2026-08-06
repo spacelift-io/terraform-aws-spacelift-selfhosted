@@ -18,6 +18,11 @@ variable "password_sm_arn" {
   description = "Arn or the name of the SecretsManager secret that holds the database password."
 }
 
+variable "snapshot_identifier" {
+  type        = string
+  description = "ARN or name of a DB cluster snapshot to restore the cluster from. If null, a new empty database is created."
+}
+
 variable "instance_configuration" {
   type = map(object({
     instance_identifier = string

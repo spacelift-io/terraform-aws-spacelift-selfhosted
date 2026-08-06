@@ -140,6 +140,12 @@ variable "rds_password_sm_arn" {
   default     = null
 }
 
+variable "rds_snapshot_identifier" {
+  type        = string
+  description = "ARN or name of a DB cluster snapshot to restore the database from. If null (the default), a new empty database is created. Note that the master username of a restored cluster comes from the snapshot, so rds_username must match the snapshot's master username for the generated connection strings to work. Setting or changing this value on an existing cluster replaces it, and the old cluster is deleted without a final snapshot - take a manual snapshot first. Removing the value after the restore does not force a replacement."
+  default     = null
+}
+
 variable "rds_serverlessv2_scaling_configuration" {
   type = object({
     max_capacity : number
