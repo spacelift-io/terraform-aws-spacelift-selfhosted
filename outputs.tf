@@ -68,6 +68,16 @@ output "vpc_id" {
   description = "ID of the VPC. It will be null if create_vpc is false."
 }
 
+output "nat_gateway_public_ips" {
+  value       = var.create_vpc ? module.network[0].nat_gateway_public_ips : null
+  description = "Public IP addresses of the NAT gateways, which are the source addresses of all outbound traffic from the private subnets. Useful for allowlisting the installation on VCS providers or other firewalls. They will be null if create_vpc is false."
+}
+
+output "nat_gateway_ids" {
+  value       = var.create_vpc ? module.network[0].nat_gateway_ids : null
+  description = "IDs of the NAT gateways. They will be null if create_vpc is false."
+}
+
 output "rds_cluster_identifier" {
   description = "Name of the RDS cluster."
   value       = var.create_database ? module.rds[0].cluster_identifier : null

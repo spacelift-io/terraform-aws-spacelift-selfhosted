@@ -19,6 +19,16 @@ output "public_subnet_ids" {
   )
 }
 
+output "nat_gateway_public_ips" {
+  description = "The public IP addresses of the NAT gateways, which are the source addresses of all outbound traffic from the private subnets"
+  value       = aws_eip.eips[*].public_ip
+}
+
+output "nat_gateway_ids" {
+  description = "The IDs of the NAT gateways"
+  value       = aws_nat_gateway.nat_gateways[*].id
+}
+
 output "database_security_group_id" {
   description = "The ID of the security group for the Spacelift database. Will be null if create_database is false."
   value       = var.create_database ? aws_security_group.database_sg[0].id : null
