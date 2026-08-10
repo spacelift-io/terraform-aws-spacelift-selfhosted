@@ -8,7 +8,10 @@ module "spacelift" {
   rds_engine_version = null
   website_endpoint   = "https://spacelift.example.com"
 
-  # Setting the run logs expiration to 360 days
+  # Setting the run logs expiration to 360 days, and keeping noncurrent versions
+  # of expired or overwritten objects for 14 days instead of the default 7
+  s3_noncurrent_version_expiration_days = 14
+
   s3_bucket_configuration = {
     run_logs = {
       name            = null

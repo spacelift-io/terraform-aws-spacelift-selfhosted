@@ -34,6 +34,11 @@ variable "bucket_configuration" {
   })
 }
 
+variable "noncurrent_version_expiration_days" {
+  type        = number
+  description = "Number of days to keep noncurrent object versions on the versioned buckets that expire objects."
+}
+
 variable "enable_public_access_block_on_s3" {
   type        = bool
   description = "Whether to enable the public access block on the bucket."

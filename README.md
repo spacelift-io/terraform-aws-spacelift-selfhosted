@@ -107,6 +107,11 @@ module "spacelift" {
   region             = "eu-west-1"
   rds_engine_version = "18.3"
 
+  # The buckets that expire objects have versioning enabled, so expiring the current
+  # version only writes a delete marker and the data lives on as a noncurrent version.
+  # Noncurrent versions are expired separately, after 7 days by default.
+  s3_noncurrent_version_expiration_days = 14
+
   s3_bucket_configuration = {
     run_logs = {
       name            = null  # Use default name
@@ -126,6 +131,8 @@ module "spacelift" {
   }
 }
 ```
+
+`s3_noncurrent_version_expiration_days` applies to the `policy`, `run_logs`, `uploads`, `user_uploads` and `workspace` buckets, which are the buckets that have both versioning and object expiration enabled. The remaining buckets either keep their versions deliberately (`binaries`, `modules`, `states`) or are not versioned (`deliveries`, `large_queue`, `metadata`).
 
 ### Enable the RDS Data API
 

@@ -226,6 +226,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "policy_inputs" {
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
+    noncurrent_version_expiration {
+      noncurrent_days = var.noncurrent_version_expiration_days
+    }
 
     filter {
       prefix = ""
@@ -290,6 +293,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "run_logs" {
 
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
+    }
+    noncurrent_version_expiration {
+      noncurrent_days = var.noncurrent_version_expiration_days
     }
 
     filter {
@@ -406,6 +412,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
     }
+    noncurrent_version_expiration {
+      noncurrent_days = var.noncurrent_version_expiration_days
+    }
 
     filter {
       prefix = ""
@@ -449,6 +458,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "user_uploads" {
 
     abort_incomplete_multipart_upload {
       days_after_initiation = 2
+    }
+    noncurrent_version_expiration {
+      noncurrent_days = var.noncurrent_version_expiration_days
     }
 
     filter {
@@ -515,7 +527,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "workspaces" {
       days_after_initiation = 2
     }
     noncurrent_version_expiration {
-      noncurrent_days = 1
+      noncurrent_days = var.noncurrent_version_expiration_days
     }
 
     filter {

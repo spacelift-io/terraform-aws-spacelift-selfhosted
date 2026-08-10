@@ -283,6 +283,12 @@ variable "s3_bucket_configuration" {
   default     = null
 }
 
+variable "s3_noncurrent_version_expiration_days" {
+  type        = number
+  description = "Number of days to keep noncurrent object versions on the versioned buckets that expire objects (policy, run logs, uploads, user uploads and workspace). Versioning turns an expired or overwritten object into a noncurrent version, which is only deleted by this rule."
+  default     = 7
+}
+
 variable "enable_public_access_block_on_s3" {
   type        = bool
   description = "Whether to enable the public access block on the bucket."
