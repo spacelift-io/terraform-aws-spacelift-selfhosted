@@ -3,6 +3,7 @@ resource "aws_sqs_queue" "deadletter" {
   name                       = "spacelift-dlq"
   kms_master_key_id          = var.kms_master_key_arn
   visibility_timeout_seconds = 300
+  region                     = var.region
 }
 
 resource "aws_sqs_queue" "deadletter_fifo" {
@@ -10,6 +11,7 @@ resource "aws_sqs_queue" "deadletter_fifo" {
   fifo_queue                 = true
   kms_master_key_id          = var.kms_master_key_arn
   visibility_timeout_seconds = 300
+  region                     = var.region
 }
 
 # Async Jobs Queue
@@ -18,6 +20,7 @@ resource "aws_sqs_queue" "async_jobs" {
   kms_master_key_id          = var.kms_master_key_arn
   receive_wait_time_seconds  = 20
   visibility_timeout_seconds = 300
+  region                     = var.region
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.deadletter.arn
@@ -34,6 +37,7 @@ resource "aws_sqs_queue" "async_jobs_fifo" {
   kms_master_key_id          = var.kms_master_key_arn
   receive_wait_time_seconds  = 20
   visibility_timeout_seconds = 300
+  region                     = var.region
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.deadletter_fifo.arn
@@ -48,6 +52,7 @@ resource "aws_sqs_queue" "cronjobs" {
   receive_wait_time_seconds  = 20
   visibility_timeout_seconds = 300
   message_retention_seconds  = 3600
+  region                     = var.region
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.deadletter.arn
@@ -61,6 +66,7 @@ resource "aws_sqs_queue" "events_inbox" {
   kms_master_key_id          = var.kms_master_key_arn
   receive_wait_time_seconds  = 20
   visibility_timeout_seconds = 300
+  region                     = var.region
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.deadletter.arn
@@ -74,6 +80,7 @@ resource "aws_sqs_queue" "iot" {
   kms_master_key_id          = var.kms_master_key_arn
   receive_wait_time_seconds  = 20
   visibility_timeout_seconds = 45
+  region                     = var.region
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.deadletter.arn
@@ -87,6 +94,7 @@ resource "aws_sqs_queue" "webhooks" {
   kms_master_key_id          = var.kms_master_key_arn
   receive_wait_time_seconds  = 20
   visibility_timeout_seconds = 600
+  region                     = var.region
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.deadletter.arn

@@ -27,3 +27,9 @@ variable "launcher_repository_name" {
   type        = string
   description = "Name of the launcher ECR repository."
 }
+
+variable "region" {
+  type        = string
+  description = "AWS region to deploy resources in."
+}
+

@@ -9,6 +9,8 @@ data "aws_rds_engine_version" "pgversion" {
 module "network" {
   source = "../../modules/network"
 
+  region = var.aws_region
+
   suffix               = lower(substr(random_uuid.suffix.id, 0, 5))
   create_database      = true
   create_vcs_gateway   = true

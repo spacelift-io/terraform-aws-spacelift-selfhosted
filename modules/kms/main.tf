@@ -3,6 +3,10 @@ resource "aws_kms_key" "kms_master_key" {
   multi_region        = var.master_key_multi_regional
   enable_key_rotation = true
 
+  # Official documentation specifies that this is where the KMS key is
+  # managed, not the only region it works in. It can still be an MRK.
+  region = var.region
+
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -23,6 +27,10 @@ resource "aws_kms_key" "encryption_key" {
   description         = "Spacelift KMS key used for in-app encryption"
   multi_region        = var.encryption_key_multi_regional
   enable_key_rotation = true
+
+  # Official documentation specifies that this is where the KMS key is
+  # managed, not the only region it works in. It can still be an MRK.
+  region = var.region
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -45,6 +53,10 @@ resource "aws_kms_key" "jwt_key" {
   key_usage                = "SIGN_VERIFY"
   customer_master_key_spec = "RSA_4096"
   multi_region             = var.jwt_key_multi_regional
+
+  # Official documentation specifies that this is where the KMS key is
+  # managed, not the only region it works in. It can still be an MRK.
+  region = var.region
 
   policy = jsonencode({
     Version = "2012-10-17"

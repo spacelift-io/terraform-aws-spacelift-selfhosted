@@ -5,7 +5,9 @@ locals {
   password            = var.password_sm_arn != null ? local.db_password_from_sm : random_id.db_pw.b64_url
 }
 
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+  region = var.region
+}
 
 resource "random_id" "db_pw" {
   byte_length = 24
@@ -14,6 +16,7 @@ resource "random_id" "db_pw" {
 data "aws_secretsmanager_secret_version" "db_pw" {
   count = var.password_sm_arn != null ? 1 : 0
 
+  region    = var.region
   secret_id = var.password_sm_arn
 }
 
@@ -25,6 +28,8 @@ resource "aws_rds_cluster" "db_cluster" {
   # and must match var.db_username, otherwise the generated connection strings
   # won't work. The master password is reset to the generated one after restore.
   snapshot_identifier = var.snapshot_identifier
+
+  region = var.region
 
   engine                      = "aurora-postgresql"
   engine_mode                 = var.engine_mode
@@ -66,6 +71,8 @@ resource "aws_rds_cluster" "db_cluster" {
 resource "aws_rds_cluster_instance" "db_instance" {
   for_each = var.instance_configuration
 
+  region = var.region
+
   cluster_identifier                    = aws_rds_cluster.db_cluster.id
   identifier                            = each.value["instance_identifier"]
   instance_class                        = each.value["instance_class"]
@@ -81,6 +88,8 @@ resource "aws_db_subnet_group" "db_subnet_group" {
   name        = coalesce(var.subnet_group_name, "spacelift-${var.suffix}")
   description = "Joins the Spacelift database to the private subnets"
   subnet_ids  = var.subnet_ids
+
+  region = var.region
 }
 
 resource "aws_rds_cluster_parameter_group" "spacelift" {
@@ -88,6 +97,8 @@ resource "aws_rds_cluster_parameter_group" "spacelift" {
   name_prefix = var.parameter_group_name == null ? "spacelift-${var.suffix}" : null
   description = coalesce(var.parameter_group_description, "Spacelift core product database parameter group.")
   family      = join("", ["aurora-postgresql", substr(var.postgres_engine_version, 0, 2)])
+
+  region = var.region
 
   lifecycle {
     create_before_destroy = true
@@ -104,6 +115,8 @@ resource "aws_secretsmanager_secret" "conn_string" {
   name                    = "spacelift/db-conn-string-${var.suffix}"
   description             = "Spacelift database connection string"
   recovery_window_in_days = 0
+
+  region = var.region
 }
 
 resource "aws_secretsmanager_secret_version" "conn_string" {
@@ -112,4 +125,6 @@ resource "aws_secretsmanager_secret_version" "conn_string" {
     DATABASE_URL           = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
     DATABASE_READ_ONLY_URL = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
   })
+
+  region = var.region
 }

@@ -1,5 +1,6 @@
 resource "aws_eip" "eips" {
-  count = 3
+  count  = 3
+  region = var.region
 
   tags = {
     Name = "Spacelift NAT Gateway IP (${var.suffix} - ${count.index})"
@@ -7,7 +8,8 @@ resource "aws_eip" "eips" {
 }
 
 resource "aws_nat_gateway" "nat_gateways" {
-  count = 3
+  count  = 3
+  region = var.region
 
   allocation_id = element(aws_eip.eips.*.id, count.index)
   subnet_id     = element(aws_subnet.public_subnets.*.id, count.index)
@@ -18,7 +20,8 @@ resource "aws_nat_gateway" "nat_gateways" {
 }
 
 resource "aws_route_table" "nat_gateway" {
-  count = 3
+  count  = 3
+  region = var.region
 
   vpc_id = aws_vpc.spacelift_vpc.id
 
@@ -35,7 +38,8 @@ resource "aws_route_table" "nat_gateway" {
 }
 
 resource "aws_route_table_association" "nat_gateway" {
-  count = 3
+  count  = 3
+  region = var.region
 
   subnet_id      = element(aws_subnet.private_subnets.*.id, count.index)
   route_table_id = element(aws_route_table.nat_gateway.*.id, count.index)

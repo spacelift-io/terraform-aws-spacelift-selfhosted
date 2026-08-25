@@ -52,3 +52,9 @@ variable "security_group_names" {
   })
   description = "The names of the security groups to create."
 }
+
+variable "region" {
+  type        = string
+  description = "AWS region to deploy resources in."
+}
+

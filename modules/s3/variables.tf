@@ -43,3 +43,9 @@ variable "enable_public_access_block_on_s3" {
   type        = bool
   description = "Whether to enable the public access block on the bucket."
 }
+
+variable "region" {
+  type        = string
+  description = "AWS region to deploy resources in."
+}
+

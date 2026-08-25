@@ -3,12 +3,16 @@ locals {
   public_cidr_block  = cidrsubnet(var.vpc_cidr_block, 2, 1)
 }
 
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+  region = var.region
+}
 
 resource "aws_vpc" "spacelift_vpc" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = var.enable_dns_hostnames
   enable_dns_support   = true
+
+  region = var.region
 
   tags = {
     Name = "Spacelift VPC (${var.suffix})"
@@ -17,6 +21,8 @@ resource "aws_vpc" "spacelift_vpc" {
 
 resource "aws_subnet" "private_subnets" {
   count = length(var.private_subnet_cidr_blocks) > 0 ? length(var.private_subnet_cidr_blocks) : 3
+
+  region = var.region
 
   vpc_id                  = aws_vpc.spacelift_vpc.id
   cidr_block              = length(var.private_subnet_cidr_blocks) > 0 ? var.private_subnet_cidr_blocks[count.index] : cidrsubnet(local.private_cidr_block, 2, count.index)
@@ -30,6 +36,8 @@ resource "aws_subnet" "private_subnets" {
 
 resource "aws_subnet" "public_subnets" {
   count = length(var.public_subnet_cidr_blocks) > 0 ? length(var.public_subnet_cidr_blocks) : 3
+
+  region = var.region
 
   vpc_id                  = aws_vpc.spacelift_vpc.id
   cidr_block              = length(var.public_subnet_cidr_blocks) > 0 ? var.public_subnet_cidr_blocks[count.index] : cidrsubnet(local.public_cidr_block, 2, count.index)

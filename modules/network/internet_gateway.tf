@@ -1,5 +1,6 @@
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.spacelift_vpc.id
+  region = var.region
 
   tags = {
     Name = "Spacelift Internet Gateway (${var.suffix})"
@@ -8,6 +9,7 @@ resource "aws_internet_gateway" "main" {
 
 resource "aws_route_table" "internet_gateway" {
   vpc_id = aws_vpc.spacelift_vpc.id
+  region = var.region
 
   route {
     cidr_block = "0.0.0.0/0"
@@ -21,6 +23,8 @@ resource "aws_route_table" "internet_gateway" {
 
 resource "aws_route_table_association" "internet_gateway" {
   count = 3
+
+  region = var.region
 
   route_table_id = aws_route_table.internet_gateway.id
   subnet_id      = element(aws_subnet.public_subnets.*.id, count.index)

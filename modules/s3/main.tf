@@ -29,6 +29,8 @@ locals {
 resource "aws_s3_bucket" "binaries" {
   bucket        = local.bucket_names["binaries"]
   force_destroy = !var.retain_on_destroy
+
+  region = var.region
 }
 
 resource "aws_s3_bucket_versioning" "binaries" {
@@ -36,15 +38,19 @@ resource "aws_s3_bucket_versioning" "binaries" {
   versioning_configuration {
     status = "Enabled"
   }
+
+  region = var.region
 }
 
 resource "aws_s3_bucket" "deliveries" {
   bucket        = local.bucket_names["deliveries"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "deliveries" {
   bucket = aws_s3_bucket.deliveries.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -57,6 +63,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "deliveries" {
 resource "aws_s3_bucket_public_access_block" "deliveries" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.deliveries.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -66,6 +73,7 @@ resource "aws_s3_bucket_public_access_block" "deliveries" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "deliveries" {
   bucket = aws_s3_bucket.deliveries.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -88,10 +96,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "deliveries" {
 resource "aws_s3_bucket" "large_queue_messages" {
   bucket        = local.bucket_names["large-queue"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "large_queue_messages" {
   bucket = aws_s3_bucket.large_queue_messages.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -103,6 +113,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "large_queue_messa
 
 resource "aws_s3_bucket_lifecycle_configuration" "large_queue_messages" {
   bucket = aws_s3_bucket.large_queue_messages.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -125,6 +136,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "large_queue_messages" {
 resource "aws_s3_bucket_public_access_block" "large_queue_messages" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.large_queue_messages.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -135,10 +147,12 @@ resource "aws_s3_bucket_public_access_block" "large_queue_messages" {
 resource "aws_s3_bucket" "metadata" {
   bucket        = local.bucket_names["metadata"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "metadata" {
   bucket = aws_s3_bucket.metadata.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -150,6 +164,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "metadata" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "metadata" {
   bucket = aws_s3_bucket.metadata.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -172,6 +187,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "metadata" {
 resource "aws_s3_bucket_public_access_block" "metadata" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.metadata.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -182,10 +198,12 @@ resource "aws_s3_bucket_public_access_block" "metadata" {
 resource "aws_s3_bucket" "modules" {
   bucket        = local.bucket_names["modules"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "modules" {
   bucket = aws_s3_bucket.modules.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -198,6 +216,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "modules" {
 resource "aws_s3_bucket_public_access_block" "modules" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.modules.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -207,6 +226,7 @@ resource "aws_s3_bucket_public_access_block" "modules" {
 
 resource "aws_s3_bucket_versioning" "modules" {
   bucket = aws_s3_bucket.modules.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
@@ -215,10 +235,12 @@ resource "aws_s3_bucket_versioning" "modules" {
 resource "aws_s3_bucket" "policy_inputs" {
   bucket        = local.bucket_names["policy"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "policy_inputs" {
   bucket = aws_s3_bucket.policy_inputs.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -242,6 +264,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "policy_inputs" {
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "policy_inputs" {
   bucket = aws_s3_bucket.policy_inputs.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -254,6 +277,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "policy_inputs" {
 resource "aws_s3_bucket_public_access_block" "policy_inputs" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.policy_inputs.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -263,6 +287,7 @@ resource "aws_s3_bucket_public_access_block" "policy_inputs" {
 
 resource "aws_s3_bucket_versioning" "policy_inputs" {
   bucket = aws_s3_bucket.policy_inputs.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
@@ -271,10 +296,12 @@ resource "aws_s3_bucket_versioning" "policy_inputs" {
 resource "aws_s3_bucket" "run_logs" {
   bucket        = local.bucket_names["run-logs"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "run_logs" {
   bucket = aws_s3_bucket.run_logs.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -286,6 +313,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "run_logs" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "run_logs" {
   bucket = aws_s3_bucket.run_logs.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -311,6 +339,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "run_logs" {
 resource "aws_s3_bucket_public_access_block" "run_logs" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.run_logs.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -320,6 +349,7 @@ resource "aws_s3_bucket_public_access_block" "run_logs" {
 
 resource "aws_s3_bucket_versioning" "run_logs" {
   bucket = aws_s3_bucket.run_logs.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
@@ -327,11 +357,13 @@ resource "aws_s3_bucket_versioning" "run_logs" {
 
 resource "aws_s3_bucket" "states" {
   bucket        = local.bucket_names["states"]
+  region        = var.region
   force_destroy = !var.retain_on_destroy
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "states" {
   bucket = aws_s3_bucket.states.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -344,6 +376,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "states" {
 resource "aws_s3_bucket_public_access_block" "states" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.states.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -353,6 +386,7 @@ resource "aws_s3_bucket_public_access_block" "states" {
 
 resource "aws_s3_bucket_versioning" "states" {
   bucket = aws_s3_bucket.states.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
@@ -361,10 +395,12 @@ resource "aws_s3_bucket_versioning" "states" {
 resource "aws_s3_bucket" "uploads" {
   bucket        = local.bucket_names["uploads"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "uploads" {
   bucket = aws_s3_bucket.uploads.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -376,6 +412,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "uploads" {
 
 resource "aws_s3_bucket_versioning" "uploads" {
   bucket = aws_s3_bucket.uploads.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
@@ -384,6 +421,7 @@ resource "aws_s3_bucket_versioning" "uploads" {
 resource "aws_s3_bucket_cors_configuration" "uploads" {
   count  = length(var.cors_hostname) > 0 ? 1 : 0
   bucket = aws_s3_bucket.uploads.id
+  region = var.region
 
   cors_rule {
     allowed_methods = ["PUT", "POST"]
@@ -395,6 +433,7 @@ resource "aws_s3_bucket_cors_configuration" "uploads" {
 resource "aws_s3_bucket_public_access_block" "uploads" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.uploads.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -404,6 +443,7 @@ resource "aws_s3_bucket_public_access_block" "uploads" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
   bucket = aws_s3_bucket.uploads.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -429,10 +469,12 @@ resource "aws_s3_bucket_lifecycle_configuration" "uploads" {
 resource "aws_s3_bucket" "user_uploads" {
   bucket        = local.bucket_names["user-uploads"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "user_uploads" {
   bucket = aws_s3_bucket.user_uploads.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -444,6 +486,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "user_uploads" {
 
 resource "aws_s3_bucket_versioning" "user_uploads" {
   bucket = aws_s3_bucket.user_uploads.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
@@ -451,6 +494,7 @@ resource "aws_s3_bucket_versioning" "user_uploads" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "user_uploads" {
   bucket = aws_s3_bucket.user_uploads.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -476,6 +520,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "user_uploads" {
 resource "aws_s3_bucket_public_access_block" "user_uploads" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.user_uploads.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -486,10 +531,12 @@ resource "aws_s3_bucket_public_access_block" "user_uploads" {
 resource "aws_s3_bucket" "workspaces" {
   bucket        = local.bucket_names["workspace"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "workspaces" {
   bucket = aws_s3_bucket.workspaces.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -501,6 +548,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "workspaces" {
 
 resource "aws_s3_bucket_versioning" "workspaces" {
   bucket = aws_s3_bucket.workspaces.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
@@ -509,6 +557,7 @@ resource "aws_s3_bucket_versioning" "workspaces" {
 resource "aws_s3_bucket_public_access_block" "workspaces" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.workspaces.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -518,6 +567,7 @@ resource "aws_s3_bucket_public_access_block" "workspaces" {
 
 resource "aws_s3_bucket_lifecycle_configuration" "workspaces" {
   bucket = aws_s3_bucket.workspaces.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"

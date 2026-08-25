@@ -25,6 +25,7 @@ module "kms" {
 module "ecr" {
   source = "./modules/ecr"
 
+  region                     = var.region
   kms_key_arn                = local.kms_arn
   suffix                     = local.suffix
   number_of_images_to_retain = var.number_of_images_to_retain
@@ -37,6 +38,7 @@ module "network" {
   source = "./modules/network"
   count  = var.create_vpc ? 1 : 0
 
+  region                     = var.region
   suffix                     = local.suffix
   create_database            = var.create_database
   create_vcs_gateway         = var.create_vcs_gateway
@@ -53,6 +55,7 @@ module "rds" {
   source = "./modules/rds"
   count  = var.create_database ? 1 : 0
 
+  region = var.region
   suffix = local.suffix
 
   postgres_engine_version            = var.rds_engine_version
@@ -89,6 +92,7 @@ module "s3" {
   source = "./modules/s3"
 
   suffix = local.suffix
+  region = var.region
 
   bucket_configuration               = var.s3_bucket_configuration
   noncurrent_version_expiration_days = var.s3_noncurrent_version_expiration_days
