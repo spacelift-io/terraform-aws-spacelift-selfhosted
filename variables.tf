@@ -278,6 +278,9 @@ variable "s3_bucket_configuration" {
     uploads      = object({ name = string, expiration_days = number })
     user_uploads = object({ name = string, expiration_days = number })
     workspace    = object({ name = string, expiration_days = number })
+
+    # Optional so that existing callers passing the full object keep working.
+    run_observability = optional(object({ name = string, expiration_days = number }))
   })
   description = "Custom configuration for S3 buckets."
   default     = null
@@ -285,7 +288,7 @@ variable "s3_bucket_configuration" {
 
 variable "s3_noncurrent_version_expiration_days" {
   type        = number
-  description = "Number of days to keep noncurrent object versions on the versioned buckets that expire objects (policy, run logs, uploads, user uploads and workspace). Versioning turns an expired or overwritten object into a noncurrent version, which is only deleted by this rule."
+  description = "Number of days to keep noncurrent object versions on the versioned buckets that expire objects (policy, run logs, run observability, uploads, user uploads and workspace). Versioning turns an expired or overwritten object into a noncurrent version, which is only deleted by this rule."
   default     = 7
 }
 

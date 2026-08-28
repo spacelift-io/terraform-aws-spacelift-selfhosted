@@ -241,6 +241,16 @@ output "run_logs_bucket_name" {
   description = "ID of the S3 bucket used for storing run logs."
 }
 
+output "run_observability_bucket_arn" {
+  value       = module.s3.run_observability_bucket_arn
+  description = "ARN of the S3 bucket used for storing run observability artifacts."
+}
+
+output "run_observability_bucket_name" {
+  value       = module.s3.run_observability_bucket_name
+  description = "ID of the S3 bucket used for storing run observability artifacts."
+}
+
 output "states_bucket_arn" {
   value       = module.s3.states_bucket_arn
   description = "ARN of the S3 bucket used for storing states."
@@ -350,6 +360,7 @@ output "tfvars" {
       modules_bucket_name : module.s3.modules_bucket_name
       policy_inputs_bucket_name : module.s3.policy_inputs_bucket_name
       run_logs_bucket_name : module.s3.run_logs_bucket_name
+      run_observability_bucket_name : module.s3.run_observability_bucket_name
       states_bucket_name : module.s3.states_bucket_name
       uploads_bucket_name : module.s3.uploads_bucket_name
       uploads_bucket_url : local.uploads_bucket_url

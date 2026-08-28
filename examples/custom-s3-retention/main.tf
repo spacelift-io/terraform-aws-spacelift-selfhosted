@@ -27,6 +27,9 @@ module "spacelift" {
     uploads      = null
     user_uploads = null
     workspace    = null
+
+    # Optional attribute, can be omitted entirely.
+    run_observability = null
   }
 
   s3_retain_on_destroy = false

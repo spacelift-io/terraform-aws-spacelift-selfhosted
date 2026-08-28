@@ -128,11 +128,14 @@ module "spacelift" {
     uploads      = null
     user_uploads = null
     workspace    = null
+
+    # Optional attribute, can be omitted entirely.
+    run_observability = null
   }
 }
 ```
 
-`s3_noncurrent_version_expiration_days` applies to the `policy`, `run_logs`, `uploads`, `user_uploads` and `workspace` buckets, which are the buckets that have both versioning and object expiration enabled. The remaining buckets either keep their versions deliberately (`binaries`, `modules`, `states`) or are not versioned (`deliveries`, `large_queue`, `metadata`).
+`s3_noncurrent_version_expiration_days` applies to the `policy`, `run_logs`, `run_observability`, `uploads`, `user_uploads` and `workspace` buckets, which are the buckets that have both versioning and object expiration enabled. The remaining buckets either keep their versions deliberately (`binaries`, `modules`, `states`) or are not versioned (`deliveries`, `large_queue`, `metadata`).
 
 ### Enable the RDS Data API
 
