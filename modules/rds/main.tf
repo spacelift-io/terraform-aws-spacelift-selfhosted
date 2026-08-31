@@ -47,6 +47,7 @@ resource "aws_rds_cluster" "db_cluster" {
   kms_key_id        = var.kms_key_arn
   storage_encrypted = true
   master_username   = var.db_username
+  master_password   = local.password
 
   backup_retention_period = var.backup_retention_period
   preferred_backup_window = var.preferred_backup_window
@@ -79,6 +80,8 @@ resource "aws_rds_cluster_instance" "db_instance" {
   performance_insights_enabled          = lookup(var.performance_insights, "enabled", false)
   performance_insights_kms_key_id       = lookup(var.performance_insights, "kms_key_arn", null)
   performance_insights_retention_period = lookup(var.performance_insights, "retention_period", null)
+  monitoring_interval                   = var.monitoring.interval
+  monitoring_role_arn                   = var.monitoring.role_arn
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {

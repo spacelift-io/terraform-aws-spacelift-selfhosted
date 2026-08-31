@@ -71,6 +71,7 @@ module "rds" {
   instance_configuration          = var.rds_instance_configuration
   performance_insights            = var.rds_performance_insights
   enabled_cloudwatch_logs_exports = var.rds_enabled_cloudwatch_logs_exports
+  monitoring                      = var.rds_monitoring
 
   availability_zones = var.availability_zones
 
