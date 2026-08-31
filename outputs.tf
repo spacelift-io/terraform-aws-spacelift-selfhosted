@@ -28,11 +28,6 @@ output "drain_security_group_id" {
   description = "ID of the security group for the Spacelift async-processing service. It will be null if create_vpc is false."
 }
 
-output "scheduler_security_group_id" {
-  value       = var.create_vpc ? module.network[0].scheduler_security_group_id : null
-  description = "ID of the security group for the Spacelift scheduler service. It will be null if create_vpc is false."
-}
-
 output "vcs_gateway_security_group_id" {
   value       = var.create_vcs_gateway ? module.network[0].vcs_gateway_security_group_id : null
   description = "ID of the security group for the Spacelift VCS gateway service. It will be null if create_vcs_gateway is false."
@@ -241,6 +236,16 @@ output "run_logs_bucket_name" {
   description = "ID of the S3 bucket used for storing run logs."
 }
 
+output "run_observability_bucket_arn" {
+  value       = module.s3.run_observability_bucket_arn
+  description = "ARN of the S3 bucket used for storing run observability artifacts."
+}
+
+output "run_observability_bucket_name" {
+  value       = module.s3.run_observability_bucket_name
+  description = "ID of the S3 bucket used for storing run observability artifacts."
+}
+
 output "states_bucket_arn" {
   value       = module.s3.states_bucket_arn
   description = "ARN of the S3 bucket used for storing states."
@@ -338,7 +343,6 @@ output "tfvars" {
       vpc_id : var.create_vpc ? module.network[0].vpc_id : ""
       server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : ""
       drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : ""
-      scheduler_security_group_id : var.create_vpc ? module.network[0].scheduler_security_group_id : ""
       backend_image : module.ecr.ecr_backend_repository_url
       launcher_image : module.ecr.ecr_launcher_repository_url
       database_url : local.database_url
@@ -350,6 +354,7 @@ output "tfvars" {
       modules_bucket_name : module.s3.modules_bucket_name
       policy_inputs_bucket_name : module.s3.policy_inputs_bucket_name
       run_logs_bucket_name : module.s3.run_logs_bucket_name
+      run_observability_bucket_name : module.s3.run_observability_bucket_name
       states_bucket_name : module.s3.states_bucket_name
       uploads_bucket_name : module.s3.uploads_bucket_name
       uploads_bucket_url : local.uploads_bucket_url

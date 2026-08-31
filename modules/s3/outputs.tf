@@ -68,6 +68,16 @@ output "run_logs_bucket_name" {
   description = "ID of the S3 bucket used for storing run logs."
 }
 
+output "run_observability_bucket_arn" {
+  value       = aws_s3_bucket.run_observability.arn
+  description = "ARN of the S3 bucket used for storing run observability artifacts."
+}
+
+output "run_observability_bucket_name" {
+  value       = aws_s3_bucket.run_observability.id
+  description = "ID of the S3 bucket used for storing run observability artifacts."
+}
+
 output "states_bucket_arn" {
   value       = aws_s3_bucket.states.arn
   description = "ARN of the S3 bucket used for storing states."

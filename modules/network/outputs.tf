@@ -48,8 +48,3 @@ output "vcs_gateway_security_group_id" {
   description = "The ID of the security group for the Spacelift VCS gateway service. Will be null if create_vcs_gateway is false."
   value       = var.create_vcs_gateway ? aws_security_group.vcs_gateway_sg[0].id : null
 }
-
-output "scheduler_security_group_id" {
-  description = "The ID of the security group for the Spacelift cron scheduler service"
-  value       = aws_security_group.scheduler_sg.id
-}
