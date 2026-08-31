@@ -61,6 +61,10 @@ resource "aws_rds_cluster" "db_cluster" {
   vpc_security_group_ids              = var.security_group_ids
   iam_database_authentication_enabled = true
   enable_http_endpoint                = var.enable_http_endpoint
+
+  lifecycle {
+    ignore_changes = [global_cluster_identifier, replication_source_identifier]
+  }
 }
 
 resource "aws_rds_cluster_instance" "db_instance" {
