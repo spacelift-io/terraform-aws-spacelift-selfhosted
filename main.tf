@@ -68,8 +68,9 @@ module "rds" {
   password_sm_arn     = var.rds_password_sm_arn
   snapshot_identifier = var.rds_snapshot_identifier
 
-  instance_configuration = var.rds_instance_configuration
-  performance_insights   = var.rds_performance_insights
+  instance_configuration          = var.rds_instance_configuration
+  performance_insights            = var.rds_performance_insights
+  enabled_cloudwatch_logs_exports = var.rds_enabled_cloudwatch_logs_exports
 
   availability_zones = var.availability_zones
 

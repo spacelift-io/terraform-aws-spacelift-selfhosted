@@ -121,6 +121,12 @@ variable "performance_insights" {
   }
 }
 
+variable "enabled_cloudwatch_logs_exports" {
+  description = "Set of log types to export to cloudwatch"
+  type        = set(string)
+  default     = null
+}
+
 variable "apply_immediately" {
   type        = bool
   description = "Whether to apply cluster modifications immediately or during the next maintenance window."

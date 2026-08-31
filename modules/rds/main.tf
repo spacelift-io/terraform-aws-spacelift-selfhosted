@@ -47,12 +47,16 @@ resource "aws_rds_cluster" "db_cluster" {
   kms_key_id        = var.kms_key_arn
   storage_encrypted = true
   master_username   = var.db_username
-  master_password   = local.password
 
   backup_retention_period = var.backup_retention_period
   preferred_backup_window = var.preferred_backup_window
   copy_tags_to_snapshot   = true
   skip_final_snapshot     = true
+
+  enabled_cloudwatch_logs_exports       = var.enabled_cloudwatch_logs_exports
+  performance_insights_enabled          = lookup(var.performance_insights, "enabled", false)
+  performance_insights_kms_key_id       = lookup(var.performance_insights, "kms_key_arn", null)
+  performance_insights_retention_period = lookup(var.performance_insights, "retention_period", null)
 
   deletion_protection             = var.db_delete_protection_enabled
   db_cluster_parameter_group_name = aws_rds_cluster_parameter_group.spacelift.name
