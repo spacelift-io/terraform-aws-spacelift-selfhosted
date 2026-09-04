@@ -67,6 +67,9 @@ module "rds" {
   subnet_group_name           = var.rds_subnet_group_name
   regional_cluster_identifier = var.rds_regional_cluster_identifier
 
+  global_cluster_identifier     = var.rds_global_cluster_identifier
+  replication_source_identifier = var.rds_replication_source_identifier
+
   db_username         = var.rds_username
   password_sm_arn     = var.rds_password_sm_arn
   snapshot_identifier = var.rds_snapshot_identifier

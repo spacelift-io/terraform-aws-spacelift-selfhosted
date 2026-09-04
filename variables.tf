@@ -116,6 +116,18 @@ variable "rds_regional_cluster_identifier" {
   default     = null
 }
 
+variable "rds_global_cluster_identifier" {
+  type        = string
+  description = "The identifier of an aws_rds_global_cluster to join the Spacelift database to as the primary cluster. Only taken into account when the cluster is created, see the README for details."
+  default     = null
+}
+
+variable "rds_replication_source_identifier" {
+  type        = string
+  description = "ARN of the source DB cluster to replicate from, making the Spacelift database a cross-region read replica. Only taken into account when the cluster is created, see the README for details."
+  default     = null
+}
+
 variable "rds_subnet_group_name" {
   type        = string
   description = "Name of the RDS subnet group. If not provided, a name will be generated."

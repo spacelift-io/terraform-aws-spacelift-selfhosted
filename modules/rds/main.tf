@@ -31,6 +31,9 @@ resource "aws_rds_cluster" "db_cluster" {
 
   region = var.region
 
+  global_cluster_identifier     = var.global_cluster_identifier
+  replication_source_identifier = var.replication_source_identifier
+
   engine                      = "aurora-postgresql"
   engine_mode                 = var.engine_mode
   engine_version              = var.postgres_engine_version
@@ -72,6 +75,9 @@ resource "aws_rds_cluster" "db_cluster" {
   iam_database_authentication_enabled = true
   enable_http_endpoint                = var.enable_http_endpoint
 
+  # Attaching or detaching a running cluster from a global cluster is done
+  # through the global cluster resource (or out of band), so we only take these
+  # values into account on creation and ignore any drift afterwards.
   lifecycle {
     ignore_changes = [global_cluster_identifier, replication_source_identifier]
   }

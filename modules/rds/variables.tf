@@ -86,6 +86,18 @@ variable "regional_cluster_identifier" {
   description = "The identifier for the regional RDS cluster."
 }
 
+variable "global_cluster_identifier" {
+  type        = string
+  description = "The identifier of an aws_rds_global_cluster to join this cluster to as the primary. Changes are ignored after creation."
+  default     = null
+}
+
+variable "replication_source_identifier" {
+  type        = string
+  description = "ARN of the source DB cluster to replicate from, making this cluster a cross-region read replica. Changes are ignored after creation."
+  default     = null
+}
+
 variable "subnet_group_name" {
   type        = string
   description = "Name of the DB subnet group."

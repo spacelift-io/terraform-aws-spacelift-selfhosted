@@ -143,6 +143,43 @@ module "spacelift" {
 
 `s3_noncurrent_version_expiration_days` applies to the `policy`, `run_logs`, `run_observability`, `uploads`, `user_uploads` and `workspace` buckets, which are the buckets that have both versioning and object expiration enabled. The remaining buckets either keep their versions deliberately (`binaries`, `modules`, `states`) or are not versioned (`deliveries`, `large_queue`, `metadata`).
 
+### Join the database to an Aurora Global Database
+
+For cross-region HA, set `rds_global_cluster_identifier` to have the Spacelift database created as the primary cluster of an existing [Aurora Global Database](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html). `rds_replication_source_identifier` does the same for a plain cross-region read replica.
+
+```hcl
+resource "aws_rds_global_cluster" "spacelift" {
+  global_cluster_identifier = "spacelift-global"
+  engine                    = "aurora-postgresql"
+  engine_version            = "18.3"
+}
+
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+
+  region             = "eu-west-1"
+  rds_engine_version = "18.3"
+
+  rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
+}
+```
+
+Secondary clusters are yours to manage, since their lifecycle (and which one you promote during an outage) is a deployment decision rather than something the module can guess:
+
+```hcl
+resource "aws_rds_cluster" "spacelift_dr" {
+  cluster_identifier        = "spacelift-dr"
+  region                    = "us-east-1"
+  engine                    = "aurora-postgresql"
+  engine_version            = module.spacelift.rds_engine_version_actual
+  global_cluster_identifier = aws_rds_global_cluster.spacelift.id
+  skip_final_snapshot       = true
+}
+```
+
+> [!IMPORTANT]
+> Both variables are only applied when the cluster is first created. The module ignores later changes to them, because attaching or detaching a running cluster is something you do through the global cluster resource (or the AWS console), not by editing the cluster in place. To bring an existing Spacelift database into a global cluster, point `aws_rds_global_cluster.source_db_cluster_identifier` at the `rds_cluster_arn` output instead.
+
 ### Enable the RDS Data API
 
 Set `rds_enable_http_endpoint` to `true` to turn on the [Data API](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html) for the cluster. This unlocks the query editor in the RDS console, so you can run SQL against the database straight from the browser. No bastion host, VPN, or local client needed, which is handy for quick inspections and debugging.
