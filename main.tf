@@ -67,11 +67,13 @@ module "rds" {
   subnet_group_name           = var.rds_subnet_group_name
   regional_cluster_identifier = var.rds_regional_cluster_identifier
 
+  is_global_secondary           = var.rds_is_global_secondary
   global_cluster_identifier     = var.rds_global_cluster_identifier
   replication_source_identifier = var.rds_replication_source_identifier
 
   db_username         = var.rds_username
   password_sm_arn     = var.rds_password_sm_arn
+  password_sm_region  = var.rds_password_sm_region
   snapshot_identifier = var.rds_snapshot_identifier
 
   instance_configuration          = var.rds_instance_configuration

@@ -88,7 +88,7 @@ variable "regional_cluster_identifier" {
 
 variable "global_cluster_identifier" {
   type        = string
-  description = "The identifier of an aws_rds_global_cluster to join this cluster to as the primary. Changes are ignored after creation."
+  description = "The identifier of an aws_rds_global_cluster to join this cluster to as either the primary or the secondary. Changes are ignored after creation."
   default     = null
 }
 
@@ -165,3 +165,14 @@ variable "region" {
   description = "AWS region to deploy resources in."
 }
 
+variable "is_global_secondary" {
+  type        = bool
+  default     = false
+  description = "Whether or not this cluster should be a global secondary."
+}
+
+variable "password_sm_region" {
+  type        = string
+  description = "Region containing the supplied datbase password secret."
+  default     = null
+}

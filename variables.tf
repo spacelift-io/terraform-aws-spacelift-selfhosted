@@ -118,7 +118,7 @@ variable "rds_regional_cluster_identifier" {
 
 variable "rds_global_cluster_identifier" {
   type        = string
-  description = "The identifier of an aws_rds_global_cluster to join the Spacelift database to as the primary cluster. Only taken into account when the cluster is created, see the README for details."
+  description = "The identifier of an aws_rds_global_cluster to join the Spacelift database to as either the primary or secondary cluster. Only taken into account when the cluster is created, see the README for details."
   default     = null
 }
 
@@ -149,6 +149,12 @@ variable "rds_parameter_group_description" {
 variable "rds_password_sm_arn" {
   type        = string
   description = "ARN of the SSM parameter where the RDS password is stored already - this variable is only used for importing an existing database instance."
+  default     = null
+}
+
+variable "rds_password_sm_region" {
+  type        = string
+  description = "Region containing the supplied database password secret."
   default     = null
 }
 
@@ -269,6 +275,12 @@ variable "rds_enable_http_endpoint" {
   type        = bool
   description = "Whether to enable the Data API (HTTP endpoint) for the RDS cluster. This also unlocks the query editor in the RDS console, letting you run SQL against the database without a bastion or local client. Only available for Aurora Serverless v2 and provisioned clusters in supported regions, see https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html#data-api.regions for the list."
   default     = null
+}
+
+variable "rds_is_global_secondary" {
+  type        = bool
+  default     = false
+  description = "Whether or not the RDS cluster should be a global secondary."
 }
 
 variable "website_endpoint" {

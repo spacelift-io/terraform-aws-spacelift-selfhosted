@@ -1,8 +1,24 @@
 locals {
-  database_name       = "spacelift"
-  db_url_from_sm      = var.password_sm_arn != null ? jsondecode(data.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"] : ""
-  db_password_from_sm = var.password_sm_arn != null ? regex("postgres://spacelift:([^@]+)@", local.db_url_from_sm)[0] : ""
-  password            = var.password_sm_arn != null ? local.db_password_from_sm : random_id.db_pw.b64_url
+  database_name = "spacelift"
+  db_url_from_sm = var.password_sm_arn != null ? jsondecode(
+    data.aws_secretsmanager_secret_version.db_pw[0].secret_string
+  )["DATABASE_URL"] : ""
+
+  db_credentials_from_sm = var.password_sm_arn != null ? regex(
+    "^postgres://([^:]+):([^@]+)@", local.db_url_from_sm
+  ) : null
+
+  database_username = (
+    var.password_sm_arn != null
+    ? local.db_credentials_from_sm[0]
+    : var.db_username
+  )
+
+  password = (
+    var.password_sm_arn != null
+    ? local.db_credentials_from_sm[1]
+    : random_id.db_pw.b64_url
+  )
 }
 
 data "aws_availability_zones" "available" {
@@ -16,13 +32,18 @@ resource "random_id" "db_pw" {
 data "aws_secretsmanager_secret_version" "db_pw" {
   count = var.password_sm_arn != null ? 1 : 0
 
-  region    = var.region
+  region    = coalesce(var.password_sm_region, var.region)
   secret_id = var.password_sm_arn
 }
 
 resource "aws_rds_cluster" "db_cluster" {
   cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
-  database_name      = local.database_name
+
+  # If this cluster is a secondary within an Aurora global cluster, these should remain null
+  # so they can be set by the primary cluster.
+  database_name   = var.is_global_secondary ? null : local.database_name
+  master_username = var.is_global_secondary ? null : var.db_username
+  master_password = var.is_global_secondary ? null : local.password
 
   # When restoring from a snapshot, the master username comes from the snapshot
   # and must match var.db_username, otherwise the generated connection strings
@@ -47,6 +68,7 @@ resource "aws_rds_cluster" "db_cluster" {
       min_capacity             = var.serverlessv2_scaling_configuration.min_capacity
       seconds_until_auto_pause = var.serverlessv2_scaling_configuration.seconds_until_auto_pause
     }
+
   }
 
   availability_zones   = var.availability_zones != null ? var.availability_zones : slice(data.aws_availability_zones.available.names, 0, length(var.subnet_ids))
@@ -54,8 +76,6 @@ resource "aws_rds_cluster" "db_cluster" {
 
   kms_key_id        = var.kms_key_arn
   storage_encrypted = true
-  master_username   = var.db_username
-  master_password   = local.password
 
   backup_retention_period = var.backup_retention_period
   preferred_backup_window = var.preferred_backup_window
@@ -80,6 +100,19 @@ resource "aws_rds_cluster" "db_cluster" {
   # values into account on creation and ignore any drift afterwards.
   lifecycle {
     ignore_changes = [global_cluster_identifier, replication_source_identifier]
+    precondition {
+      condition = (
+        !var.is_global_secondary ||
+        (
+          var.global_cluster_identifier != null &&
+          var.password_sm_arn != null &&
+          var.snapshot_identifier == null &&
+          var.replication_source_identifier == null
+        )
+      )
+      error_message = "A global secondary requires global_cluster_identifier and password_sm_arn, and cannot use snapshot_identifier or replication_source_identifier"
+    }
+
   }
 }
 
@@ -139,8 +172,8 @@ resource "aws_secretsmanager_secret" "conn_string" {
 resource "aws_secretsmanager_secret_version" "conn_string" {
   secret_id = aws_secretsmanager_secret.conn_string.id
   secret_string = jsonencode({
-    DATABASE_URL           = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
-    DATABASE_READ_ONLY_URL = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+    DATABASE_URL           = "postgres://${local.database_username}:${local.password}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+    DATABASE_READ_ONLY_URL = "postgres://${local.database_username}:${local.password}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
   })
 
   region = var.region
