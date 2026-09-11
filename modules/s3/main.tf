@@ -360,10 +360,12 @@ resource "aws_s3_bucket_versioning" "run_logs" {
 resource "aws_s3_bucket" "run_observability" {
   bucket        = local.bucket_names["run-observability"]
   force_destroy = !var.retain_on_destroy
+  region        = var.region
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "run_observability" {
   bucket = aws_s3_bucket.run_observability.id
+  region = var.region
 
   rule {
     apply_server_side_encryption_by_default {
@@ -375,6 +377,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "run_observability
 
 resource "aws_s3_bucket_lifecycle_configuration" "run_observability" {
   bucket = aws_s3_bucket.run_observability.id
+  region = var.region
 
   rule {
     id     = "expire-after-x-days"
@@ -400,6 +403,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "run_observability" {
 resource "aws_s3_bucket_public_access_block" "run_observability" {
   count  = var.enable_public_access_block_on_s3 == true ? 1 : 0
   bucket = aws_s3_bucket.run_observability.id
+  region = var.region
 
   block_public_acls       = true
   block_public_policy     = true
@@ -409,6 +413,7 @@ resource "aws_s3_bucket_public_access_block" "run_observability" {
 
 resource "aws_s3_bucket_versioning" "run_observability" {
   bucket = aws_s3_bucket.run_observability.id
+  region = var.region
   versioning_configuration {
     status = "Enabled"
   }
