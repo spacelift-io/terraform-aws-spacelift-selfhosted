@@ -321,6 +321,20 @@ output "sqs_queue_arns" {
   } : null
 }
 
+output "sqs_queue_names" {
+  description = "Map of all SQS queue names. Will be null if create_sqs is false."
+  value = var.create_sqs ? {
+    async_jobs      = module.sqs[0].async_jobs_queue_name
+    async_jobs_fifo = module.sqs[0].async_jobs_fifo_queue_name
+    events_inbox    = module.sqs[0].events_inbox_queue_name
+    cronjobs        = module.sqs[0].cronjobs_queue_name
+    deadletter      = module.sqs[0].deadletter_queue_name
+    deadletter_fifo = module.sqs[0].deadletter_fifo_queue_name
+    webhooks        = module.sqs[0].webhooks_queue_name
+    iot             = module.sqs[0].iot_queue_name
+  } : null
+}
+
 output "shell" {
   value = templatefile("${path.module}/env.tftpl", {
     env : {
