@@ -31,7 +31,7 @@ output "nat_gateway_ids" {
 
 output "database_security_group_id" {
   description = "The ID of the security group for the Spacelift database. Will be null if create_database is false."
-  value       = var.create_database ? aws_security_group.database_sg[0].id : null
+  value       = one(aws_security_group.database_sg[*].id)
 }
 
 output "server_security_group_id" {
@@ -46,5 +46,5 @@ output "drain_security_group_id" {
 
 output "vcs_gateway_security_group_id" {
   description = "The ID of the security group for the Spacelift VCS gateway service. Will be null if create_vcs_gateway is false."
-  value       = var.create_vcs_gateway ? aws_security_group.vcs_gateway_sg[0].id : null
+  value       = one(aws_security_group.vcs_gateway_sg[*].id)
 }

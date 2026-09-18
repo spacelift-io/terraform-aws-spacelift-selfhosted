@@ -8,7 +8,7 @@ locals {
   uploads_bucket_url     = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
   database_url           = var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].cluster_endpoint) : ""
   database_read_only_url = var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].reader_endpoint) : ""
-  kms_arn                = var.kms_arn != null && var.kms_arn != "" ? var.kms_arn : module.kms[0].key_arn
+  kms_arn                = coalesce(var.kms_arn, one(module.kms[*].key_arn))
 }
 
 module "kms" {

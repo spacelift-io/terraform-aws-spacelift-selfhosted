@@ -4,37 +4,37 @@ output "unique_suffix" {
 }
 
 output "kms_key_arn" {
-  value       = length(module.kms) > 0 ? module.kms[0].key_arn : var.kms_arn
+  value       = local.kms_arn
   description = "ARN of the KMS key used for encrypting AWS resources."
 }
 
 output "kms_encryption_key_arn" {
-  value       = length(module.kms) > 0 ? module.kms[0].encryption_key_arn : null
+  value       = one(module.kms[*].encryption_key_arn)
   description = "ARN of the KMS key used for in-app encryption. Null if kms_arn variable is provided."
 }
 
 output "kms_signing_key_arn" {
-  value       = length(module.kms) > 0 ? module.kms[0].jwt_key_arn : null
+  value       = one(module.kms[*].jwt_key_arn)
   description = "ARN of the KMS key used for signing and verifying JWTs. Null if kms_arn variable is provided."
 }
 
 output "server_security_group_id" {
-  value       = var.create_vpc ? module.network[0].server_security_group_id : null
+  value       = one(module.network[*].server_security_group_id)
   description = "ID of the security group for the Spacelift HTTP server. It will be null if create_vpc is false."
 }
 
 output "drain_security_group_id" {
-  value       = var.create_vpc ? module.network[0].drain_security_group_id : null
+  value       = one(module.network[*].drain_security_group_id)
   description = "ID of the security group for the Spacelift async-processing service. It will be null if create_vpc is false."
 }
 
 output "vcs_gateway_security_group_id" {
-  value       = var.create_vcs_gateway ? module.network[0].vcs_gateway_security_group_id : null
+  value       = one(module.network[*].vcs_gateway_security_group_id)
   description = "ID of the security group for the Spacelift VCS gateway service. It will be null if create_vcs_gateway is false."
 }
 
 output "database_security_group_id" {
-  value       = var.create_vpc ? module.network[0].database_security_group_id : null
+  value       = one(module.network[*].database_security_group_id)
   description = "**Deprecated in favor of database_security_group_ids**. ID of the security group for the Spacelift database. It will be null if create_database is false."
 }
 
@@ -59,48 +59,48 @@ output "availability_zones" {
 }
 
 output "vpc_id" {
-  value       = var.create_vpc ? module.network[0].vpc_id : null
+  value       = one(module.network[*].vpc_id)
   description = "ID of the VPC. It will be null if create_vpc is false."
 }
 
 output "nat_gateway_public_ips" {
-  value       = var.create_vpc ? module.network[0].nat_gateway_public_ips : null
+  value       = one(module.network[*].nat_gateway_public_ips)
   description = "Public IP addresses of the NAT gateways, which are the source addresses of all outbound traffic from the private subnets. Useful for allowlisting the installation on VCS providers or other firewalls. They will be null if create_vpc is false."
 }
 
 output "nat_gateway_ids" {
-  value       = var.create_vpc ? module.network[0].nat_gateway_ids : null
+  value       = one(module.network[*].nat_gateway_ids)
   description = "IDs of the NAT gateways. They will be null if create_vpc is false."
 }
 
 output "rds_cluster_identifier" {
   description = "Name of the RDS cluster."
-  value       = var.create_database ? module.rds[0].cluster_identifier : null
+  value       = one(module.rds[*].cluster_identifier)
 }
 
 output "rds_cluster_arn" {
   description = "ARN of the RDS cluster. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].cluster_arn : null
+  value       = one(module.rds[*].cluster_arn)
 }
 
 output "rds_cluster_resource_id" {
   description = "Cluster resource ID of the RDS cluster. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].cluster_resource_id : null
+  value       = one(module.rds[*].cluster_resource_id)
 }
 
 output "rds_cluster_endpoint" {
   description = "Endpoint of the RDS cluster. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].cluster_endpoint : null
+  value       = one(module.rds[*].cluster_endpoint)
 }
 
 output "rds_cluster_reader_endpoint" {
   description = "Reader endpoint of the RDS cluster. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].reader_endpoint : null
+  value       = one(module.rds[*].reader_endpoint)
 }
 
 output "rds_engine_version_actual" {
   description = "Running engine version of the RDS cluster. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].engine_version_actual : null
+  value       = one(module.rds[*].engine_version_actual)
 }
 
 output "rds_username" {
@@ -110,7 +110,7 @@ output "rds_username" {
 
 output "rds_password" {
   description = "Password for the RDS database. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].db_password : null
+  value       = one(module.rds[*].db_password)
   sensitive   = true
 }
 
@@ -122,7 +122,7 @@ output "database_url" {
 
 output "database_name" {
   description = "Name of the database. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].database_name : null
+  value       = one(module.rds[*].database_name)
 }
 
 output "database_read_only_url" {
@@ -133,17 +133,17 @@ output "database_read_only_url" {
 
 output "database_secret_name" {
   description = "Name of the Secrets Manager secret for the database connection string. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].secrets_manager_database_connection_string_name : null
+  value       = one(module.rds[*].secrets_manager_database_connection_string_name)
 }
 
 output "database_secret_arn" {
   description = "ARN of the Secrets Manager secret for the database connection string. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].secrets_manager_database_connection_string_arn : null
+  value       = one(module.rds[*].secrets_manager_database_connection_string_arn)
 }
 
 output "database_secret_version_id" {
   description = "Version ID of the Secrets Manager secret for the database connection string. Will be null if create_database is false."
-  value       = var.create_database ? module.rds[0].secrets_manager_database_connection_string_version_id : null
+  value       = one(module.rds[*].secrets_manager_database_connection_string_version_id)
 }
 
 output "ecr_backend_repository_url" {
@@ -362,7 +362,7 @@ output "tfvars" {
       workspace_bucket_name : module.s3.workspace_bucket_name
       kms_encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : ""
       kms_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : ""
-      kms_key_arn : length(module.kms) > 0 ? module.kms[0].key_arn : ""
+      kms_key_arn : local.kms_arn
     },
     jsonVars : {
       public_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].public_subnet_ids)) : jsonencode([])
