@@ -131,6 +131,16 @@ output "database_read_only_url" {
   sensitive   = true
 }
 
+output "database_iam_url" {
+  description = "The URL to the write endpoint of the database for the rds_iam_username user. It carries no password: the services mint an IAM auth token instead. Only populated if create_database is true and rds_iam_username is set."
+  value       = local.database_iam_url
+}
+
+output "database_iam_read_only_url" {
+  description = "The URL to the read endpoint of the database for the rds_iam_username user. It carries no password: the services mint an IAM auth token instead. Only populated if create_database is true and rds_iam_username is set."
+  value       = local.database_iam_read_only_url
+}
+
 output "database_secret_name" {
   description = "Name of the Secrets Manager secret for the database connection string. Will be null if create_database is false."
   value       = one(module.rds[*].secrets_manager_database_connection_string_name)

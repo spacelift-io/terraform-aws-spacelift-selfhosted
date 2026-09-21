@@ -138,10 +138,14 @@ resource "aws_secretsmanager_secret" "conn_string" {
 
 resource "aws_secretsmanager_secret_version" "conn_string" {
   secret_id = aws_secretsmanager_secret.conn_string.id
-  secret_string = jsonencode({
+  secret_string = jsonencode(merge({
     DATABASE_URL           = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
     DATABASE_READ_ONLY_URL = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
-  })
+    },
+    var.iam_username == null ? {} : {
+      DATABASE_IAM_URL           = "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+      DATABASE_IAM_READ_ONLY_URL = "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+  }))
 
   region = var.region
 }

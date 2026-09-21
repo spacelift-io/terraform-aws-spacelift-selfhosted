@@ -8,6 +8,12 @@ variable "postgres_engine_version" {
   description = "Postgres engine version."
 }
 
+variable "iam_username" {
+  type        = string
+  description = "Database user that authenticates with RDS IAM auth. When set, passwordless connection strings for it are added to the connection string secret."
+  default     = null
+}
+
 variable "db_username" {
   type        = string
   description = "Master username for the RDS instances."
