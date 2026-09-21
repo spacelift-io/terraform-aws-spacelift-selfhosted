@@ -202,6 +202,12 @@ variable "rds_username" {
   default     = "spacelift"
 }
 
+variable "rds_iam_username" {
+  type        = string
+  description = "Database user that authenticates with RDS IAM auth. Setting it adds passwordless connection strings for that user to the database secret and the database_iam_url outputs. The user itself still has to be created in Postgres and granted the rds_iam role."
+  default     = null
+}
+
 variable "rds_instance_configuration" {
   type = map(object({
     instance_identifier = string

@@ -198,6 +198,34 @@ module "spacelift" {
 > [!NOTE]
 > The Data API is only available for Aurora Serverless v2 and provisioned clusters in [supported regions](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/data-api.html#data-api.regions).
 
+### Passwordless database authentication
+
+The cluster has IAM database authentication enabled by default. Set `rds_iam_username` to the database user the services will connect as, and the module builds passwordless connection strings for it:
+
+```hcl
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+
+  region             = "eu-west-1"
+  rds_engine_version = "18.3"
+
+  rds_iam_username = "spacelift_iam" # Set this to a user you created explicitly for IAM authentication
+}
+```
+
+> [!IMPORTANT]
+> This user is **not** created for you, and it is **not** the master user. It's a separate Postgres user that you have to create explicitly, connected as the master user:
+>
+> ```sql
+> CREATE USER spacelift_iam;
+> GRANT rds_iam TO spacelift_iam;
+> GRANT spacelift TO spacelift_iam;
+> ```
+>
+> The last grant makes it a member of the `spacelift` role that owns the database, so it can alter the schema and not just read and write rows. Don't grant `rds_iam` to the master user itself - it loses password authentication, and with it your break-glass access.
+
+The strings land in the database secret as `DATABASE_IAM_URL` and `DATABASE_IAM_READ_ONLY_URL`, next to the password-carrying pair, and in the `database_iam_url` and `database_iam_read_only_url` outputs. Handing them to the services, along with the IAM permission to mint tokens, is the job of whichever module deploys them - see [ECS](https://github.com/spacelift-io/terraform-aws-ecs-spacelift-selfhosted#rds-iam-database-authentication) or [EKS](https://github.com/spacelift-io/terraform-aws-eks-spacelift-selfhosted#rds-iam-database-authentication).
+
 ## 🚀 Release
 
 We have a [GitHub workflow](./.github/workflows/release.yaml) to automatically create a tag and a release based on the version number in [`.spacelift/config.yml`](./.spacelift/config.yml) file.
