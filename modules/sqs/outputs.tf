@@ -41,6 +41,11 @@ output "events_inbox_queue_arn" {
   value       = aws_sqs_queue.events_inbox.arn
 }
 
+output "events_inbox_queue_name" {
+  description = "The name of the events inbox queue"
+  value       = aws_sqs_queue.events_inbox.name
+}
+
 # Cronjobs Queue Outputs
 output "cronjobs_queue_url" {
   description = "The URL of the cronjobs queue"
