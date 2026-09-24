@@ -8,6 +8,12 @@ variable "postgres_engine_version" {
   description = "Postgres engine version."
 }
 
+variable "postgres_allow_auto_minor_version_upgrade" {
+  type        = bool
+  description = "Whether to allow automatic minor version upgrades for the Postgres engine."
+  default     = false
+}
+
 variable "iam_username" {
   type        = string
   description = "Database user that authenticates with RDS IAM auth. When set, passwordless connection strings for it are added to the connection string secret."

@@ -60,7 +60,9 @@ module "rds" {
   region = var.region
   suffix = local.suffix
 
-  postgres_engine_version            = var.rds_engine_version
+  postgres_engine_version                   = var.rds_engine_version
+  postgres_allow_auto_minor_version_upgrade = var.rds_allow_auto_minor_version_upgrade
+
   engine_mode                        = var.rds_engine_mode
   serverlessv2_scaling_configuration = var.rds_serverlessv2_scaling_configuration
 

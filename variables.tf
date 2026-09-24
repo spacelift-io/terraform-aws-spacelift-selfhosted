@@ -185,6 +185,12 @@ variable "rds_engine_version" {
   description = "Postgres engine version."
 }
 
+variable "rds_allow_auto_minor_version_upgrade" {
+  type        = bool
+  description = "Whether to allow automatic minor version upgrades for the Postgres engine."
+  default     = false
+}
+
 variable "rds_engine_mode" {
   type        = string
   description = "Engine mode for the RDS instances. Default is 'provisioned'. Can be either 'serverless' or 'provisioned'."
