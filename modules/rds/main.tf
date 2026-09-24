@@ -1,8 +1,23 @@
 locals {
-  database_name       = "spacelift"
-  db_url_from_sm      = var.password_sm_arn != null ? jsondecode(data.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"] : ""
-  db_password_from_sm = var.password_sm_arn != null ? regex("postgres://spacelift:([^@]+)@", local.db_url_from_sm)[0] : ""
-  password            = var.password_sm_arn != null ? local.db_password_from_sm : random_id.db_pw.b64_url
+  database_name = "spacelift"
+
+  # A global secondary always reads the primary's secret. Deciding that from
+  # is_global_secondary keeps the data source's count known at plan time, even
+  # when the primary's secret doesn't exist yet and its ARN is still unknown.
+  read_credentials_from_sm = var.is_global_secondary ? true : var.password_sm_arn != null
+
+  credentials_from_sm = !local.read_credentials_from_sm ? null : regex(
+    "^postgres://([^:]+):([^@]+)@",
+    jsondecode(data.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"],
+  )
+  username = local.read_credentials_from_sm ? local.credentials_from_sm[0] : var.db_username
+  password = local.read_credentials_from_sm ? local.credentials_from_sm[1] : random_id.db_pw.b64_url
+
+  url_suffix                 = ":5432/${local.database_name}?statement_cache_capacity=0"
+  database_url               = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.endpoint}${local.url_suffix}"
+  database_read_only_url     = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.url_suffix}"
+  database_iam_url           = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.endpoint}${local.url_suffix}"
+  database_iam_read_only_url = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.url_suffix}"
 }
 
 data "aws_availability_zones" "available" {
@@ -14,15 +29,28 @@ resource "random_id" "db_pw" {
 }
 
 data "aws_secretsmanager_secret_version" "db_pw" {
-  count = var.password_sm_arn != null ? 1 : 0
+  count = local.read_credentials_from_sm ? 1 : 0
 
-  region    = var.region
+  # The primary's secret lives in the primary's region, which the ARN tells us.
+  region    = startswith(var.password_sm_arn, "arn:") ? split(":", var.password_sm_arn)[3] : var.region
   secret_id = var.password_sm_arn
+
+  lifecycle {
+    precondition {
+      condition     = var.password_sm_arn != null
+      error_message = "A global secondary needs password_sm_arn pointing at the primary's database secret."
+    }
+  }
 }
 
 resource "aws_rds_cluster" "db_cluster" {
   cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
-  database_name      = local.database_name
+
+  # A global secondary inherits the database and the master credentials from
+  # the primary cluster, so AWS rejects them on creation.
+  database_name   = var.is_global_secondary ? null : local.database_name
+  master_username = var.is_global_secondary ? null : local.username
+  master_password = var.is_global_secondary ? null : local.password
 
   # When restoring from a snapshot, the master username comes from the snapshot
   # and must match var.db_username, otherwise the generated connection strings
@@ -55,8 +83,6 @@ resource "aws_rds_cluster" "db_cluster" {
 
   kms_key_id        = var.kms_key_arn
   storage_encrypted = true
-  master_username   = var.db_username
-  master_password   = local.password
 
   backup_retention_period = var.backup_retention_period
   preferred_backup_window = var.preferred_backup_window
@@ -81,6 +107,16 @@ resource "aws_rds_cluster" "db_cluster" {
   # values into account on creation and ignore any drift afterwards.
   lifecycle {
     ignore_changes = [global_cluster_identifier, replication_source_identifier]
+
+    precondition {
+      condition     = !var.is_global_secondary || var.global_cluster_identifier != null
+      error_message = "A global secondary needs global_cluster_identifier."
+    }
+
+    precondition {
+      condition     = !var.is_global_secondary || (var.snapshot_identifier == null && var.replication_source_identifier == null)
+      error_message = "A global secondary can't be restored from a snapshot or replicate from another cluster."
+    }
   }
 }
 
@@ -140,12 +176,12 @@ resource "aws_secretsmanager_secret" "conn_string" {
 resource "aws_secretsmanager_secret_version" "conn_string" {
   secret_id = aws_secretsmanager_secret.conn_string.id
   secret_string = jsonencode(merge({
-    DATABASE_URL           = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
-    DATABASE_READ_ONLY_URL = "postgres://${var.db_username}:${local.password}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+    DATABASE_URL           = local.database_url
+    DATABASE_READ_ONLY_URL = local.database_read_only_url
     },
     var.iam_username == null ? {} : {
-      DATABASE_IAM_URL           = "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
-      DATABASE_IAM_READ_ONLY_URL = "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.reader_endpoint}:5432/${local.database_name}?statement_cache_capacity=0"
+      DATABASE_IAM_URL           = local.database_iam_url
+      DATABASE_IAM_READ_ONLY_URL = local.database_iam_read_only_url
   }))
 
   region = var.region

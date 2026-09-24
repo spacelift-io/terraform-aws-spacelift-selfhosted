@@ -6,10 +6,10 @@ resource "random_uuid" "suffix" {
 locals {
   suffix                     = coalesce(lower(var.unique_suffix), lower(substr(random_uuid.suffix.id, 0, 5))) # Certain resources (subnet group, rds) require all lowercase names
   uploads_bucket_url         = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
-  database_url               = var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].cluster_endpoint) : ""
-  database_read_only_url     = var.create_database ? format("postgres://%s:%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_username, urlencode(module.rds[0].db_password), module.rds[0].reader_endpoint) : ""
-  database_iam_url           = var.create_database && var.rds_iam_username != null ? format("postgres://%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_iam_username, module.rds[0].cluster_endpoint) : ""
-  database_iam_read_only_url = var.create_database && var.rds_iam_username != null ? format("postgres://%s@%s:5432/spacelift?statement_cache_capacity=0", var.rds_iam_username, module.rds[0].reader_endpoint) : ""
+  database_url               = var.create_database ? module.rds[0].database_url : ""
+  database_read_only_url     = var.create_database ? module.rds[0].database_read_only_url : ""
+  database_iam_url           = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_url : ""
+  database_iam_read_only_url = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_read_only_url : ""
   kms_arn                    = coalesce(var.kms_arn, one(module.kms[*].key_arn))
 }
 
@@ -72,6 +72,7 @@ module "rds" {
   regional_cluster_identifier = var.rds_regional_cluster_identifier
 
   global_cluster_identifier     = var.rds_global_cluster_identifier
+  is_global_secondary           = var.rds_is_global_secondary
   replication_source_identifier = var.rds_replication_source_identifier
 
   db_username         = var.rds_username

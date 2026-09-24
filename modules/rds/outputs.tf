@@ -29,6 +29,28 @@ output "db_password" {
   sensitive   = true
 }
 
+output "database_url" {
+  description = "Connection string for the writer endpoint."
+  value       = local.database_url
+  sensitive   = true
+}
+
+output "database_read_only_url" {
+  description = "Connection string for the reader endpoint."
+  value       = local.database_read_only_url
+  sensitive   = true
+}
+
+output "database_iam_url" {
+  description = "Passwordless connection string for the writer endpoint. Null if iam_username is not set."
+  value       = local.database_iam_url
+}
+
+output "database_iam_read_only_url" {
+  description = "Passwordless connection string for the reader endpoint. Null if iam_username is not set."
+  value       = local.database_iam_read_only_url
+}
+
 output "database_name" {
   description = "Name of the database."
   value       = local.database_name
@@ -42,7 +64,9 @@ output "secrets_manager_database_connection_string_name" {
 
 output "secrets_manager_database_connection_string_arn" {
   description = "Connection string for the database stored in Secrets Manager."
-  value       = aws_secretsmanager_secret.conn_string.arn
+  # Taken from the version so that anything reading the secret through this
+  # output (like a global secondary) waits until it has a value.
+  value = aws_secretsmanager_secret_version.conn_string.secret_arn
 }
 
 output "secrets_manager_database_connection_string_version_id" {

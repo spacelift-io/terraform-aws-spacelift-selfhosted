@@ -27,7 +27,14 @@ variable "db_username" {
 
 variable "password_sm_arn" {
   type        = string
-  description = "Arn or the name of the SecretsManager secret that holds the database password."
+  description = "ARN or name of an existing Spacelift database secret to take the master credentials from. Its DATABASE_URL key has to hold a postgres:// connection string. If null, a random password is generated."
+  default     = null
+}
+
+variable "is_global_secondary" {
+  type        = bool
+  description = "Whether the cluster joins global_cluster_identifier as a secondary. It then inherits the database and master credentials from the primary, and password_sm_arn must point at the primary's database secret."
+  default     = false
 }
 
 variable "snapshot_identifier" {
@@ -100,7 +107,7 @@ variable "regional_cluster_identifier" {
 
 variable "global_cluster_identifier" {
   type        = string
-  description = "The identifier of an aws_rds_global_cluster to join this cluster to as the primary. Changes are ignored after creation."
+  description = "The identifier of an aws_rds_global_cluster to join this cluster to. Changes are ignored after creation."
   default     = null
 }
 

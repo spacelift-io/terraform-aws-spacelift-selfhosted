@@ -118,8 +118,14 @@ variable "rds_regional_cluster_identifier" {
 
 variable "rds_global_cluster_identifier" {
   type        = string
-  description = "The identifier of an aws_rds_global_cluster to join the Spacelift database to as the primary cluster. Only taken into account when the cluster is created, see the README for details."
+  description = "The identifier of an aws_rds_global_cluster to join the Spacelift database to, as the primary cluster unless rds_is_global_secondary is true. Only taken into account when the cluster is created, see the README for details."
   default     = null
+}
+
+variable "rds_is_global_secondary" {
+  type        = bool
+  description = "Whether the Spacelift database joins rds_global_cluster_identifier as a secondary cluster. It then inherits the database and master credentials from the primary, so rds_password_sm_arn must point at the primary's database secret (its database_secret_arn output). See the README for details."
+  default     = false
 }
 
 variable "rds_replication_source_identifier" {
@@ -148,7 +154,7 @@ variable "rds_parameter_group_description" {
 
 variable "rds_password_sm_arn" {
   type        = string
-  description = "ARN of the SSM parameter where the RDS password is stored already - this variable is only used for importing an existing database instance."
+  description = "ARN of an existing Spacelift database secret to take the master credentials from, instead of generating a password. Use it when importing a database from a CloudFormation install, or set it to the primary's database_secret_arn output when rds_is_global_secondary is true. The secret's DATABASE_URL key has to hold a postgres:// connection string, and both the username and the password are taken from it."
   default     = null
 }
 
