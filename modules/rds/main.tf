@@ -38,6 +38,7 @@ resource "aws_rds_cluster" "db_cluster" {
   engine_mode                 = var.engine_mode
   engine_version              = var.postgres_engine_version
   allow_major_version_upgrade = true
+  auto_minor_version_upgrade  = var.postgres_allow_auto_minor_version_upgrade
   apply_immediately           = var.apply_immediately
 
   dynamic "serverlessv2_scaling_configuration" {
@@ -92,7 +93,7 @@ resource "aws_rds_cluster_instance" "db_instance" {
   identifier                            = each.value["instance_identifier"]
   instance_class                        = each.value["instance_class"]
   engine                                = aws_rds_cluster.db_cluster.engine
-  auto_minor_version_upgrade            = false
+  auto_minor_version_upgrade            = var.postgres_allow_auto_minor_version_upgrade
   ca_cert_identifier                    = "rds-ca-rsa2048-g1"
   performance_insights_enabled          = lookup(var.performance_insights, "enabled", false)
   performance_insights_kms_key_id       = lookup(var.performance_insights, "kms_key_arn", null)
