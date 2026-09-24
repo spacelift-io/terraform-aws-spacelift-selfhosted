@@ -164,21 +164,25 @@ module "spacelift" {
 }
 ```
 
-Secondary clusters are yours to manage, since their lifecycle (and which one you promote during an outage) is a deployment decision rather than something the module can guess:
+You can manage the secondary clusters yourself, or create them with a second instance of this module by setting `rds_is_global_secondary`. A secondary inherits the database and the master credentials from the primary, so point it at the primary's database secret. The module reads the credentials from there (in the primary's region) to build the secondary's own connection strings:
 
 ```hcl
-resource "aws_rds_cluster" "spacelift_dr" {
-  cluster_identifier        = "spacelift-dr"
-  region                    = "us-east-1"
-  engine                    = "aurora-postgresql"
-  engine_version            = module.spacelift.rds_engine_version_actual
-  global_cluster_identifier = aws_rds_global_cluster.spacelift.id
-  skip_final_snapshot       = true
+module "spacelift_dr" {
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+
+  region             = "us-east-1"
+  rds_engine_version = "18.3"
+
+  rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
+  rds_is_global_secondary       = true
+  rds_password_sm_arn           = module.spacelift.database_secret_arn
 }
 ```
 
+If the primary lives in a different state, pass the secret's ARN as a plain string. The secondary's writer endpoint only accepts writes after you promote it.
+
 > [!IMPORTANT]
-> Both variables are only applied when the cluster is first created. The module ignores later changes to them, because attaching or detaching a running cluster is something you do through the global cluster resource (or the AWS console), not by editing the cluster in place. To bring an existing Spacelift database into a global cluster, point `aws_rds_global_cluster.source_db_cluster_identifier` at the `rds_cluster_arn` output instead.
+> `rds_global_cluster_identifier` and `rds_replication_source_identifier` are only applied when the cluster is first created. The module ignores later changes to them, because attaching or detaching a running cluster is something you do through the global cluster resource (or the AWS console), not by editing the cluster in place. To bring an existing Spacelift database into a global cluster, point `aws_rds_global_cluster.source_db_cluster_identifier` at the `rds_cluster_arn` output instead.
 
 ### Enable the RDS Data API
 
