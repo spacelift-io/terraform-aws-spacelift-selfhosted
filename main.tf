@@ -11,6 +11,8 @@ locals {
   database_iam_url           = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_url : ""
   database_iam_read_only_url = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_read_only_url : ""
   kms_arn                    = coalesce(var.kms_arn, one(module.kms[*].key_arn))
+  backend_image              = var.create_ecr ? module.ecr[0].ecr_backend_repository_url : "registry.spacelift.io/deploy/backend"
+  launcher_image             = var.create_ecr ? module.ecr[0].ecr_launcher_repository_url : "registry.spacelift.io/deploy/launcher"
 }
 
 module "kms" {
@@ -26,6 +28,7 @@ module "kms" {
 
 module "ecr" {
   source = "./modules/ecr"
+  count  = var.create_ecr ? 1 : 0
 
   region                     = var.region
   kms_key_arn                = local.kms_arn
@@ -34,6 +37,13 @@ module "ecr" {
   ecr_force_delete           = var.ecr_force_delete
   backend_repository_name    = var.backend_ecr_repository_name
   launcher_repository_name   = var.launcher_ecr_repository_name
+}
+
+# OpenTofu moves module.ecr to module.ecr[0] on its own once count is added,
+# Terraform plans to destroy and recreate the repositories instead.
+moved {
+  from = module.ecr
+  to   = module.ecr[0]
 }
 
 module "network" {

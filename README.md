@@ -33,7 +33,7 @@ This module creates:
   - a KMS key that is used for signing and validating [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token)s
 - Network resources
   - A VPC, 3 subnets and 3 security groups
-- Container repositories (ECR)
+- Container repositories (ECR), which you can [skip](#pull-images-from-registryspaceliftio)
   - a repository for the backend image (used by the `server` and `drain` services)
   - another repository for the launcher image
 - Database resources
@@ -79,6 +79,26 @@ module "spacelift" {
 ```
 
 If `create_vpc` is `false`, you must provide `rds_subnet_ids` and `rds_security_group_ids`.
+
+### Pull images from registry.spacelift.io
+
+If you pull the backend and launcher images from `registry.spacelift.io`, you don't need your own ECR repositories. Set `create_ecr` to `false` to skip them:
+
+```hcl
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+
+  region             = "eu-west-1"
+  rds_engine_version = "18.3"
+
+  create_ecr = false
+}
+```
+
+The `ecr_*` outputs are then null. The `shell` and `tfvars` outputs point the images at `registry.spacelift.io/deploy/backend` and `registry.spacelift.io/deploy/launcher`, and the `shell` output leaves out `PRIVATE_ECR_LOGIN_URL`. Passing the registry credentials to the services is the job of whichever module deploys them.
+
+> [!WARNING]
+> Setting `create_ecr` to `false` on an existing installation deletes both repositories, so move your services to `registry.spacelift.io` first. A repository that still holds images is only deleted if `ecr_force_delete` was already `true` in the previous apply. Set `ecr_force_delete = true` and apply, then set `create_ecr = false` and apply again.
 
 ### Deploy multiple RDS instances
 

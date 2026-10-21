@@ -344,6 +344,12 @@ variable "enable_public_access_block_on_s3" {
   default     = true
 }
 
+variable "create_ecr" {
+  type        = bool
+  description = "Whether to create the ECR repositories for the backend and launcher images. Set it to false if you pull the images from registry.spacelift.io. Setting it to false on an existing installation deletes the repositories, see the README for details."
+  default     = true
+}
+
 variable "backend_ecr_repository_name" {
   type        = string
   description = "Name of the backend ECR repository."
