@@ -157,23 +157,23 @@ output "database_secret_version_id" {
 }
 
 output "ecr_backend_repository_url" {
-  value       = module.ecr.ecr_backend_repository_url
-  description = "URL of the ECR repository for the backend images."
+  value       = one(module.ecr[*].ecr_backend_repository_url)
+  description = "URL of the ECR repository for the backend images. Will be null if create_ecr is false."
 }
 
 output "ecr_backend_repository_arn" {
-  value       = module.ecr.ecr_backend_repository_arn
-  description = "ARN of the ECR repository for the backend images."
+  value       = one(module.ecr[*].ecr_backend_repository_arn)
+  description = "ARN of the ECR repository for the backend images. Will be null if create_ecr is false."
 }
 
 output "ecr_launcher_repository_url" {
-  value       = module.ecr.ecr_launcher_repository_url
-  description = "URL of the ECR repository for the launcher images."
+  value       = one(module.ecr[*].ecr_launcher_repository_url)
+  description = "URL of the ECR repository for the launcher images. Will be null if create_ecr is false."
 }
 
 output "ecr_launcher_repository_arn" {
-  value       = module.ecr.ecr_launcher_repository_arn
-  description = "ARN of the ECR repository for the launcher images."
+  value       = one(module.ecr[*].ecr_launcher_repository_arn)
+  description = "ARN of the ECR repository for the launcher images. Will be null if create_ecr is false."
 }
 
 output "binaries_bucket_arn" {
@@ -347,14 +347,16 @@ output "sqs_queue_names" {
 
 output "shell" {
   value = templatefile("${path.module}/env.tftpl", {
-    env : {
-      AWS_REGION : var.region
-      AWS_ACCOUNT_ID : data.aws_caller_identity.current.account_id
-      BACKEND_IMAGE : module.ecr.ecr_backend_repository_url
-      LAUNCHER_IMAGE : module.ecr.ecr_launcher_repository_url
-      PRIVATE_ECR_LOGIN_URL : split("/", module.ecr.ecr_backend_repository_url)[0]
-      BINARIES_BUCKET_NAME : module.s3.binaries_bucket_name
-    },
+    env : merge(
+      {
+        AWS_REGION : var.region
+        AWS_ACCOUNT_ID : data.aws_caller_identity.current.account_id
+        BACKEND_IMAGE : local.backend_image
+        LAUNCHER_IMAGE : local.launcher_image
+        BINARIES_BUCKET_NAME : module.s3.binaries_bucket_name
+      },
+      var.create_ecr ? { PRIVATE_ECR_LOGIN_URL : split("/", module.ecr[0].ecr_backend_repository_url)[0] } : {},
+    ),
   })
 }
 
@@ -367,8 +369,8 @@ output "tfvars" {
       vpc_id : var.create_vpc ? module.network[0].vpc_id : ""
       server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : ""
       drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : ""
-      backend_image : module.ecr.ecr_backend_repository_url
-      launcher_image : module.ecr.ecr_launcher_repository_url
+      backend_image : local.backend_image
+      launcher_image : local.launcher_image
       database_url : local.database_url
       database_read_only_url : local.database_read_only_url
       binaries_bucket_name : module.s3.binaries_bucket_name
