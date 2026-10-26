@@ -6,3 +6,7 @@ output "ecr_backend_repository_url" {
 output "shell" {
   value = module.spacelift.shell
 }
+
+output "binaries_bucket_name" {
+  value = module.spacelift.binaries_bucket_name
+}

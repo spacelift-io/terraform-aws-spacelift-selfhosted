@@ -28,16 +28,21 @@ tests:
       # With create_container_registry = false the ECR outputs are null and
       # the shell output has no image lines.
       - |
-        TF_BIN=$(command -v tofu || command -v terraform)
-        OUTPUTS=$($TF_BIN output -json) || { echo "FAIL: cannot read the outputs"; exit 1; }
-        SHELL_OUT=$($TF_BIN output -raw shell) || { echo "FAIL: cannot read the shell output"; exit 1; }
+        set -eu
+        TF_BIN=$(command -v tofu || command -v terraform || true)
+        for b in /bin/tofu /bin/terraform; do [ -n "$TF_BIN" ] || { [ -x "$b" ] && TF_BIN=$b; }; done
+        [ -n "$TF_BIN" ] && [ -x "$TF_BIN" ] || { echo "ER10-CHECK FAIL: no tofu or terraform binary"; exit 1; }
+        ALL=$($TF_BIN output -json)
+        SHELL_OUT=$($TF_BIN output -raw shell)
         echo "$SHELL_OUT"
+        # Proves the state was read: a known output must be there.
+        echo "$ALL" | grep -q '"binaries_bucket_name"' || { echo "ER10-CHECK FAIL: binaries_bucket_name missing, state not read"; exit 1; }
+        echo "$SHELL_OUT" | grep -q "BINARIES_BUCKET_NAME" || { echo "ER10-CHECK FAIL: the shell output misses BINARIES_BUCKET_NAME"; exit 1; }
         # Null outputs are not stored in the state, so a null output is a missing one.
-        if echo "$OUTPUTS" | grep -q '"ecr_backend_repository_url"'; then
-          echo "FAIL: ecr_backend_repository_url is not null"; exit 1
+        if echo "$ALL" | grep -q '"ecr_backend_repository_url"'; then
+          echo "ER10-CHECK FAIL: ecr_backend_repository_url is not null"; exit 1
         fi
         if echo "$SHELL_OUT" | grep -qE "BACKEND_IMAGE|LAUNCHER_IMAGE|PRIVATE_ECR_LOGIN_URL"; then
-          echo "FAIL: the shell output has image lines"; exit 1
+          echo "ER10-CHECK FAIL: the shell output has image lines"; exit 1
         fi
-        echo "$SHELL_OUT" | grep -q "BINARIES_BUCKET_NAME" || { echo "FAIL: the shell output misses BINARIES_BUCKET_NAME"; exit 1; }
-        echo "OK: no ECR outputs, no image lines"
+        echo "ER10-CHECK OK: $TF_BIN, checked $(echo "$SHELL_OUT" | grep -c export) shell lines, no ECR outputs, no image lines"
