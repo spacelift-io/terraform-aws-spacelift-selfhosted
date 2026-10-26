@@ -19,3 +19,23 @@ tests:
     project_root: examples/sqs-enabled
     environment:
       TF_VAR_aws_region: eu-north-1
+
+  - name: Without ECR
+    project_root: examples/without-ecr
+    environment:
+      TF_VAR_aws_region: eu-north-1
+    after_apply:
+      # With create_container_registry = false the ECR outputs are null and
+      # the shell output has no image lines.
+      - |
+        TF_BIN=$(command -v tofu || command -v terraform)
+        SHELL_OUT=$($TF_BIN output -raw shell)
+        echo "$SHELL_OUT"
+        if [ "$($TF_BIN output -json ecr_backend_repository_url)" != "null" ]; then
+          echo "FAIL: ecr_backend_repository_url is not null"; exit 1
+        fi
+        if echo "$SHELL_OUT" | grep -qE "BACKEND_IMAGE|LAUNCHER_IMAGE|PRIVATE_ECR_LOGIN_URL"; then
+          echo "FAIL: the shell output has image lines"; exit 1
+        fi
+        echo "$SHELL_OUT" | grep -q "BINARIES_BUCKET_NAME" || { echo "FAIL: the shell output misses BINARIES_BUCKET_NAME"; exit 1; }
+        echo "OK: no ECR outputs, no image lines"
