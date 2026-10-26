@@ -33,7 +33,7 @@ This module creates:
   - a KMS key that is used for signing and validating [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token)s
 - Network resources
   - A VPC, 3 subnets and 3 security groups
-- Container repositories (ECR)
+- Container repositories (ECR), unless `create_container_registry` is `false` (see [below](#deploy-without-ecr-repositories))
   - a repository for the backend image (used by the `server` and `drain` services)
   - another repository for the launcher image
 - Database resources
@@ -79,6 +79,32 @@ module "spacelift" {
 ```
 
 If `create_vpc` is `false`, you must provide `rds_subnet_ids` and `rds_security_group_ids`.
+
+### Deploy without ECR repositories
+
+If you pull the backend and launcher images from another registry, such as `registry.spacelift.io`, you don't need the ECR repositories. Set `create_container_registry` to `false` to skip them:
+
+```hcl
+module "spacelift" {
+  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+
+  region             = "eu-west-1"
+  rds_engine_version = "18.3"
+
+  create_container_registry = false
+}
+```
+
+With the flag off:
+
+- the `ecr_*` outputs are null;
+- the `shell` output has no `BACKEND_IMAGE`, `LAUNCHER_IMAGE` and `PRIVATE_ECR_LOGIN_URL` lines, and the `tfvars` output has no `backend_image` and `launcher_image` lines. Set the images where you deploy the services instead;
+- `backend_ecr_repository_name`, `launcher_ecr_repository_name`, `number_of_images_to_retain` and `ecr_force_delete` have no effect.
+
+The default is `true`, so existing installations don't change.
+
+> [!WARNING]
+> Setting `create_container_registry` to `false` on an existing installation **deletes both ECR repositories** and the images in them, so move your services to the new registry first. AWS refuses to delete a repository that still holds images unless `ecr_force_delete` was already `true` in the previous apply. Set `ecr_force_delete = true` and apply, then set `create_container_registry = false` and apply again.
 
 ### Deploy multiple RDS instances
 
