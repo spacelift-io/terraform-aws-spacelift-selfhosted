@@ -29,9 +29,11 @@ tests:
       # the shell output has no image lines.
       - |
         TF_BIN=$(command -v tofu || command -v terraform)
-        SHELL_OUT=$($TF_BIN output -raw shell)
+        OUTPUTS=$($TF_BIN output -json) || { echo "FAIL: cannot read the outputs"; exit 1; }
+        SHELL_OUT=$($TF_BIN output -raw shell) || { echo "FAIL: cannot read the shell output"; exit 1; }
         echo "$SHELL_OUT"
-        if [ "$($TF_BIN output -json ecr_backend_repository_url)" != "null" ]; then
+        # Null outputs are not stored in the state, so a null output is a missing one.
+        if echo "$OUTPUTS" | grep -q '"ecr_backend_repository_url"'; then
           echo "FAIL: ecr_backend_repository_url is not null"; exit 1
         fi
         if echo "$SHELL_OUT" | grep -qE "BACKEND_IMAGE|LAUNCHER_IMAGE|PRIVATE_ECR_LOGIN_URL"; then
