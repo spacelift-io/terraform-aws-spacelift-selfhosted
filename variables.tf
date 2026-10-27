@@ -346,7 +346,7 @@ variable "enable_public_access_block_on_s3" {
 
 variable "create_container_registry" {
   type        = bool
-  description = "Whether to create the ECR repositories for the backend and launcher images. Set it to false if you pull the images from another registry, such as registry.spacelift.io. The ecr_* outputs are then null, and the shell and tfvars outputs have no image lines. On an existing installation, setting it to false removes the repositories from the module, see the README for how to keep or delete them."
+  description = "Whether to create the ECR repositories for the backend and launcher images. Set it to false if you pull the images from another registry, such as oci.spacelift.io. The ecr_* outputs are then null, and the shell and tfvars outputs have no image lines. On an existing installation, setting it to false removes the repositories from the module, see the README for how to keep or delete them."
   default     = true
 }
 

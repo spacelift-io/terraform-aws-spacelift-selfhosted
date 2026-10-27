@@ -82,7 +82,7 @@ If `create_vpc` is `false`, you must provide `rds_subnet_ids` and `rds_security_
 
 ### Deploy without ECR repositories
 
-If you pull the backend and launcher images from another registry, such as `registry.spacelift.io`, you don't need the ECR repositories. Set `create_container_registry` to `false` to skip them:
+If you pull the backend and launcher images from another registry, such as `oci.spacelift.io`, you don't need the ECR repositories. Set `create_container_registry` to `false` to skip them:
 
 ```hcl
 module "spacelift" {
