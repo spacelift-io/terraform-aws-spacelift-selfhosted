@@ -18,9 +18,11 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted?ref=v2.3.0"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
   region             = "eu-west-1"
+  website_endpoint   = "https://spacelift.mycorp.com"
   rds_engine_version = "18.3"
 }
 ```
@@ -56,9 +58,11 @@ This deploys the KMS keys, network stack (VPC, subnets, security groups), RDS cl
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
   region             = "eu-west-1"
+  website_endpoint   = "https://spacelift.mycorp.com"
   rds_engine_version = "18.3"
 }
 ```
@@ -67,9 +71,11 @@ module "spacelift" {
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
-  region       = "eu-west-1"
+  region           = "eu-west-1"
+  website_endpoint = "https://spacelift.mycorp.com"
 
   create_vpc             = false
   rds_subnet_ids         = ["subnet-012345abc", "subnet-012345def", "subnet-012345ghi"]
@@ -84,11 +90,13 @@ If `create_vpc` is `false`, you must provide `rds_subnet_ids` and `rds_security_
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
-  region       = "eu-west-1"
+  region           = "eu-west-1"
+  website_endpoint = "https://spacelift.mycorp.com"
 
-  rds_engine_version         = "18.3"
+  rds_engine_version = "18.3"
   rds_instance_configuration = {
     "primary-instance" = {
       instance_identifier = "primary"
@@ -108,9 +116,11 @@ You can customize S3 bucket names and retention policies using the `s3_bucket_co
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
   region             = "eu-west-1"
+  website_endpoint   = "https://spacelift.mycorp.com"
   rds_engine_version = "18.3"
 
   # The buckets that expire objects have versioning enabled, so expiring the current
@@ -120,8 +130,8 @@ module "spacelift" {
 
   s3_bucket_configuration = {
     run_logs = {
-      name            = null  # Use default name
-      expiration_days = 360   # Keep run logs for 1 year instead of default 60 days
+      name            = null # Use default name
+      expiration_days = 360  # Keep run logs for 1 year instead of default 60 days
     }
     # All other buckets will use default settings
     binaries     = null
@@ -155,9 +165,11 @@ resource "aws_rds_global_cluster" "spacelift" {
 }
 
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
   region             = "eu-west-1"
+  website_endpoint   = "https://spacelift.mycorp.com"
   rds_engine_version = "18.3"
 
   rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
@@ -168,9 +180,11 @@ You can manage the secondary clusters yourself, or create them with a second ins
 
 ```hcl
 module "spacelift_dr" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
   region             = "us-east-1"
+  website_endpoint   = "https://spacelift.mycorp.com"
   rds_engine_version = "18.3"
 
   rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
@@ -190,9 +204,11 @@ Set `rds_enable_http_endpoint` to `true` to turn on the [Data API](https://docs.
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
   region             = "eu-west-1"
+  website_endpoint   = "https://spacelift.mycorp.com"
   rds_engine_version = "18.3"
 
   rds_enable_http_endpoint = true
@@ -208,9 +224,11 @@ The cluster has IAM database authentication enabled by default. Set `rds_iam_use
 
 ```hcl
 module "spacelift" {
-  source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
+  source  = "spacelift-io/spacelift-selfhosted/aws"
+  version = "~> 3.3"
 
   region             = "eu-west-1"
+  website_endpoint   = "https://spacelift.mycorp.com"
   rds_engine_version = "18.3"
 
   rds_iam_username = "spacelift_iam" # Set this to a user you created explicitly for IAM authentication
