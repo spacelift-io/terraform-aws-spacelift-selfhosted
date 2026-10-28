@@ -344,6 +344,12 @@ variable "enable_public_access_block_on_s3" {
   default     = true
 }
 
+variable "create_ecr" {
+  type        = bool
+  description = "Whether to create the ECR repositories for the backend and launcher images. Default is true. Set to false if you host the images elsewhere (for example an existing registry or a pull-through cache)."
+  default     = true
+}
+
 variable "backend_ecr_repository_name" {
   type        = string
   description = "Name of the backend ECR repository."

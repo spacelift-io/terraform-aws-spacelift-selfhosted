@@ -4,13 +4,15 @@ resource "random_uuid" "suffix" {
 }
 
 locals {
-  suffix                     = coalesce(lower(var.unique_suffix), lower(substr(random_uuid.suffix.id, 0, 5))) # Certain resources (subnet group, rds) require all lowercase names
-  uploads_bucket_url         = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
-  database_url               = var.create_database ? module.rds[0].database_url : ""
-  database_read_only_url     = var.create_database ? module.rds[0].database_read_only_url : ""
-  database_iam_url           = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_url : ""
-  database_iam_read_only_url = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_read_only_url : ""
-  kms_arn                    = coalesce(var.kms_arn, one(module.kms[*].key_arn))
+  suffix                      = coalesce(lower(var.unique_suffix), lower(substr(random_uuid.suffix.id, 0, 5))) # Certain resources (subnet group, rds) require all lowercase names
+  uploads_bucket_url          = "https://${module.s3.uploads_bucket_name}.s3.${var.region}.${data.aws_partition.current.dns_suffix}"
+  database_url                = var.create_database ? module.rds[0].database_url : ""
+  database_read_only_url      = var.create_database ? module.rds[0].database_read_only_url : ""
+  database_iam_url            = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_url : ""
+  database_iam_read_only_url  = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_read_only_url : ""
+  kms_arn                     = coalesce(var.kms_arn, one(module.kms[*].key_arn))
+  ecr_backend_repository_url  = var.create_ecr ? module.ecr[0].ecr_backend_repository_url : ""
+  ecr_launcher_repository_url = var.create_ecr ? module.ecr[0].ecr_launcher_repository_url : ""
 }
 
 module "kms" {
@@ -24,8 +26,15 @@ module "kms" {
   jwt_key_multi_regional        = var.kms_jwt_key_multi_regional
 }
 
+# Keeps existing state intact now that the module is conditional.
+moved {
+  from = module.ecr
+  to   = module.ecr[0]
+}
+
 module "ecr" {
   source = "./modules/ecr"
+  count  = var.create_ecr ? 1 : 0
 
   region                     = var.region
   kms_key_arn                = local.kms_arn
