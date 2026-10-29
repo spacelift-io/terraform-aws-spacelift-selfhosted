@@ -82,6 +82,9 @@ If `create_vpc` is `false`, you must provide `rds_subnet_ids` and `rds_security_
 
 ### Deploy without ECR repositories
 
+> [!NOTE]
+> We recommend pulling the images from `oci.spacelift.io`. Starting with Self-Hosted v8.0.0, releases no longer include the image archives, so the images are only available from `oci.spacelift.io`. To keep them in your own registry, mirror them from there.
+
 If you pull the backend and launcher images from another registry, such as `oci.spacelift.io`, you don't need the ECR repositories. Set `create_container_registry` to `false` to skip them:
 
 ```hcl
