@@ -26,6 +26,7 @@ module "kms" {
 
 module "ecr" {
   source = "./modules/ecr"
+  count  = var.create_container_registry ? 1 : 0
 
   region                     = var.region
   kms_key_arn                = local.kms_arn
@@ -34,6 +35,13 @@ module "ecr" {
   ecr_force_delete           = var.ecr_force_delete
   backend_repository_name    = var.backend_ecr_repository_name
   launcher_repository_name   = var.launcher_ecr_repository_name
+}
+
+# Keeps existing repositories when upgrading from a version without count on
+# module.ecr. Without it, Terraform plans to destroy and recreate them.
+moved {
+  from = module.ecr
+  to   = module.ecr[0]
 }
 
 module "network" {

@@ -344,27 +344,33 @@ variable "enable_public_access_block_on_s3" {
   default     = true
 }
 
+variable "create_container_registry" {
+  type        = bool
+  description = "Whether to create the ECR repositories for the backend and launcher images. Set it to false if you pull the images from another registry, such as oci.spacelift.io. The ecr_* outputs are then null, and the shell and tfvars outputs have no image lines. On an existing installation, setting it to false removes the repositories from the module, see the README for how to keep or delete them."
+  default     = true
+}
+
 variable "backend_ecr_repository_name" {
   type        = string
-  description = "Name of the backend ECR repository."
+  description = "Name of the backend ECR repository. Not used if create_container_registry is false."
   default     = null
 }
 
 variable "launcher_ecr_repository_name" {
   type        = string
-  description = "Name of the launcher ECR repository."
+  description = "Name of the launcher ECR repository. Not used if create_container_registry is false."
   default     = null
 }
 
 variable "number_of_images_to_retain" {
   type        = number
-  description = "Number of Docker images to retain in ECR repositories. Default is 5. If set to 0, no images will be cleaned up."
+  description = "Number of Docker images to retain in ECR repositories. Default is 5. If set to 0, no images will be cleaned up. Not used if create_container_registry is false."
   default     = 5
 }
 
 variable "ecr_force_delete" {
   type        = bool
-  description = "Whether to force delete the ECRs, even if they contain images."
+  description = "Whether to force delete the ECRs, even if they contain images. Not used if create_container_registry is false. To delete the repositories with their images when turning create_container_registry off, set it to true one apply before, see the README."
   default     = false
 }
 
