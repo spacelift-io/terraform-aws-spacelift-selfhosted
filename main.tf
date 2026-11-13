@@ -87,6 +87,12 @@ module "rds" {
 
   availability_zones = var.availability_zones
 
+  skip_final_snapshot            = var.rds_skip_final_snapshot
+  final_snapshot_identifier      = var.rds_final_snapshot_identifier
+  cluster_parameters             = var.rds_cluster_parameters
+  secret_recovery_window_in_days = var.rds_secret_recovery_window_in_days
+  secret_replica_regions         = var.rds_secret_replica_regions
+
   db_delete_protection_enabled = var.rds_delete_protection_enabled
   backup_retention_period      = var.rds_backup_retention_period
   preferred_backup_window      = var.rds_preferred_backup_window

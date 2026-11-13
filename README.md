@@ -195,6 +195,8 @@ module "spacelift_dr" {
 
 If the primary lives in a different state, pass the secret's ARN as a plain string. The secondary's writer endpoint only accepts writes after you promote it.
 
+To plan the secondary without depending on the primary's region, replicate the primary's secret to the secondary's region with `rds_secret_replica_regions = ["us-east-1"]` on the primary, and pass the secret's name (`spacelift/db-conn-string-<suffix>`) instead of its ARN: the module reads a secret given by name in its own region.
+
 > [!IMPORTANT]
 > `rds_global_cluster_identifier` and `rds_replication_source_identifier` are only applied when the cluster is first created. The module ignores later changes to them, because attaching or detaching a running cluster is something you do through the global cluster resource (or the AWS console), not by editing the cluster in place. To bring an existing Spacelift database into a global cluster, point `aws_rds_global_cluster.source_db_cluster_identifier` at the `rds_cluster_arn` output instead.
 
