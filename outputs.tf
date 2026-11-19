@@ -157,23 +157,23 @@ output "database_secret_version_id" {
 }
 
 output "ecr_backend_repository_url" {
-  value       = module.ecr.ecr_backend_repository_url
-  description = "URL of the ECR repository for the backend images."
+  value       = one(module.ecr[*].ecr_backend_repository_url)
+  description = "URL of the ECR repository for the backend images. It will be null if create_container_registry is false."
 }
 
 output "ecr_backend_repository_arn" {
-  value       = module.ecr.ecr_backend_repository_arn
-  description = "ARN of the ECR repository for the backend images."
+  value       = one(module.ecr[*].ecr_backend_repository_arn)
+  description = "ARN of the ECR repository for the backend images. It will be null if create_container_registry is false."
 }
 
 output "ecr_launcher_repository_url" {
-  value       = module.ecr.ecr_launcher_repository_url
-  description = "URL of the ECR repository for the launcher images."
+  value       = one(module.ecr[*].ecr_launcher_repository_url)
+  description = "URL of the ECR repository for the launcher images. It will be null if create_container_registry is false."
 }
 
 output "ecr_launcher_repository_arn" {
-  value       = module.ecr.ecr_launcher_repository_arn
-  description = "ARN of the ECR repository for the launcher images."
+  value       = one(module.ecr[*].ecr_launcher_repository_arn)
+  description = "ARN of the ECR repository for the launcher images. It will be null if create_container_registry is false."
 }
 
 output "binaries_bucket_arn" {
@@ -347,47 +347,57 @@ output "sqs_queue_names" {
 
 output "shell" {
   value = templatefile("${path.module}/env.tftpl", {
-    env : {
-      AWS_REGION : var.region
-      AWS_ACCOUNT_ID : data.aws_caller_identity.current.account_id
-      BACKEND_IMAGE : module.ecr.ecr_backend_repository_url
-      LAUNCHER_IMAGE : module.ecr.ecr_launcher_repository_url
-      PRIVATE_ECR_LOGIN_URL : split("/", module.ecr.ecr_backend_repository_url)[0]
-      BINARIES_BUCKET_NAME : module.s3.binaries_bucket_name
-    },
+    # The template renders the keys in lexical order, so merge() keeps the
+    # output unchanged for existing installations.
+    env : merge(
+      {
+        AWS_REGION : var.region
+        AWS_ACCOUNT_ID : data.aws_caller_identity.current.account_id
+        BINARIES_BUCKET_NAME : module.s3.binaries_bucket_name
+      },
+      var.create_container_registry ? {
+        BACKEND_IMAGE : module.ecr[0].ecr_backend_repository_url
+        LAUNCHER_IMAGE : module.ecr[0].ecr_launcher_repository_url
+        PRIVATE_ECR_LOGIN_URL : split("/", module.ecr[0].ecr_backend_repository_url)[0]
+      } : {},
+    ),
   })
 }
 
 output "tfvars" {
   sensitive = true
   value = templatefile("${path.module}/tfvars.tftpl", {
-    stringVars : {
-      aws_region : var.region
-      unique_suffix : local.suffix
-      vpc_id : var.create_vpc ? module.network[0].vpc_id : ""
-      server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : ""
-      drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : ""
-      backend_image : module.ecr.ecr_backend_repository_url
-      launcher_image : module.ecr.ecr_launcher_repository_url
-      database_url : local.database_url
-      database_read_only_url : local.database_read_only_url
-      binaries_bucket_name : module.s3.binaries_bucket_name
-      deliveries_bucket_name : module.s3.deliveries_bucket_name
-      large_queue_messages_bucket_name : module.s3.large_queue_messages_bucket_name
-      metadata_bucket_name : module.s3.metadata_bucket_name
-      modules_bucket_name : module.s3.modules_bucket_name
-      policy_inputs_bucket_name : module.s3.policy_inputs_bucket_name
-      run_logs_bucket_name : module.s3.run_logs_bucket_name
-      run_observability_bucket_name : module.s3.run_observability_bucket_name
-      states_bucket_name : module.s3.states_bucket_name
-      uploads_bucket_name : module.s3.uploads_bucket_name
-      uploads_bucket_url : local.uploads_bucket_url
-      user_uploaded_workspaces_bucket_name : module.s3.user_uploaded_workspaces_bucket_name
-      workspace_bucket_name : module.s3.workspace_bucket_name
-      kms_encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : ""
-      kms_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : ""
-      kms_key_arn : local.kms_arn
-    },
+    stringVars : merge(
+      {
+        aws_region : var.region
+        unique_suffix : local.suffix
+        vpc_id : var.create_vpc ? module.network[0].vpc_id : ""
+        server_security_group_id : var.create_vpc ? module.network[0].server_security_group_id : ""
+        drain_security_group_id : var.create_vpc ? module.network[0].drain_security_group_id : ""
+        database_url : local.database_url
+        database_read_only_url : local.database_read_only_url
+        binaries_bucket_name : module.s3.binaries_bucket_name
+        deliveries_bucket_name : module.s3.deliveries_bucket_name
+        large_queue_messages_bucket_name : module.s3.large_queue_messages_bucket_name
+        metadata_bucket_name : module.s3.metadata_bucket_name
+        modules_bucket_name : module.s3.modules_bucket_name
+        policy_inputs_bucket_name : module.s3.policy_inputs_bucket_name
+        run_logs_bucket_name : module.s3.run_logs_bucket_name
+        run_observability_bucket_name : module.s3.run_observability_bucket_name
+        states_bucket_name : module.s3.states_bucket_name
+        uploads_bucket_name : module.s3.uploads_bucket_name
+        uploads_bucket_url : local.uploads_bucket_url
+        user_uploaded_workspaces_bucket_name : module.s3.user_uploaded_workspaces_bucket_name
+        workspace_bucket_name : module.s3.workspace_bucket_name
+        kms_encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : ""
+        kms_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : ""
+        kms_key_arn : local.kms_arn
+      },
+      var.create_container_registry ? {
+        backend_image : module.ecr[0].ecr_backend_repository_url
+        launcher_image : module.ecr[0].ecr_launcher_repository_url
+      } : {},
+    ),
     jsonVars : {
       public_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].public_subnet_ids)) : jsonencode([])
       private_subnet_ids : var.create_vpc ? jsonencode(values(module.network[0].private_subnet_ids)) : jsonencode([])
