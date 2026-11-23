@@ -6,18 +6,26 @@ locals {
   # when the primary's secret doesn't exist yet and its ARN is still unknown.
   read_credentials_from_sm = var.is_global_secondary ? true : var.password_sm_arn != null
 
+  # The primary's secret lives in the primary's region, which the ARN tells us.
+  credentials_sm_region = startswith(var.password_sm_arn, "arn:") ? split(":", var.password_sm_arn)[3] : var.region
   credentials_from_sm = !local.read_credentials_from_sm ? null : regex(
     "^postgres://([^:]+):([^@]+)@",
-    jsondecode(data.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"],
+    jsondecode(ephemeral.aws_secretsmanager_secret_version.db_pw[0].secret_string)["DATABASE_URL"],
   )
   username = local.read_credentials_from_sm ? local.credentials_from_sm[0] : var.db_username
   password = local.read_credentials_from_sm ? local.credentials_from_sm[1] : random_id.db_pw.b64_url
+  password_version = parseint(substr(sha256(local.read_credentials_from_sm ?
+    data.aws_secretsmanager_secret.db_pw[0].last_changed_date :
+    local.password
+  ), 0, 16), 16)
 
   url_suffix                 = ":5432/${local.database_name}?statement_cache_capacity=0"
   database_url               = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.endpoint}${local.url_suffix}"
   database_read_only_url     = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.url_suffix}"
   database_iam_url           = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.endpoint}${local.url_suffix}"
   database_iam_read_only_url = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.url_suffix}"
+
+  conn_str_version = parseint(substr(sha256("${local.password_version}|${local.username}|${var.iam_username}|${aws_rds_cluster.db_cluster.endpoint}"), 0, 16), 16)
 }
 
 data "aws_availability_zones" "available" {
@@ -28,11 +36,11 @@ resource "random_id" "db_pw" {
   byte_length = 24
 }
 
-data "aws_secretsmanager_secret_version" "db_pw" {
+ephemeral "aws_secretsmanager_secret_version" "db_pw" {
   count = local.read_credentials_from_sm ? 1 : 0
 
   # The primary's secret lives in the primary's region, which the ARN tells us.
-  region    = startswith(var.password_sm_arn, "arn:") ? split(":", var.password_sm_arn)[3] : var.region
+  region    = local.credentials_sm_region
   secret_id = var.password_sm_arn
 
   lifecycle {
@@ -43,14 +51,24 @@ data "aws_secretsmanager_secret_version" "db_pw" {
   }
 }
 
+# This is needed in order to get a version for the wo password
+data "aws_secretsmanager_secret" "db_pw" {
+  count = local.read_credentials_from_sm ? 1 : 0
+
+  region = local.credentials_sm_region
+  arn    = var.password_sm_arn
+
+}
+
 resource "aws_rds_cluster" "db_cluster" {
   cluster_identifier = coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")
 
   # A global secondary inherits the database and the master credentials from
   # the primary cluster, so AWS rejects them on creation.
-  database_name   = var.is_global_secondary ? null : local.database_name
-  master_username = var.is_global_secondary ? null : local.username
-  master_password = var.is_global_secondary ? null : local.password
+  database_name              = var.is_global_secondary ? null : local.database_name
+  master_username            = var.is_global_secondary ? null : local.username
+  master_password_wo         = var.is_global_secondary ? null : local.password
+  master_password_wo_version = local.password_version
 
   # When restoring from a snapshot, the master username comes from the snapshot
   # and must match var.db_username, otherwise the generated connection strings
@@ -175,7 +193,7 @@ resource "aws_secretsmanager_secret" "conn_string" {
 
 resource "aws_secretsmanager_secret_version" "conn_string" {
   secret_id = aws_secretsmanager_secret.conn_string.id
-  secret_string = jsonencode(merge({
+  secret_string_wo = jsonencode(merge({
     DATABASE_URL           = local.database_url
     DATABASE_READ_ONLY_URL = local.database_read_only_url
     },
@@ -183,6 +201,7 @@ resource "aws_secretsmanager_secret_version" "conn_string" {
       DATABASE_IAM_URL           = local.database_iam_url
       DATABASE_IAM_READ_ONLY_URL = local.database_iam_read_only_url
   }))
+  secret_string_wo_version = local.conn_str_version
 
   region = var.region
 }
