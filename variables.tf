@@ -328,17 +328,17 @@ variable "s3_bucket_configuration" {
     # Optional so that existing callers passing the full object keep working.
     run_observability = optional(object({ name = string, expiration_days = number }))
 
-    # Only used when create_flows_bucket is true. Nothing in this bucket expires.
+    # Only used when enable_flows is true. Nothing in this bucket expires.
     flows = optional(object({ name = string }))
   })
   description = "Custom configuration for S3 buckets."
   default     = null
 }
 
-variable "create_flows_bucket" {
+variable "enable_flows" {
   type        = bool
-  description = "Whether to create the S3 bucket Spacelift Flows stores its data in, and the KMS key it is encrypted with. They stay unused if you don't deploy Flows."
-  default     = true
+  description = "Whether to create what Spacelift Flows needs on top of Spacelift Deploy: the S3 bucket it stores its data in, the KMS key that bucket is encrypted with, and, unless create_container_registry is false, the ECR repositories for its images."
+  default     = false
 }
 
 variable "s3_noncurrent_version_expiration_days" {
@@ -355,7 +355,7 @@ variable "enable_public_access_block_on_s3" {
 
 variable "create_container_registry" {
   type        = bool
-  description = "Whether to create the ECR repositories for the backend and launcher images. Set it to false if you pull the images from another registry, such as oci.spacelift.io. The ecr_* outputs are then null, and the shell and tfvars outputs have no image lines. On an existing installation, setting it to false removes the repositories from the module, see the README for how to keep or delete them."
+  description = "Whether to create the ECR repositories for the backend, launcher and Flows images. Set it to false if you pull the images from another registry, such as oci.spacelift.io. The ecr_* outputs are then null, and the shell and tfvars outputs have no image lines. On an existing installation, setting it to false removes the repositories from the module, see the README for how to keep or delete them."
   default     = true
 }
 

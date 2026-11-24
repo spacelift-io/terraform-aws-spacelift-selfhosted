@@ -187,6 +187,36 @@ output "ecr_launcher_repository_arn" {
   description = "ARN of the ECR repository for the launcher images. It will be null if create_container_registry is false."
 }
 
+output "ecr_flows_backend_repository_url" {
+  value       = try(module.ecr[0].ecr_flows_repository_urls.backend, null)
+  description = "URL of the ECR repository for the Spacelift Flows backend images. It will be null if create_container_registry or enable_flows is false."
+}
+
+output "ecr_flows_backend_repository_arn" {
+  value       = try(module.ecr[0].ecr_flows_repository_arns.backend, null)
+  description = "ARN of the ECR repository for the Spacelift Flows backend images. It will be null if create_container_registry or enable_flows is false."
+}
+
+output "ecr_flows_agent_repository_url" {
+  value       = try(module.ecr[0].ecr_flows_repository_urls.agent, null)
+  description = "URL of the ECR repository for the Spacelift Flows agent images. It will be null if create_container_registry or enable_flows is false."
+}
+
+output "ecr_flows_agent_repository_arn" {
+  value       = try(module.ecr[0].ecr_flows_repository_arns.agent, null)
+  description = "ARN of the ECR repository for the Spacelift Flows agent images. It will be null if create_container_registry or enable_flows is false."
+}
+
+output "ecr_flows_k8s_js_executor_repository_url" {
+  value       = try(module.ecr[0].ecr_flows_repository_urls.k8s_js_executor, null)
+  description = "URL of the ECR repository for the Spacelift Flows Kubernetes JS executor images. It will be null if create_container_registry or enable_flows is false."
+}
+
+output "ecr_flows_k8s_js_executor_repository_arn" {
+  value       = try(module.ecr[0].ecr_flows_repository_arns.k8s_js_executor, null)
+  description = "ARN of the ECR repository for the Spacelift Flows Kubernetes JS executor images. It will be null if create_container_registry or enable_flows is false."
+}
+
 output "binaries_bucket_arn" {
   value       = module.s3.binaries_bucket_arn
   description = "ARN of the S3 bucket used for storing binaries."
@@ -269,17 +299,17 @@ output "run_observability_bucket_name" {
 
 output "flows_kms_key_arn" {
   value       = module.kms.flows_key_arn
-  description = "ARN of the KMS key used for encrypting the Spacelift Flows bucket. Null if create_flows_bucket is false."
+  description = "ARN of the KMS key used for encrypting the Spacelift Flows bucket. Null if enable_flows is false."
 }
 
 output "flows_bucket_arn" {
   value       = module.s3.flows_bucket_arn
-  description = "ARN of the S3 bucket used by Spacelift Flows. Null if create_flows_bucket is false."
+  description = "ARN of the S3 bucket used by Spacelift Flows. Null if enable_flows is false."
 }
 
 output "flows_bucket_name" {
   value       = module.s3.flows_bucket_name
-  description = "ID of the S3 bucket used by Spacelift Flows. Null if create_flows_bucket is false."
+  description = "ID of the S3 bucket used by Spacelift Flows. Null if enable_flows is false."
 }
 
 output "states_bucket_arn" {
@@ -385,6 +415,11 @@ output "shell" {
         BACKEND_IMAGE : module.ecr[0].ecr_backend_repository_url
         LAUNCHER_IMAGE : module.ecr[0].ecr_launcher_repository_url
         PRIVATE_ECR_LOGIN_URL : split("/", module.ecr[0].ecr_backend_repository_url)[0]
+      } : {},
+      var.create_container_registry && var.enable_flows ? {
+        FLOWS_AGENT_IMAGE : module.ecr[0].ecr_flows_repository_urls.agent
+        FLOWS_BACKEND_IMAGE : module.ecr[0].ecr_flows_repository_urls.backend
+        FLOWS_K8S_JS_EXECUTOR_IMAGE : module.ecr[0].ecr_flows_repository_urls.k8s_js_executor
       } : {},
     ),
   })

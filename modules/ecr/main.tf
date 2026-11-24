@@ -73,3 +73,52 @@ resource "aws_ecr_lifecycle_policy" "launcher" {
     }]
   })
 }
+
+locals {
+  flows_repository_names = !var.create_flows_repositories ? {} : {
+    backend         = "spacelift-flows-backend-${var.suffix}"
+    agent           = "spacelift-flows-agent-${var.suffix}"
+    k8s_js_executor = "spacelift-flows-k8s-js-executor-${var.suffix}"
+  }
+}
+
+resource "aws_ecr_repository" "flows" {
+  for_each = local.flows_repository_names
+
+  name         = each.value
+  force_delete = var.ecr_force_delete
+
+  region = var.region
+
+  encryption_configuration {
+    encryption_type = "KMS"
+    kms_key         = var.kms_key_arn
+  }
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "flows" {
+  for_each = var.number_of_images_to_retain > 0 ? local.flows_repository_names : {}
+
+  repository = aws_ecr_repository.flows[each.key].name
+
+  region = var.region
+
+  policy = jsonencode({
+    rules = [{
+      rulePriority = 1
+      description  = "Only keep the ${var.number_of_images_to_retain} last images"
+      selection = {
+        tagStatus   = "any"
+        countType   = "imageCountMoreThan"
+        countNumber = var.number_of_images_to_retain
+      }
+      action = {
+        type = "expire"
+      }
+    }]
+  })
+}
