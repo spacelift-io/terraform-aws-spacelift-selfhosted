@@ -1,6 +1,6 @@
 # ☁️ Terraform module for Spacelift on AWS
 
-This module creates a base infrastructure for a self-hosted Spacelift instance on AWS.
+This module creates the base infrastructure for a self-hosted Spacelift installation on AWS. It covers both products, [Spacelift Deploy](https://docs.spacelift.io/) and [Spacelift Flows](https://docs.spacelift.io/flows/introduction).
 
 > [!IMPORTANT]
 > **Breaking change in v3.0.0 - scheduler security group removed:** the standalone
@@ -19,11 +19,11 @@ Check out the [Terraform](https://developer.hashicorp.com/terraform/language/bac
 ```hcl
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region             = "eu-west-1"
   website_endpoint   = "https://spacelift.mycorp.com"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 }
 ```
 
@@ -33,9 +33,10 @@ This module creates:
   - a KMS key that is used to encrypt AWS resources (RDS, S3 buckets, ECR repositories)
   - a KMS key that is used for in-app encryption (eg. encrypt entities in the database)
   - a KMS key that is used for signing and validating [JWT](https://en.wikipedia.org/wiki/JSON_Web_Token)s
+  - a separate KMS key that encrypts the Flows resources
 - Network resources
   - A VPC, 3 subnets and 3 security groups
-- Container repositories (ECR), unless `create_container_registry` is `false` (see [below](#deploy-without-ecr-repositories))
+- Container repositories (ECR), optional. The images are available from our registry (`oci.spacelift.io`), so you only need these if you want to mirror them into your own account. Set `create_container_registry` to `false` if you don't (see [below](#deploy-without-ecr-repositories)).
   - a repository for the backend image (used by the `server` and `drain` services)
   - another repository for the launcher image
 - Database resources
@@ -43,8 +44,10 @@ This module creates:
     - Note: feel free to promote it into a [global cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/aurora-global-database.html) yourself. Check out the [New Global Cluster From Existing DB Cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/rds_global_cluster#new-global-cluster-from-existing-db-cluster) section of the Terraform documentation.
   - RDS instance(s) for the regional cluster (configurable)
   - a SecretsManager secret for the database credentials
+  - Deploy and Flows share the cluster, each with a database of its own. Flows creates its database on its first start.
 - Storage resources
-  - 10 S3 buckets
+  - multiple S3 buckets for Deploy
+  - an S3 bucket for Flows
 
 It is highly configurable, so if you wish to use your own KMS key, VPC, RDS cluster etc., you can do so by providing the necessary parameters.
 
@@ -54,16 +57,16 @@ For guidance on upgrading your Aurora PostgreSQL database, see the [RDS Upgrade 
 
 #### Default
 
-This deploys the KMS keys, network stack (VPC, subnets, security groups), RDS cluster, ECR repositories and the S3 buckets.
+This deploys everything Deploy and Flows need: the KMS keys, network stack (VPC, subnets, security groups), RDS cluster, ECR repositories and the S3 buckets.
 
 ```hcl
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region             = "eu-west-1"
   website_endpoint   = "https://spacelift.mycorp.com"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 }
 ```
 
@@ -72,7 +75,7 @@ module "spacelift" {
 ```hcl
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region           = "eu-west-1"
   website_endpoint = "https://spacelift.mycorp.com"
@@ -80,7 +83,7 @@ module "spacelift" {
   create_vpc             = false
   rds_subnet_ids         = ["subnet-012345abc", "subnet-012345def", "subnet-012345ghi"]
   rds_security_group_ids = ["sg-012345abc"]
-  rds_engine_version     = "18.3"
+  rds_engine_version     = "18.6"
 }
 ```
 
@@ -98,7 +101,7 @@ module "spacelift" {
   source = "github.com/spacelift-io/terraform-aws-spacelift-selfhosted"
 
   region             = "eu-west-1"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 
   create_container_registry = false
 }
@@ -136,12 +139,12 @@ On an existing installation, turning the flag off removes the ECR repositories f
 ```hcl
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region           = "eu-west-1"
   website_endpoint = "https://spacelift.mycorp.com"
 
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
   rds_instance_configuration = {
     "primary-instance" = {
       instance_identifier = "primary"
@@ -162,11 +165,11 @@ You can customize S3 bucket names and retention policies using the `s3_bucket_co
 ```hcl
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region             = "eu-west-1"
   website_endpoint   = "https://spacelift.mycorp.com"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 
   # The buckets that expire objects have versioning enabled, so expiring the current
   # version only writes a delete marker and the data lives on as a noncurrent version.
@@ -206,16 +209,16 @@ For cross-region HA, set `rds_global_cluster_identifier` to have the Spacelift d
 resource "aws_rds_global_cluster" "spacelift" {
   global_cluster_identifier = "spacelift-global"
   engine                    = "aurora-postgresql"
-  engine_version            = "18.3"
+  engine_version            = "18.6"
 }
 
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region             = "eu-west-1"
   website_endpoint   = "https://spacelift.mycorp.com"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 
   rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
 }
@@ -226,11 +229,11 @@ You can manage the secondary clusters yourself, or create them with a second ins
 ```hcl
 module "spacelift_dr" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region             = "us-east-1"
   website_endpoint   = "https://spacelift.mycorp.com"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 
   rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
   rds_is_global_secondary       = true
@@ -250,11 +253,11 @@ Set `rds_enable_http_endpoint` to `true` to turn on the [Data API](https://docs.
 ```hcl
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region             = "eu-west-1"
   website_endpoint   = "https://spacelift.mycorp.com"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 
   rds_enable_http_endpoint = true
 }
@@ -270,11 +273,11 @@ The cluster has IAM database authentication enabled by default. Set `rds_iam_use
 ```hcl
 module "spacelift" {
   source  = "spacelift-io/spacelift-selfhosted/aws"
-  version = "~> 3.3"
+  version = "~> 3.5"
 
   region             = "eu-west-1"
   website_endpoint   = "https://spacelift.mycorp.com"
-  rds_engine_version = "18.3"
+  rds_engine_version = "18.6"
 
   rds_iam_username = "spacelift_iam" # Set this to a user you created explicitly for IAM authentication
 }

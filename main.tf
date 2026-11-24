@@ -10,18 +10,26 @@ locals {
   database_read_only_url     = var.create_database ? module.rds[0].database_read_only_url : ""
   database_iam_url           = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_url : ""
   database_iam_read_only_url = var.create_database && var.rds_iam_username != null ? module.rds[0].database_iam_read_only_url : ""
-  kms_arn                    = coalesce(var.kms_arn, one(module.kms[*].key_arn))
+  flows_database_url         = var.create_database ? module.rds[0].flows_database_url : ""
+  kms_arn                    = coalesce(var.kms_arn, module.kms.key_arn)
 }
 
 module "kms" {
   source = "./modules/kms"
-  count  = var.kms_arn == null ? 1 : 0
+
+  create_deploy_keys = var.kms_arn == null
+  create_flows_key   = var.create_flows_bucket
 
   region                        = var.region
   account_id                    = data.aws_caller_identity.current.account_id
   master_key_multi_regional     = var.kms_master_key_multi_regional
   encryption_key_multi_regional = var.kms_encryption_key_multi_regional
   jwt_key_multi_regional        = var.kms_jwt_key_multi_regional
+}
+
+moved {
+  from = module.kms[0]
+  to   = module.kms
 }
 
 module "ecr" {
@@ -37,8 +45,6 @@ module "ecr" {
   launcher_repository_name   = var.launcher_ecr_repository_name
 }
 
-# Keeps existing repositories when upgrading from a version without count on
-# module.ecr. Without it, Terraform plans to destroy and recreate them.
 moved {
   from = module.ecr
   to   = module.ecr[0]
@@ -108,10 +114,14 @@ module "rds" {
 }
 
 module "s3" {
-  source = "./modules/s3"
+  source     = "./modules/s3"
+  depends_on = [module.kms]
 
   suffix = local.suffix
   region = var.region
+
+  create_flows_bucket = var.create_flows_bucket
+  flows_kms_key_arn   = module.kms.flows_key_arn
 
   bucket_configuration               = var.s3_bucket_configuration
   noncurrent_version_expiration_days = var.s3_noncurrent_version_expiration_days

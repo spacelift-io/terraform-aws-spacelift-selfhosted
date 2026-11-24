@@ -22,3 +22,13 @@ variable "jwt_key_multi_regional" {
   type        = bool
   description = "Whether the JWT key should be multi-regional."
 }
+
+variable "create_deploy_keys" {
+  type        = bool
+  description = "Whether to create the three KMS keys Spacelift uses: resource encryption, in-app encryption and JWT signing."
+}
+
+variable "create_flows_key" {
+  type        = bool
+  description = "Whether to create the KMS key the Spacelift Flows bucket is encrypted with."
+}

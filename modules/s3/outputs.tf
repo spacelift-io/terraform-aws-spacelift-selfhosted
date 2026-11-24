@@ -117,3 +117,13 @@ output "workspace_bucket_name" {
   value       = aws_s3_bucket.workspaces.id
   description = "ID of the S3 bucket used for storing workspaces."
 }
+
+output "flows_bucket_arn" {
+  value       = one(aws_s3_bucket.flows[*].arn)
+  description = "ARN of the S3 bucket used by Spacelift Flows. Null if create_flows_bucket is false."
+}
+
+output "flows_bucket_name" {
+  value       = one(aws_s3_bucket.flows[*].id)
+  description = "ID of the S3 bucket used by Spacelift Flows. Null if create_flows_bucket is false."
+}
