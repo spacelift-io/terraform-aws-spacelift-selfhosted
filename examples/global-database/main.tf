@@ -2,13 +2,13 @@ resource "random_uuid" "suffix" {
 }
 
 data "aws_rds_engine_version" "pgversion" {
-  region = var.primary_region
+  region = "us-east-1"
   engine = "aurora-postgresql"
   latest = true
 }
 
 resource "aws_rds_global_cluster" "spacelift" {
-  region = var.primary_region
+  region = "us-east-1"
 
   global_cluster_identifier = "spacelift-global-${lower(substr(random_uuid.suffix.id, 0, 5))}"
   engine                    = "aurora-postgresql"
@@ -19,21 +19,17 @@ resource "aws_rds_global_cluster" "spacelift" {
 module "primary" {
   source = "../../"
 
-  region = var.primary_region
+  region = "us-east-1"
 
   rds_engine_version            = data.aws_rds_engine_version.pgversion.version_actual
   rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
   website_endpoint              = "https://spacelift.example.com"
-
-  rds_delete_protection_enabled = false
-  s3_retain_on_destroy          = false
-  ecr_force_delete              = true
 }
 
 module "secondary" {
   source = "../../"
 
-  region = var.secondary_region
+  region = "us-west-2"
 
   rds_engine_version            = data.aws_rds_engine_version.pgversion.version_actual
   rds_global_cluster_identifier = aws_rds_global_cluster.spacelift.id
@@ -45,10 +41,6 @@ module "secondary" {
   # destroy it before, which is the order the global cluster needs.
   rds_is_global_secondary = true
   rds_password_sm_arn     = module.primary.database_secret_arn
-
-  rds_delete_protection_enabled = false
-  s3_retain_on_destroy          = false
-  ecr_force_delete              = true
 }
 
 output "primary_shell" {
