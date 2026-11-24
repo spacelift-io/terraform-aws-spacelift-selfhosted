@@ -9,12 +9,12 @@ output "kms_key_arn" {
 }
 
 output "kms_encryption_key_arn" {
-  value       = one(module.kms[*].encryption_key_arn)
+  value       = module.kms.encryption_key_arn
   description = "ARN of the KMS key used for in-app encryption. Null if kms_arn variable is provided."
 }
 
 output "kms_signing_key_arn" {
-  value       = one(module.kms[*].jwt_key_arn)
+  value       = module.kms.jwt_key_arn
   description = "ARN of the KMS key used for signing and verifying JWTs. Null if kms_arn variable is provided."
 }
 
@@ -123,6 +123,17 @@ output "database_url" {
 output "database_name" {
   description = "Name of the database. Will be null if create_database is false."
   value       = one(module.rds[*].database_name)
+}
+
+output "flows_database_name" {
+  description = "Name of the database Spacelift Flows uses. Will be null if create_database is false."
+  value       = one(module.rds[*].flows_database_name)
+}
+
+output "flows_database_url" {
+  description = "The URL to the Spacelift Flows database on the write endpoint of the cluster, with the same user as Spacelift. Only populated if create_database is true."
+  value       = local.flows_database_url
+  sensitive   = true
 }
 
 output "database_read_only_url" {
@@ -254,6 +265,21 @@ output "run_observability_bucket_arn" {
 output "run_observability_bucket_name" {
   value       = module.s3.run_observability_bucket_name
   description = "ID of the S3 bucket used for storing run observability artifacts."
+}
+
+output "flows_kms_key_arn" {
+  value       = module.kms.flows_key_arn
+  description = "ARN of the KMS key used for encrypting the Spacelift Flows bucket. Null if create_flows_bucket is false."
+}
+
+output "flows_bucket_arn" {
+  value       = module.s3.flows_bucket_arn
+  description = "ARN of the S3 bucket used by Spacelift Flows. Null if create_flows_bucket is false."
+}
+
+output "flows_bucket_name" {
+  value       = module.s3.flows_bucket_name
+  description = "ID of the S3 bucket used by Spacelift Flows. Null if create_flows_bucket is false."
 }
 
 output "states_bucket_arn" {
@@ -389,8 +415,8 @@ output "tfvars" {
         uploads_bucket_url : local.uploads_bucket_url
         user_uploaded_workspaces_bucket_name : module.s3.user_uploaded_workspaces_bucket_name
         workspace_bucket_name : module.s3.workspace_bucket_name
-        kms_encryption_key_arn : length(module.kms) > 0 ? module.kms[0].encryption_key_arn : ""
-        kms_signing_key_arn : length(module.kms) > 0 ? module.kms[0].jwt_key_arn : ""
+        kms_encryption_key_arn : var.kms_arn == null ? module.kms.encryption_key_arn : ""
+        kms_signing_key_arn : var.kms_arn == null ? module.kms.jwt_key_arn : ""
         kms_key_arn : local.kms_arn
       },
       var.create_container_registry ? {

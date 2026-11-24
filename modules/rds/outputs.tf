@@ -31,29 +31,40 @@ output "db_password" {
 
 output "database_url" {
   description = "Connection string for the writer endpoint."
-  value       = local.database_url
+  value       = local.deploy_database_url
   sensitive   = true
 }
 
 output "database_read_only_url" {
   description = "Connection string for the reader endpoint."
-  value       = local.database_read_only_url
+  value       = local.deploy_database_read_only_url
   sensitive   = true
 }
 
 output "database_iam_url" {
   description = "Passwordless connection string for the writer endpoint. Null if iam_username is not set."
-  value       = local.database_iam_url
+  value       = local.deploy_database_iam_url
 }
 
 output "database_iam_read_only_url" {
   description = "Passwordless connection string for the reader endpoint. Null if iam_username is not set."
-  value       = local.database_iam_read_only_url
+  value       = local.deploy_database_iam_read_only_url
 }
 
 output "database_name" {
   description = "Name of the database."
-  value       = local.database_name
+  value       = local.deploy_database_name
+}
+
+output "flows_database_name" {
+  description = "Name of the database Spacelift Flows uses."
+  value       = local.flows_database_name
+}
+
+output "flows_database_url" {
+  description = "Connection string for the Spacelift Flows database on the writer endpoint."
+  value       = local.flows_database_url
+  sensitive   = true
 }
 
 output "secrets_manager_database_connection_string_name" {

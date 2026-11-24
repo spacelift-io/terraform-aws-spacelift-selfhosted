@@ -12,6 +12,7 @@ locals {
     uploads           = coalesce(try(var.bucket_configuration.uploads.name, null), "spacelift-uploads-${var.suffix}")
     user-uploads      = coalesce(try(var.bucket_configuration.user_uploads.name, null), "spacelift-user-uploaded-workspaces-${var.suffix}")
     workspace         = coalesce(try(var.bucket_configuration.workspace.name, null), "spacelift-workspace-${var.suffix}")
+    flows             = coalesce(try(var.bucket_configuration.flows.name, null), "spacelift-flows-${var.suffix}")
   }
 
   bucket_expirations = {
@@ -651,5 +652,49 @@ resource "aws_s3_bucket_lifecycle_configuration" "workspaces" {
     expiration {
       days = local.bucket_expirations["workspace"]
     }
+  }
+}
+
+resource "aws_s3_bucket" "flows" {
+  count = var.create_flows_bucket ? 1 : 0
+
+  bucket        = local.bucket_names["flows"]
+  region        = var.region
+  force_destroy = !var.retain_on_destroy
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "flows" {
+  count = var.create_flows_bucket ? 1 : 0
+
+  bucket = aws_s3_bucket.flows[0].id
+  region = var.region
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = var.flows_kms_key_arn
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "flows" {
+  count = var.create_flows_bucket && var.enable_public_access_block_on_s3 == true ? 1 : 0
+
+  bucket = aws_s3_bucket.flows[0].id
+  region = var.region
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+resource "aws_s3_bucket_versioning" "flows" {
+  count = var.create_flows_bucket ? 1 : 0
+
+  bucket = aws_s3_bucket.flows[0].id
+  region = var.region
+  versioning_configuration {
+    status = "Enabled"
   }
 }

@@ -327,9 +327,18 @@ variable "s3_bucket_configuration" {
 
     # Optional so that existing callers passing the full object keep working.
     run_observability = optional(object({ name = string, expiration_days = number }))
+
+    # Only used when create_flows_bucket is true. Nothing in this bucket expires.
+    flows = optional(object({ name = string }))
   })
   description = "Custom configuration for S3 buckets."
   default     = null
+}
+
+variable "create_flows_bucket" {
+  type        = bool
+  description = "Whether to create the S3 bucket Spacelift Flows stores its data in, and the KMS key it is encrypted with. They stay unused if you don't deploy Flows."
+  default     = true
 }
 
 variable "s3_noncurrent_version_expiration_days" {

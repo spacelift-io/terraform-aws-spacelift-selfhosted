@@ -34,6 +34,9 @@ variable "bucket_configuration" {
 
     # Optional so that existing callers passing the full object keep working.
     run_observability = optional(object({ name = string, expiration_days = number }))
+
+    # Only used when create_flows_bucket is true. Nothing in this bucket expires.
+    flows = optional(object({ name = string }))
   })
 }
 
@@ -52,3 +55,13 @@ variable "region" {
   description = "AWS region to deploy resources in."
 }
 
+
+variable "create_flows_bucket" {
+  type        = bool
+  description = "Whether to create the bucket Spacelift Flows stores its data in."
+}
+
+variable "flows_kms_key_arn" {
+  type        = string
+  description = "ARN of the KMS key that encrypts the Flows bucket. Null when create_flows_bucket is false."
+}

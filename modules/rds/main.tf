@@ -1,5 +1,6 @@
 locals {
-  database_name = "spacelift"
+  deploy_database_name = "spacelift"
+  flows_database_name  = "flows"
 
   # A global secondary always reads the primary's secret. Deciding that from
   # is_global_secondary keeps the data source's count known at plan time, even
@@ -13,11 +14,12 @@ locals {
   username = local.read_credentials_from_sm ? local.credentials_from_sm[0] : var.db_username
   password = local.read_credentials_from_sm ? local.credentials_from_sm[1] : random_id.db_pw.b64_url
 
-  url_suffix                 = ":5432/${local.database_name}?statement_cache_capacity=0"
-  database_url               = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.endpoint}${local.url_suffix}"
-  database_read_only_url     = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.url_suffix}"
-  database_iam_url           = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.endpoint}${local.url_suffix}"
-  database_iam_read_only_url = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.url_suffix}"
+  deploy_url_suffix                 = ":5432/${local.deploy_database_name}?statement_cache_capacity=0"
+  deploy_database_url               = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.endpoint}${local.deploy_url_suffix}"
+  deploy_database_read_only_url     = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.deploy_url_suffix}"
+  deploy_database_iam_url           = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.endpoint}${local.deploy_url_suffix}"
+  deploy_database_iam_read_only_url = var.iam_username == null ? null : "postgres://${var.iam_username}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.deploy_url_suffix}"
+  flows_database_url                = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.endpoint}:5432/${local.flows_database_name}"
 }
 
 data "aws_availability_zones" "available" {
@@ -48,7 +50,7 @@ resource "aws_rds_cluster" "db_cluster" {
 
   # A global secondary inherits the database and the master credentials from
   # the primary cluster, so AWS rejects them on creation.
-  database_name   = var.is_global_secondary ? null : local.database_name
+  database_name   = var.is_global_secondary ? null : local.deploy_database_name
   master_username = var.is_global_secondary ? null : local.username
   master_password = var.is_global_secondary ? null : local.password
 
@@ -176,12 +178,12 @@ resource "aws_secretsmanager_secret" "conn_string" {
 resource "aws_secretsmanager_secret_version" "conn_string" {
   secret_id = aws_secretsmanager_secret.conn_string.id
   secret_string = jsonencode(merge({
-    DATABASE_URL           = local.database_url
-    DATABASE_READ_ONLY_URL = local.database_read_only_url
+    DATABASE_URL           = local.deploy_database_url
+    DATABASE_READ_ONLY_URL = local.deploy_database_read_only_url
     },
     var.iam_username == null ? {} : {
-      DATABASE_IAM_URL           = local.database_iam_url
-      DATABASE_IAM_READ_ONLY_URL = local.database_iam_read_only_url
+      DATABASE_IAM_URL           = local.deploy_database_iam_url
+      DATABASE_IAM_READ_ONLY_URL = local.deploy_database_iam_read_only_url
   }))
 
   region = var.region
