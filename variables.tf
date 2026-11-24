@@ -224,14 +224,49 @@ variable "rds_instance_configuration" {
   type = map(object({
     instance_identifier = string
     instance_class      = string
+    availability_zone   = optional(string)
+    promotion_tier      = optional(number)
   }))
-  description = "Instance configuration for the RDS instances. Default is a single db.r6g.large instance."
+  description = "Instance configuration for the RDS instances. Default is a single db.r6g.large instance. availability_zone pins an instance to an AZ (otherwise AWS picks one, so two instances can share an AZ); changing it replaces the instance. promotion_tier (0-15, lowest first) sets the failover order."
   default = {
     "primary-instance" = {
       instance_identifier = "primary"
       instance_class      = "db.r6g.large"
     }
   }
+}
+
+variable "rds_skip_final_snapshot" {
+  type        = bool
+  description = "Whether to skip the final snapshot when the RDS cluster is destroyed. Default is true."
+  default     = true
+}
+
+variable "rds_final_snapshot_identifier" {
+  type        = string
+  description = "Name of the final snapshot taken when the RDS cluster is destroyed, if rds_skip_final_snapshot is false. If null, it's the cluster identifier with a -final suffix."
+  default     = null
+}
+
+variable "rds_cluster_parameters" {
+  type = map(object({
+    value        = string
+    apply_method = optional(string, "immediate")
+  }))
+  description = "Extra parameters for the RDS cluster parameter group, by name, e.g. { idle_in_transaction_session_timeout = { value = \"2400000\" } }. They can override the module's default statement_timeout (120000 ms)."
+  default     = {}
+}
+
+variable "rds_secret_recovery_window_in_days" {
+  type        = number
+  description = "Days Secrets Manager keeps the database connection string secret after it's deleted, so it can be restored (7-30). Default is 0, which deletes it immediately."
+  default     = 0
+}
+
+variable "rds_secret_replica_regions" {
+  type        = list(string)
+  description = "Regions to replicate the database connection string secret to, e.g. so a global secondary in another region can read it there (pass the secret's name as its rds_password_sm_arn)."
+  default     = []
 }
 
 variable "rds_preferred_backup_window" {

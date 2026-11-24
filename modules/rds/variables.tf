@@ -46,6 +46,8 @@ variable "instance_configuration" {
   type = map(object({
     instance_identifier = string
     instance_class      = string
+    availability_zone   = optional(string)
+    promotion_tier      = optional(number)
   }))
   description = "Instance configuration for the RDS instances."
 }
@@ -184,3 +186,37 @@ variable "region" {
   description = "AWS region to deploy resources in."
 }
 
+variable "skip_final_snapshot" {
+  type        = bool
+  description = "Whether to skip the final snapshot when the cluster is destroyed."
+  default     = true
+}
+
+variable "final_snapshot_identifier" {
+  type        = string
+  description = "Name of the final snapshot taken when the cluster is destroyed. If null, it's the cluster identifier with a -final suffix."
+  default     = null
+}
+
+variable "cluster_parameters" {
+  type = map(object({
+    value        = string
+    apply_method = optional(string, "immediate")
+  }))
+  description = "Extra cluster parameters, by name. They can override the module's defaults (statement_timeout)."
+  default     = {}
+  nullable    = false
+}
+
+variable "secret_recovery_window_in_days" {
+  type        = number
+  description = "Days Secrets Manager keeps the connection string secret after it's deleted, so it can be restored. 0 deletes it immediately."
+  default     = 0
+}
+
+variable "secret_replica_regions" {
+  type        = list(string)
+  description = "Regions to replicate the connection string secret to."
+  default     = []
+  nullable    = false
+}

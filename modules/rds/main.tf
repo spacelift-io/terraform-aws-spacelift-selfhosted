@@ -13,6 +13,10 @@ locals {
   username = local.read_credentials_from_sm ? local.credentials_from_sm[0] : var.db_username
   password = local.read_credentials_from_sm ? local.credentials_from_sm[1] : random_id.db_pw.b64_url
 
+  cluster_parameters = merge({
+    statement_timeout = { value = "120000", apply_method = "immediate" }
+  }, var.cluster_parameters)
+
   url_suffix                 = ":5432/${local.database_name}?statement_cache_capacity=0"
   database_url               = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.endpoint}${local.url_suffix}"
   database_read_only_url     = "postgres://${local.username}:${urlencode(local.password)}@${aws_rds_cluster.db_cluster.reader_endpoint}${local.url_suffix}"
@@ -84,10 +88,11 @@ resource "aws_rds_cluster" "db_cluster" {
   kms_key_id        = var.kms_key_arn
   storage_encrypted = true
 
-  backup_retention_period = var.backup_retention_period
-  preferred_backup_window = var.preferred_backup_window
-  copy_tags_to_snapshot   = true
-  skip_final_snapshot     = true
+  backup_retention_period   = var.backup_retention_period
+  preferred_backup_window   = var.preferred_backup_window
+  copy_tags_to_snapshot     = true
+  skip_final_snapshot       = var.skip_final_snapshot
+  final_snapshot_identifier = var.skip_final_snapshot ? null : coalesce(var.final_snapshot_identifier, "${coalesce(var.regional_cluster_identifier, "spacelift-${var.suffix}")}-final")
 
   enabled_cloudwatch_logs_exports       = var.enabled_cloudwatch_logs_exports
   performance_insights_enabled          = lookup(var.performance_insights, "enabled", false)
@@ -128,6 +133,8 @@ resource "aws_rds_cluster_instance" "db_instance" {
   cluster_identifier                    = aws_rds_cluster.db_cluster.id
   identifier                            = each.value["instance_identifier"]
   instance_class                        = each.value["instance_class"]
+  availability_zone                     = each.value["availability_zone"]
+  promotion_tier                        = each.value["promotion_tier"]
   engine                                = aws_rds_cluster.db_cluster.engine
   auto_minor_version_upgrade            = var.postgres_allow_auto_minor_version_upgrade
   ca_cert_identifier                    = "rds-ca-rsa2048-g1"
@@ -158,19 +165,29 @@ resource "aws_rds_cluster_parameter_group" "spacelift" {
     create_before_destroy = true
   }
 
-  parameter {
-    apply_method = "immediate"
-    name         = "statement_timeout"
-    value        = "120000"
+  dynamic "parameter" {
+    for_each = local.cluster_parameters
+    content {
+      name         = parameter.key
+      value        = parameter.value.value
+      apply_method = parameter.value.apply_method
+    }
   }
 }
 
 resource "aws_secretsmanager_secret" "conn_string" {
   name                    = "spacelift/db-conn-string-${var.suffix}"
   description             = "Spacelift database connection string"
-  recovery_window_in_days = 0
+  recovery_window_in_days = var.secret_recovery_window_in_days
 
   region = var.region
+
+  dynamic "replica" {
+    for_each = var.secret_replica_regions
+    content {
+      region = replica.value
+    }
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "conn_string" {
