@@ -21,7 +21,9 @@ module "spacelift" {
 }
 ```
 
-This module creates the KMS keys, the network (a VPC with subnets and security groups), an Aurora PostgreSQL cluster and the S3 buckets that Deploy and Flows run on. It can also create ECR repositories, if you'd rather mirror the images than pull them from our registry (`oci.spacelift.io`).
+This module creates the KMS keys, the network (a VPC with subnets and security groups), an Aurora PostgreSQL cluster and the S3 buckets that Deploy runs on. It can also create ECR repositories, if you'd rather mirror the images than pull them from our registry (`oci.spacelift.io`).
+
+Set `enable_flows` to `true` to also create what Flows needs: its S3 bucket with a KMS key of its own, and ECR repositories for its images. Flows shares the Aurora cluster with Deploy.
 
 Most of it is optional: bring your own KMS key, VPC or database by setting the matching inputs, and the module skips that part.
 

@@ -28,6 +28,11 @@ variable "launcher_repository_name" {
   description = "Name of the launcher ECR repository."
 }
 
+variable "create_flows_repositories" {
+  type        = bool
+  description = "Whether to create the ECR repositories for the Spacelift Flows images."
+}
+
 variable "region" {
   type        = string
   description = "AWS region to deploy resources in."

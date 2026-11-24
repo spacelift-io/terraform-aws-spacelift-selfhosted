@@ -18,7 +18,7 @@ module "kms" {
   source = "./modules/kms"
 
   create_deploy_keys = var.kms_arn == null
-  create_flows_key   = var.create_flows_bucket
+  create_flows_key   = var.enable_flows
 
   region                        = var.region
   account_id                    = data.aws_caller_identity.current.account_id
@@ -43,6 +43,7 @@ module "ecr" {
   ecr_force_delete           = var.ecr_force_delete
   backend_repository_name    = var.backend_ecr_repository_name
   launcher_repository_name   = var.launcher_ecr_repository_name
+  create_flows_repositories  = var.enable_flows
 }
 
 moved {
@@ -120,7 +121,7 @@ module "s3" {
   suffix = local.suffix
   region = var.region
 
-  create_flows_bucket = var.create_flows_bucket
+  create_flows_bucket = var.enable_flows
   flows_kms_key_arn   = module.kms.flows_key_arn
 
   bucket_configuration               = var.s3_bucket_configuration
